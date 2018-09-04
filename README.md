@@ -10,7 +10,7 @@ The data life cycle is based on a workflow that is based on a sequence of four t
 4. a time slot query the Knowledge Base (**teaching window**)
 
 
-![KEES cycle](https://raw.github.com/linkeddatacenter/kees/v1/images/cycle.png)
+![KEES cycle](https://raw.github.com/linkeddatacenter/kees/master/v1/images/cycle.png)
 
 More or less the **learning window** is an ETL process that:
   
