@@ -1,5 +1,5 @@
 # sdaas-ce
-A  docker with a lightweight implementation of a  [Smart Data Management Platform](https://it.linkeddata.center/b/smart-data-platform/) derived from the [LinkeData.Center SDaaS product](https://it.linkeddata.center//p/sdaas).
+A  docker with a lightweight implementation of a [Smart Data Management Platform](https://it.linkeddata.center/b/smart-data-platform/) derived from the [LinkeData.Center SDaaS product](https://it.linkeddata.center//p/sdaas).
 
 See  [LinkedData.Center SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home)
 
@@ -15,8 +15,8 @@ curl "http://localhost:8889/sdaas/sparql?query=SELECT DISTINCT ?g WHERE {GRAPH ?
 
 ```
 docker build -t sdaas-ce .
-docker run --name sdaas -d -p 8889:8080 -v $PWD/boilerplate:/workspace sdaas-ce
-docker exec -t sdaas -f build.sdaas --reboot
+docker run --name dmp -d -p 8889:8080 -v $PWD/boilerplate:/workspace sdaas-ce
+docker exec -t dmp sdaas -f build.sdaas --reboot
 curl "http://localhost:8889/sdaas/sparql?query=SELECT DISTINCT ?g WHERE {GRAPH ?g {?s ?p ?o}}"
 ```
 

@@ -4,9 +4,9 @@ LABEL authors="enrico@linkeddata.center"
 
 USER root
 
+ENV SD_LOCAL_BG_ENDPOINT http://localhost:8080/sdaas
 ENV SDAAS_BIN_DIR /usr/local/bin/sdaas
 ENV PATH="${SDAAS_BIN_DIR}:${PATH}"
-
 
 # load regular linux tools required by sdaas:
 # see https://wiki.alpinelinux.org/wiki/How_to_get_regular_stuff_working

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 function USAGE {
 	>&2 cat <<-EOT
 		Smart Data as a Service (SDaaS) platform community edition

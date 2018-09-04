@@ -55,7 +55,7 @@ SD_LEARN "urn:graph:istat" 'https://s3-eu-west-1.amazonaws.com/demo.hub1.linkedd
 #SD_LEARN_S3 "urn:graph:istat" 's2://demo.hub1.linkeddata.center/data/comuni.csv' '|||.ttl|php gateway/istat.php'
 
 
-# loads https://www.w3.org/ns/prov using contente negotiation in graph named <$GRAPH_PREFIX/prov_ontology> 
+# loads https://www.w3.org/ns/prov using content negotiation in graph named <$GRAPH_PREFIX/prov_ontology> 
 # SD_LEARN "$GRAPH_PREFIX/prov_ontology"  'https://www.w3.org/ns/prov|.ttl|-H 'Accept: text/ttl'"
 
 # loads a wikipedia in graph named <urn:city:Milan> 
