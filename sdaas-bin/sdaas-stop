@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+cd /var/lib/jetty &&  sudo -u jetty java -jar /usr/local/jetty/start.jar \
+	STOP.PORT=28282 STOP.KEY=secret --stop
+
+
+echo "SDaaS engine stopped"

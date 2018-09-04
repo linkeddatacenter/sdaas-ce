@@ -6,7 +6,7 @@ See  [LinkedData.Center SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas
 ## Quickstart
 
 ```
-docker run --name sdaas -d -p 8889:8080 -v $PWD/boilerplate:/buildir linkeddatacenter/sdaas-ce
+docker run --name sdaas -d -p 8889:8080 -v $PWD/boilerplate:/workspace linkeddatacenter/sdaas-ce
 docker exec -t sdaas -f build.sdaas --reboot
 curl "http://localhost:8889/sdaas/sparql?query=SELECT DISTINCT ?g WHERE {GRAPH ?g {?s ?p ?o}}"
 ```
@@ -15,7 +15,7 @@ curl "http://localhost:8889/sdaas/sparql?query=SELECT DISTINCT ?g WHERE {GRAPH ?
 
 ```
 docker build -t sdaas-ce .
-docker run --name sdaas -d -p 8889:8080 -v $PWD/boilerplate:/buildir sdaas-ce
+docker run --name sdaas -d -p 8889:8080 -v $PWD/boilerplate:/workspace sdaas-ce
 docker exec -t sdaas -f build.sdaas --reboot
 curl "http://localhost:8889/sdaas/sparql?query=SELECT DISTINCT ?g WHERE {GRAPH ?g {?s ?p ?o}}"
 ```
