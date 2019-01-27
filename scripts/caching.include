@@ -1,3 +1,5 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_caching+x} ]; then return ; else __module_caching=1 ; fi
 SD_REQUIRES_CMD SD_FATAL_ERROR
 

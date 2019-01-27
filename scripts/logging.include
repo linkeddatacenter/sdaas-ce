@@ -1,3 +1,5 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_logging+x} ]; then return ; else __module_logging=1 ; fi
 
 SD_REQUIRES_VAR SD_CACHE SD_VERBOSE
@@ -40,7 +42,7 @@ function SD_DEBUG_INFO {
 # $1 a string or a file name 
 function SD_MK_DEBUG_TMP_FILE {
     local prefix=${1:-"debug"}
-    local tmpFile=$(mktemp -p "$SD_CACHE" "${prefix}.XXXXXXXXXXXX")
+    local tmpFile=$(mktemp --tmpdir="$SD_CACHE" "${prefix}.XXXXXXXXXXXX")
 	SD_DEBUG_INFO "SD_MK_DEBUG_TMP_FILE $tmpFile"
 	echo "$tmpFile"
 }

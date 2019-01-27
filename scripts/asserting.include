@@ -1,6 +1,7 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_asserting+x} ]; then return ; else __module_asserting=1 ; fi
 
-SD_HOSTNAME=${SD_HOSTNAME:="$(hostname -f)"}
 SD_VERBOSE=${SD_VERBOSE:=1}
 
 # Shows a string to std error if verbose > 0
@@ -39,12 +40,14 @@ function SD_REQUIRES_CMD {
 
 
 function SD_INCLUDE {
-  _SDAAS_DIR=${_SDAAS_DIR:="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"}
+  SD_REQUIRES_VAR _SDAAS_DIR
   local -r file="$1"
   shift
   if [ -f "$file" ]; then
-  	source "$file" "$@" 
-  else
+  	source "$file" "$@"  
+  elif [ -f "$_SDAAS_DIR/$file.include" ] ; then
   	source "$_SDAAS_DIR/$file.include" "$@"  "$@" 
+  else 
+  	source "$(pwd)/scripts/$file.include" "$@"  "$@"
   fi
 }

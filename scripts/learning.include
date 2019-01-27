@@ -1,10 +1,13 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_learning+x} ]; then return ; else __module_learning=1 ; fi
 
-SD_REQUIRES_VAR SD_CACHE SD_HOSTNAME
+SD_REQUIRES_VAR SD_CACHE
 SD_REQUIRES_CMD SD_LOAD_RDF_FILE SD_LOG md5sum hostname find curl realpath tail awk mktemp
 
 ### default command used to get web resources
 SD_DEFAULT_DOWNLOADER=${SD_DEFAULT_DOWNLOADER:=curl --silent -L --retry 3 --retry-delay 5 --retry-max-time 30 --compressed} 	## TODO: when curl 7.52.0. consider to add --retry-connrefused 
+
 
 SD_ACTIVITY_DIR=''
 SD_ACTIVITY_ID=''	
@@ -31,7 +34,7 @@ function _SD_ACTIVITY_LOG {
 #	it also create and initialize a prov.ttl file to save provenance info
 #
 function _SD_START_ACTIVITY {
-	SD_REQUIRES_VAR SD_CACHE SD_HOSTNAME
+	SD_REQUIRES_VAR SD_CACHE 
 	local comment="${1:-'a knowledge base ingestion activity'}"	
 	SD_ACTIVITY_DIR="$(realpath "${2:-$(mktemp -d --tmpdir="$SD_CACHE" activity-XXXXXXXXXX)}")" || SD_FATAL_ERROR "unable to create SD_ACTIVITY_DIR"
 	SD_ACTIVITY_ID="$(basename "$SD_ACTIVITY_DIR")"
@@ -39,7 +42,7 @@ function _SD_START_ACTIVITY {
 	mkdir -p "$SD_ACTIVITY_DIR/out" || SD_FATAL_ERROR "Error creating activity default output dir $SD_ACTIVITY_DIR/out"
 	mkdir -p "$SD_ACTIVITY_DIR/in" || SD_FATAL_ERROR "Error creating activity default input dir $SD_ACTIVITY_DIR/in"
 		
-	local baseUri="file://${SD_HOSTNAME}${SD_ACTIVITY_DIR}/"
+	local baseUri="file://localhost${SD_ACTIVITY_DIR}/"
 	baseUri=${baseUri// /%20}
 	cat<<-EOT > "$SD_ACTIVITY_DIR/prov.ttl"
 		@base <$baseUri> .
@@ -64,19 +67,19 @@ function _SD_MK_UID {
 # @description
 #	downloads web resources into the activity "in" directoty
 #	It requires a list of download requests in _SD_SOURCES[@] variable. Download requests must be in the form: <url>[ |<extension> [ | <downloader options> [ | downloader]]] where:
-#	. <url> is a file or an url recognized by downloader. file is converted in url as "file://${SD_HOSTNAME}$(realpath "$url")"
+#	. <url> is a file or an url recognized by downloader. file is converted in url as "file://localhost$(realpath "$url")"
 #	. <extension> is an extension to be added to the downloaded file, ifi is equal to "auto" it tries to preserve the original extension (if present) or adds ".data"
 #	. <downloader options> extra options added to downloader command
 #	. <downloader> the commad to be used to download. it must accept <url> end write result on std out
 #	  if not specified it uses the command contained in SD_DEFAULT_DOWNLOADER (curl)
 #
+#
 # @arg $_SD_SOURCES [@] a list of download request
-# @arg $SD_HOSTNAME the name of current host
 # @arg $SD_ACTIVITY_DIR
 # @arg $SD_DEFAULT_DOWNLOADER a default download command (like curl)
 # @arg $SD_DEBUG_FILE a file to store debug info
 function _SD_EXTRACT {
-	SD_REQUIRES_VAR SD_HOSTNAME SD_DEFAULT_DOWNLOADER SD_ACTIVITY_DIR _SD_SOURCES SD_DEBUG_FILE
+	SD_REQUIRES_VAR SD_DEFAULT_DOWNLOADER SD_ACTIVITY_DIR _SD_SOURCES SD_DEBUG_FILE
 	SD_REQUIRES_CMD md5sum realpath tail awk
 	
 	_SD_LOG_PROV ":learn prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime TIMESTAMP ."
@@ -91,7 +94,7 @@ function _SD_EXTRACT {
 
 	
 		##### add schema to url if a file is passed
-		if [ -f "$url" ]; then url="file://$(realpath "$url")"; url=${url// /%20}; fi
+		if [ -f "$url" ]; then url="file://localhost$(realpath "$url")"; url=${url// /%20}; fi
 		
 		if [  "$extension" = 'auto' ]; then
 			#####  try to preseve extension, if any
@@ -146,7 +149,7 @@ function _SD_TRANSFORMER {
 #
 # @arg $1 a list of transformation
 function _SD_TRANSFORM {
-	SD_REQUIRES_VAR SD_HOSTNAME SD_ACTIVITY_DIR
+	SD_REQUIRES_VAR SD_ACTIVITY_DIR
 	SD_REQUIRES_CMD find
 	
 	_SD_LOG_PROV ":learn prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime TIMESTAMP ."

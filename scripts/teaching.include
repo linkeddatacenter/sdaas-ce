@@ -1,6 +1,8 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_answering+x} ]; then return ; else __module_answering=1 ; fi
 
-SD_REQUIRES_CMD awk
+SD_REQUIRES_CMD  awk
 
 #  extra files to be copied in the distribution
 function SD_CREATE_DATA_DISTRIBUTION {
@@ -35,12 +37,6 @@ function SD_CREATE_DATA_DISTRIBUTION {
 		if [ -f "$var" ]; then
 			cp "$var" "$_SD_DIST_DIR"
 		fi
-	done
-
-	
-	printf "\n\n# Key answers #\n\n" >> "$_SD_DIST_DIR/README.md"
-	for query in $(find "$_SD_DIST_DIR" -type f -regextype posix-extended -regex '.*(csv|ttl)$'  -print | sort); do
-		printf " . $(basename "$query")\n" >> "$_SD_DIST_DIR/README.md"
 	done
 	
 	printf "\n\n-------\nData extracted on $(date) from knowledge base\n" >> "$_SD_DIST_DIR/README.md"

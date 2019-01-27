@@ -1,10 +1,15 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_platform+x} ]; then return ; else __module_platform=1 ; fi
-SD_QUADSTORE=${SD_QUADSTORE:=kb}
-SD_DEBUG=${SD_DEBUG:=0}
-_SD_REBOOT=${_SD_REBOOT:=0}
+SD_QUADSTORE=${SD_QUADSTORE:-kb}
+SD_DEBUG=${SD_DEBUG:-0}
+SD_ACCRUAL_POLICY=${SD_ACCRUAL_POLICY:-pull}
+
+_SD_REBOOT=${_SD_REBOOT:-0}
+_SD_RELEASE_NAME="Anassimene"
 
 _SD_START=$SECONDS
-_SDAAS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+_SDAAS_DIR=${_SDAAS_DIR:-$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )}
 
 # READ SECRETS FROM .env file
 if [ -f .env ]; then
@@ -21,7 +26,6 @@ fi
 source "$_SDAAS_DIR/asserting.include"
 SD_INCLUDE caching
 SD_INCLUDE logging
-SD_INCLUDE service_registry
 SD_INCLUDE $SD_QUADSTORE
 SD_INCLUDE learning
 SD_INCLUDE reasoning
@@ -33,7 +37,7 @@ function SD_BEGIN_INGESTION {
 	# Cleanup the entire knowledge base
 	SD_CLEAN_CACHE
 	SD_START_LOGGING
-	SD_LOG "LinkedData.Center SDaaS platform using $SD_QUADSTORE graph technology."
+	SD_LOG "LinkedData.Center SDaaS platform ($_SD_RELEASE_NAME) using '$SD_QUADSTORE' graph technology."
 	if [ $_SD_REBOOT -eq 1 ]; then 
 		SD_LOG "Erasing knowledge base...(it could take a while)"
 		SD_SPARQL_UPDATE "DROP ALL"; 
@@ -42,8 +46,8 @@ function SD_BEGIN_INGESTION {
 
 
 function SD_THATS_ALL_FOLKS {
-	SD_LOG "Computing knowledge base configuration default axioms."
-	SD_SPARQL_UPDATE @$_SDAAS_DIR/axioms/config-axioms.sparq_update
+	#SD_LOG "Computing knowledge base configuration default axioms."
+	#SD_SPARQL_UPDATE @$_SDAAS_DIR/axioms/sdaas-axioms.sparq_update
 	SD_LOG "Knowledge ingestion succesfully completed in $(( SECONDS - _SD_START )) seconds."
 }
 

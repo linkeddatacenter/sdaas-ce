@@ -1,3 +1,5 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_reasoning+x} ]; then return ; else __module_reasoning=1 ; fi
 
 SD_REQUIRES_CMD mktemp SD_LOAD_RDF_FILE SD_SPARQL_QUERY

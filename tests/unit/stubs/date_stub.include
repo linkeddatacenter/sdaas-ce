@@ -1,0 +1,1 @@
+function date { echo ${STUB_DATE:="Sun Dec 24 00:00:00 UTC 2017"} ; }
