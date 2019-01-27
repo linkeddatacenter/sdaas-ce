@@ -4,7 +4,7 @@ A  docker with a lightweight implementation of a [KEES](http://linkeddata.center
 ## Quickstart
 
 ```
-docker run --name sdaas -d -p 8889:8080 -v $PWD/boilerplate:/workspace linkeddatacenter/sdaas-ce
+docker run --name sdaas -d -p 8889:8080 -v $PWD/boilerplate:/workspace linkeddatacenter/sdaas-ce:2.1.0
 docker exec -t sdaas -f build.sdaas --reboot
 curl "http://localhost:8889/sdaas/sparql?query=SELECT DISTINCT ?g WHERE {GRAPH ?g {?s ?p ?o}}"
 ```
