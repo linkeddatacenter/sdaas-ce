@@ -1,11 +1,11 @@
-# sdaas-ce
 ![logo](http://linkeddata.center/resources/v4/logo/Logo-colori-trasp_oriz-640x220.png)
 
+# Welcome to LinkedData.Center SDaaS Platform Community Edition (sdaas-ce)
+
 A vanilla open source implementation of the [LinkeData.Center SDaaS product](https://it.linkeddata.center/p/sdaas).
+See [📖 LinkedData.Center SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home)
 
-See  [LinkedData.Center SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home)
-
-## Quickstart
+## 🚀 Quickstart
 
 ```
 docker build -t linkeddatacenter/sdaas-ce .
