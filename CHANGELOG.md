@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 
 
-## TBD [2.2.0]
+## [2.2.0]
 
 aligned with SDaaS [2.1.0] 
 
@@ -15,19 +15,17 @@ aligned with SDaaS [2.1.0]
 
 - boilerplate removed (use tests/system/platform)
 
-
 ### Added
 
 - test environments
-- coppyright notice on all scripts
-
+- copyright notice on all scripts
 
 ### Changed
 
 - refactory
 - license conditions
-- dockerf file structure (now aligned to blazegraph 2.1.5)
-
+- dockerfile file structure (now aligned to linkeddatacenter/sdaas-rdfstore:1.0.0)
+- accrual policy to reasoner
 
 ## 2.1.0
 
