@@ -3,7 +3,9 @@
 # Welcome to LinkedData.Center SDaaS Platform Community Edition (sdaas-ce)
 
 A vanilla open source implementation of the [LinkeData.Center SDaaS product](https://it.linkeddata.center/p/sdaas).
-See [📖 LinkedData.Center SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home)
+See documentation in [LinkedData.Center SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home).
+
+Try a short [demo of the platform](https://en.linkeddata.center/l/sdaas-ce-demo/).
 
 ## 🚀 Quickstart
 

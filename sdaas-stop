@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
-# Permission to copy and modify is granted under the MIT license
-
-cd /var/lib/jetty &&  sudo -u jetty java -jar /usr/local/jetty/start.jar \
-	STOP.PORT=28282 STOP.KEY=secret --stop
-
-
-echo "SDaaS engine stopped"
