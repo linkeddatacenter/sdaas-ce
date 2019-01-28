@@ -1,0 +1,4 @@
+@prefix s: <urn:s:> .
+@prefix p: <urn:p:> .
+@prefix o: <urn:o:> .
+s:1 p:1 o:1, o:2.

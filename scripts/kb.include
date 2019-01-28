@@ -1,0 +1,24 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
+if [ ! -z ${__module_kb+x} ]; then return ; else __module_kb=1 ; fi
+
+SD_INCLUDE bg_reasoning
+
+function SD_SPARQL_QUERY {
+	SD_REASONER_QUERY ${_SD_KB_ID:=$(SD_CREATE_REASONER kb kb)} "$@"
+	
+}
+
+
+function SD_SPARQL_UPDATE {
+	SD_REASONER_UPDATE ${_SD_KB_ID:=$(SD_CREATE_REASONER kb kb)} "$@"
+}
+
+
+function SD_LOAD_RDF_FILE {
+	local graphUri="$1"
+	local inputFile="$2"
+	local format="${3:-guess}"
+	
+	SD_REASONER_LOAD ${_SD_KB_ID:=$(SD_CREATE_REASONER kb kb)} "$inputFile" "$format" "$graphUri" 
+}

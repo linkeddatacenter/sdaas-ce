@@ -1,0 +1,140 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
+if [ ! -z ${__module_bg_reasoning+x} ]; then return ; else __module_bg_reasoning=1 ; fi
+
+SD_INCLUDE service_registry
+
+SD_REQUIRES_CMD mktemp realpath basename dirname gzip
+
+SD_REASONER_ENDPOINT=${SD_REASONER_ENDPOINT:-"http://localhost:8080/bigdata"}
+
+_SD_LOCAL_BG_PULLDIR=${_SD_LOCAL_BG_PULLDIR:-"/workspace/.shared"}
+_SD_LOCAL_BG_PULLURL=${_SD_LOCAL_BG_PULLURL:-"file:///workspace/.shared"}
+
+# @description create a reasoner based on blazegraph extensions
+# each reasoner can have an archetype (ie. specific features pre-configured). e.g.:
+#  . **rdfs** implements an rdfs triplestore reasoner
+#  . **geo** is able extends sparql triplestore  with [geospatial search](https://wiki.blazegraph.com/wiki/index.php/GeoSpatial)
+#  . **lexical** add lucene  [textual indices](https://wiki.blazegraph.com/wiki/index.php/FullTextSearch) to triplestore
+#  . **kbplus** is a quadstore with both textual and geospatial features installed
+# beside standard reasoners there is also a default sparql 1.1. quadstore with name **kb**.
+# knowledge base archetipes are in the scripts/archetipes directory
+#
+# @arg $1 a reasoner archetype
+# @arg $2 force the name of the namespace
+#
+function SD_CREATE_REASONER {
+	local archetype="$1"
+	local namespace="${2:-"${archetype}-${RANDOM}"}"
+
+	SD_DEBUG_INFO "In SD_CREATE_REASONER archetype=$archetype namespace=$namespace"
+	
+	local archetipes="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/archetypes"
+		
+	test -f  "${archetipes}/${archetype}.txt"  || SD_FATAL_ERROR "Invalid reasoner archetype ($archetype)."
+
+	local description=$(cat "$archetipes/${archetype}.txt" | sed "s/%namespace/$namespace/g")
+	SD_DEBUG_INFO "$(curl -s -X POST --data-binary "$description" --header 'Content-Type:text/plain' "$SD_REASONER_ENDPOINT/namespace")"
+	
+	reasonerId=$(SD_REGISTER_SERVICE "$SD_REASONER_ENDPOINT|$namespace|$archetype" $namespace)
+	
+	## Load specific archetipe resources
+	if [ -r "${archetipes}/${archetype}.ttl" ] ; then
+		SD_REASONER_LOAD $reasonerId "${archetipes}/${archetype}.ttl" turtle "urn:sdaas:tbox:${archetype}"
+	fi
+	echo "$reasonerId"
+}
+
+
+function SD_DESTROY_REASONER {
+	local reasonerId="$1"
+		
+	SD_DEBUG_INFO "In SD_DESTROY_REASONER reasonerId=${reasonerId}"
+	
+	local endpoint namespace archetype
+	IFS='|' read  endpoint namespace archetype <<< $(SD_FETCH_SERVICE "$reasonerId")
+
+	SD_DEBUG_INFO "$(curl -s -X DELETE "$endpoint/namespace/$namespace")"
+	SD_UNREGISTER_SERVICE "$reasonerId"
+}
+
+
+
+# @description a sparql compliant interface to a reasoner
+#
+# @example
+#   SD_REASONER_QUERY rdfs text/csv "select * where {?s ?p ?o} LIMIT 1"
+#   SD_REASONER_QUERY rdfs text/csv "@path/to/input_file_with_query"
+#
+# @arg $1 the reasoner reference
+# @arg $2 mime type for acceppted result (i.e. text/csv or text/turtle)
+# @arg $3 a string with a valid sparql query statement (with extension) or a filename prefixed by the  @ character
+# @arg $4 an optional writable file were to save debugging info (if debugging enabled)
+#
+# @exitcode 0  If successfull.
+# @exitcode >0 On failure
+function SD_REASONER_QUERY {
+	local reasonerId="$1"
+	local accept="$2"
+	local query="$3"
+	local traceFile=${4:-$(SD_MK_DEBUG_TMP_FILE sparql_query_trace)}
+	
+	SD_DEBUG_INFO  "In SD_REASONER_QUERY with reasonerId=$reasonerId accept='$accept' query='${query:0:40}'"
+
+	local endpoint namespace archetype
+	IFS='|' read  endpoint namespace archetype <<< $(SD_FETCH_SERVICE "$reasonerId")
+
+	curl -X POST \
+		--silent \
+		--data-binary "$query" \
+		--header 'Content-Type: application/sparql-query' \
+		--header "Accept: $accept" \
+		--trace-ascii "$traceFile" \
+		-f "${endpoint}/namespace/${namespace}/sparql"  || SD_FATAL_ERROR "SD_REASONER_QUERY error, see $traceFile"
+	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$traceFile"  ; fi
+}
+
+
+function SD_REASONER_UPDATE {
+	local reasonerId="$1"
+	local data="$2"
+	local traceFile="${3:-$(SD_MK_DEBUG_TMP_FILE sparql_update_trace)}"
+	
+	SD_DEBUG_INFO  "In SD_REASONER_UPDATE with reasonerId=$reasonerId data='${data:0:40}'"
+	
+	local endpoint namespace archetype
+	IFS='|' read  endpoint namespace archetype <<< $(SD_FETCH_SERVICE "$reasonerId")
+
+	SD_DEBUG_INFO "$(curl -X POST \
+		--silent \
+		--data-binary "$data" \
+		--header 'Content-Type: application/sparql-update' \
+		--trace-ascii "$traceFile" \
+		-f "${endpoint}/namespace/${namespace}/sparql")" || SD_FATAL_ERROR "Unable to update, see $traceFile"
+	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$traceFile"  ; fi
+}
+
+
+#
+# Simple loading of a a file into a reasoner
+# Reasoner engine is local load a file else use proxy and gizip it
+function SD_REASONER_LOAD {
+	local reasonerId="$1"
+	local inputFile="$2"
+	local format="${3:-guess}"
+	local graphName="${4:-'urn:default:graph'}"
+	
+	local extension="${inputFile##*.}"
+	local sharedFile=$(mktemp --tmpdir="$_SD_LOCAL_BG_PULLDIR" "r-XXXXXXXXXX.$extension.gz")
+	gzip -c "$inputFile" > "$sharedFile"	
+	chmod +r "$sharedFile"
+	local sharedName=$(basename -- "$sharedFile")
+    SD_REASONER_UPDATE $reasonerId "LOAD <${_SD_LOCAL_BG_PULLURL}/${sharedName}> INTO GRAPH <$graphName>"
+	if [ $SD_DEBUG -lt 10 ]; then  rm -f "$sharedFile" ; fi	  
+}
+
+## Ensure that $_SD_LOCAL_BG_PULLDIR exists (sholud be readable to all)
+mkdir -p "$_SD_LOCAL_BG_PULLDIR"
+## Ensure that the blazegraph instance is running
+curl -s -f  "$SD_REASONER_ENDPOINT/status" > /dev/null 2>&1 || SD_FATAL_ERROR "No running internal reasoner (bg) instance."
+
