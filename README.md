@@ -36,6 +36,7 @@ You need a gnu compliant system with following packages installed:
 Start a standard development environment by executing in docker with the 
 default bash distribution; then install the required packages:
 
+
 ```
 docker run --rm -it -v "$(pwd):/workspace" -w /workspace bash
 ./alpinelinux_provisioning.sh
