@@ -1,11 +1,11 @@
 ![logo](http://linkeddata.center/resources/v4/logo/Logo-colori-trasp_oriz-640x220.png)
 
-# Welcome to LinkedData.Center SDaaS Platform Community Edition (sdaas-ce)
+# Welcome to LinkedData.Center SDaaS Platform Community Edition (SDaaS-CE)
 
-A vanilla open source implementation of the [LinkeData.Center SDaaS product](https://it.linkeddata.center/p/sdaas).
-See documentation in [LinkedData.Center SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home).
+A vanilla open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
+See documentation in [SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home).
 
-Try a short [demo of the platform](https://en.linkeddata.center/l/sdaas-ce-demo/).
+Try a short [on-line demo of the platform](https://en.linkeddata.center/l/sdaas-ce-demo/).
 
 ## 🚀 Quickstart
 
