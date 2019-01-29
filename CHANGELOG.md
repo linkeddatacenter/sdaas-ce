@@ -4,11 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
-## TODO [2.2.1]
+## [2.2.1]
 
 ### Added
 
-- csv shortcuts support in SD_REASONER_QUERY
+- shortcuts support in SD_REASONER_QUERY
 - rdf file accrual policy in reasoner
 - tracing outputs of SD_REASONER_QUERY and SD_REASONER_UPDATE
 - improved debug info
