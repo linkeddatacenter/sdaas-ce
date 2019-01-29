@@ -15,7 +15,7 @@ function SD_REGISTER_SERVICE {
 	local serviceSpecs="$1"
 	local serviceId="$2"
 	
-	SD_DEBUG_INFO  "In SD_REGISTER_SERVICE serviceID=$serviceID serviceId=$serviceId"
+	SD_DEBUG_INFO  "In SD_REGISTER_SERVICE serviceId=$serviceId"
 	
 	mkdir -p "$_SD_SERVICE_ARCHIVE" || SD_FATAL_ERROR "Error initializing services registry archive"
 	test -r "$_SD_SERVICE_ARCHIVE" || SD_FATAL_ERROR "Registry archive is not writable."

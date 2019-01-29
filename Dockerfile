@@ -1,6 +1,6 @@
 # Copyright (C) 2019 LinkedData.Center - All Rights Reserved
 # Permission to copy and modify is granted under the MIT license
-FROM  linkeddatacenter/sdaas-rdfstore:1.0.0
+FROM  linkeddatacenter/sdaas-rdfstore:1.1.0
 
 LABEL authors="enrico@linkeddata.center"
 
