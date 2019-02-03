@@ -2,65 +2,13 @@
 # Permission to copy and modify is granted under the MIT license
 if [ ! -z ${__module_learning+x} ]; then return ; else __module_learning=1 ; fi
 
+SD_INCLUDE activity
+
 SD_REQUIRES_VAR SD_CACHE
-SD_REQUIRES_CMD SD_LOAD_RDF_FILE SD_LOG md5sum hostname find curl realpath tail awk mktemp
+SD_REQUIRES_CMD SD_LOG  find curl realpath tail
 
 ### default command used to get web resources
-SD_DEFAULT_DOWNLOADER=${SD_DEFAULT_DOWNLOADER:=curl --silent -L --retry 3 --retry-delay 5 --retry-max-time 30 --compressed} 	## TODO: when curl 7.52.0. consider to add --retry-connrefused 
-
-
-SD_ACTIVITY_DIR=''
-SD_ACTIVITY_ID=''	
-
-# @description
-#	append a prov statement after substituting variables:
-#	. **TIMESTAMP** with the current time in xsd format
-#
-# @arg $1 a prov statement template
-function _SD_LOG_PROV {
-	SD_REQUIRES_VAR SD_ACTIVITY_DIR
-	local provStatement="$1" 
-	provStatement="${provStatement/TIMESTAMP/\"$(date '+%Y-%m-%dT%T')\"^^xsd:datetime}"
-	echo "$provStatement" >> "$SD_ACTIVITY_DIR/prov.ttl"
-}
-
-
-function _SD_ACTIVITY_LOG {
-	SD_LOG "$SD_ACTIVITY_ID $1" "$2"
-}
-
-# @description
-# 	create a temporary directory with a in and out subdirectories to store activity input and output
-#	it also create and initialize a prov.ttl file to save provenance info
-#
-function _SD_START_ACTIVITY {
-	SD_REQUIRES_VAR SD_CACHE 
-	local comment="${1:-'a knowledge base ingestion activity'}"	
-	SD_ACTIVITY_DIR="$(realpath "${2:-$(mktemp -d --tmpdir="$SD_CACHE" activity-XXXXXXXXXX)}")" || SD_FATAL_ERROR "unable to create SD_ACTIVITY_DIR"
-	SD_ACTIVITY_ID="$(basename "$SD_ACTIVITY_DIR")"
-	
-	mkdir -p "$SD_ACTIVITY_DIR/out" || SD_FATAL_ERROR "Error creating activity default output dir $SD_ACTIVITY_DIR/out"
-	mkdir -p "$SD_ACTIVITY_DIR/in" || SD_FATAL_ERROR "Error creating activity default input dir $SD_ACTIVITY_DIR/in"
-		
-	local baseUri="file://localhost${SD_ACTIVITY_DIR}/"
-	baseUri=${baseUri// /%20}
-	cat<<-EOT > "$SD_ACTIVITY_DIR/prov.ttl"
-		@base <$baseUri> .
-		@prefix : <prov.ttl#> .
-		@prefix prov: <http://www.w3.org/ns/prov#> .
-		@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-		@prefix xsd: <http://www.w3.org/2000/10/XMLSchema#> .
-	EOT
-	_SD_LOG_PROV ":learn a prov:Activity; prov:startedAtTime TIMESTAMP;rdfs:comment \"\"\"$comment\"\"\" ."
-}
-
-
-function _SD_MK_UID {
-	local seed=${1-=$(cat /dev/random)}
-	echo -n "$seed"| md5sum | awk '{print $1}'
-}
-
-
+SD_DEFAULT_DOWNLOADER=${SD_DEFAULT_DOWNLOADER:-curl --silent -L --retry 3 --retry-delay 5 --retry-max-time 30 --compressed} 	## TODO: when curl 7.52.0. consider to add --retry-connrefused 
 
 
 
@@ -73,15 +21,12 @@ function _SD_MK_UID {
 #	. <downloader> the commad to be used to download. it must accept <url> end write result on std out
 #	  if not specified it uses the command contained in SD_DEFAULT_DOWNLOADER (curl)
 #
-#
 # @arg $_SD_SOURCES [@] a list of download request
 # @arg $SD_ACTIVITY_DIR
 # @arg $SD_DEFAULT_DOWNLOADER a default download command (like curl)
 # @arg $SD_DEBUG_FILE a file to store debug info
 function _SD_EXTRACT {
 	SD_REQUIRES_VAR SD_DEFAULT_DOWNLOADER SD_ACTIVITY_DIR _SD_SOURCES SD_DEBUG_FILE
-	SD_REQUIRES_CMD md5sum realpath tail awk
-	
 	_SD_LOG_PROV ":learn prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime TIMESTAMP ."
 	
 	local downloadRequest
@@ -150,7 +95,6 @@ function _SD_TRANSFORMER {
 # @arg $1 a list of transformation
 function _SD_TRANSFORM {
 	SD_REQUIRES_VAR SD_ACTIVITY_DIR
-	SD_REQUIRES_CMD find
 	
 	_SD_LOG_PROV ":learn prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime TIMESTAMP ."
 	
@@ -199,39 +143,6 @@ function _SD_TRANSFORM {
 }
 
 
-
-function _SD_COMMIT_ACTIVITY {
-	local graphName="$1"
-	
-	if [ $_SD_REBOOT -eq 0 ]; then  
-		_SD_ACTIVITY_LOG "cleaning graph <$g>."
-		SD_SPARQL_UPDATE "DROP SILENT GRAPH <$g>" ;
-	fi
-		
-	
-	local rdfFile
-	for rdfFile in $(find "$SD_ACTIVITY_DIR/out" -name "*" -type f  -print); do
-		SD_LOAD_RDF_FILE "$graphName" "$rdfFile"
-	done
-	
-	_SD_LOG_PROV ":learn prov:generated :graph. :graph a prov:Entity; prov:wasGeneratedBy :learn; prov:generatedAtTime TIMESTAMP ."
-	_SD_LOG_PROV ":learn prov:endedAtTime TIMESTAMP ."
-	SD_LOAD_RDF_FILE "$graphName" "$SD_ACTIVITY_DIR/prov.ttl"
-	
-}
-
-
-
-function _SD_INVALIDATE_GRAPH {
-	local graphName="$1"
-	
-	_SD_LOG_PROV ":learn prov:invalidated :graph. :graph a prov:Entity; sd:name <$g>; prov:invalidatedAtTime TIMESTAMP; prov:wasInvalidatedBy :learn ."	
-	_SD_LOG_PROV ":learn prov:endedAtTime TIMESTAMP ."
-	SD_LOAD_RDF_FILE "$graphName" "$SD_ACTIVITY_DIR/prov.ttl"
-}
-
-
-
 # @description 
 #	implements a named graph ingestion activity maging provenance info
 #
@@ -269,17 +180,20 @@ function SD_LEARN {
 			;;
 	esac
 	
-	local comment="starting learning of graph <$g>."
-	_SD_START_ACTIVITY "$comment"
-	_SD_ACTIVITY_LOG "$comment"
-	_SD_EXTRACT
-	if [ $? -eq 0 ]; then
+	if [ "$_SD_ACTIVITY_STATUS" != "running" ] ; then
+		local comment="starting unplanned learning of graph <$g>."
+		_SD_START_ACTIVITY "$comment"
+		_SD_ACTIVITY_LOG "$comment"
+	fi
+	
+	if _SD_EXTRACT ; then
 		_SD_TRANSFORM 
 		_SD_COMMIT_ACTIVITY "$g"
 		_SD_ACTIVITY_LOG "committed."
 	else
 		_SD_INVALIDATE_GRAPH "$g"
 	 	_SD_ACTIVITY_LOG "aborted while downloading resources."
+	 	return 1
 	fi
 	
 	if [  $SD_DEBUG -eq 0 ]; then rm -rf "$SD_ACTIVITY_DIR" ; fi

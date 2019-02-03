@@ -1,0 +1,128 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
+if [ ! -z ${__module_activity+x} ]; then return ; else __module_activity=1 ; fi
+
+SD_REQUIRES_VAR SD_CACHE
+SD_REQUIRES_CMD SD_LOAD_RDF_FILE SD_LOG md5sum find realpath tail awk mktemp
+
+SD_URISPACE=${SD_URISPACE:-"urn:sdaas:resource:"}
+SD_AGENT_URI=${SD_AGENT_URI:-"https://linkeddata.center/agent/anassimene#me"}
+
+SD_ACTIVITY_DIR=''
+SD_ACTIVITY_ID=''
+SD_ACTIVITY_URI=''
+SD_ACTIVITY_STATUS='nop'	
+
+# @description
+#	append a prov statement after substituting variables:
+#	. **TIMESTAMP** with the current time in xsd format
+#
+# @arg $1 a prov statement template
+function _SD_LOG_PROV {
+	local provStatement="$1" 
+	provStatement="${provStatement/TIMESTAMP/\"$(date '+%Y-%m-%dT%T')\"^^xsd:datetime}"
+	echo "$provStatement" >> "$SD_ACTIVITY_DIR/prov.ttl"
+}
+
+
+function _SD_ACTIVITY_LOG {
+	SD_LOG "$SD_ACTIVITY_ID $1" "$2"
+}
+
+# @description
+# 	create a temporary directory with a in and out subdirectories to store activity input and output
+#	it also create and initialize a prov.ttl file to save provenance info
+# @arg $1 an activity comment or an uri plan ( must star with http or urn: or file:// )
+# @arg $2 forced directory to create activity space
+#
+# on return sets:
+#	SD_ACTIVITY_DIR
+#	SD_ACTIVITY_ID
+#	SD_ACTIVITY_URI
+#	_SD_ACTIVITY_STATUS='running'
+#
+function _SD_START_ACTIVITY {
+	local uriOrComment="${1:-'a knowledge base ingestion activity'}"	
+	SD_ACTIVITY_DIR="$(realpath "${2:-$(mktemp -d --tmpdir="$SD_CACHE" activity-XXXXXXXXXX)}")"
+	
+	SD_ACTIVITY_ID="$(basename "$SD_ACTIVITY_DIR")"
+	SD_ACTIVITY_URI="${SD_URISPACE}${SD_ACTIVITY_ID}_activity"
+	
+	mkdir -p "$SD_ACTIVITY_DIR/out" "$SD_ACTIVITY_DIR/in" || SD_FATAL_ERROR "Error creating $SD_ACTIVITY_DIR structure"
+	
+		
+	# prepare plan object
+	local plan
+	if [[ "$uriOrComment" =~ ^(http|HTTP|urn:|file://) ]] ; then
+		plan="<$uriOrComment>"
+	else
+		plan="\"\"\"$uriOrComment\"\"\""
+	fi
+		
+	cat<<-EOT > "$SD_ACTIVITY_DIR/prov.ttl"
+		@prefix : <${SD_URISPACE}${SD_ACTIVITY_ID}_> .
+		@prefix prov: <http://www.w3.org/ns/prov#> .
+		@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+		@prefix xsd: <http://www.w3.org/2000/10/XMLSchema#> .
+		@prefix kees: <http://linkeddata.center/kees/v1#> .
+				
+		:activity a prov:Activity;
+			prov:qualifiedAssociation :activity_owner
+		.
+		:activity_owner a prov:Association ;
+			prov:agent <$SD_AGENT_URI> ;
+			prov:hadRole kees:namedGraphGenerator ;
+			prov:hadPlan $plan
+		.
+	EOT
+	_SD_LOG_PROV ":activity prov:startedAtTime TIMESTAMP ."
+	_SD_ACTIVITY_STATUS='running'
+}
+
+
+function _SD_MK_UID {
+	local seed=${1-=$(cat /dev/random)}
+	echo -n "$seed"| md5sum | awk '{print $1}'
+}
+
+
+
+
+# on return sets:
+#	_SD_ACTIVITY_STATUS='nop'
+function _SD_COMMIT_ACTIVITY {
+	local graphName="$1"
+	
+	if [ "$SD_ACCRUAL_POLICY" = "replace" ]; then  
+		_SD_ACTIVITY_LOG "cleaning graph <$g>."
+		SD_SPARQL_UPDATE "DROP SILENT GRAPH <$g>" ;
+	fi
+		
+	
+	local rdfFile
+	for rdfFile in $(find "$SD_ACTIVITY_DIR/out" -name "*" -type f  -print); do
+		SD_LOAD_RDF_FILE "$graphName" "$rdfFile"
+	done
+	
+	_SD_LOG_PROV ":activity prov:generated :graph. :graph a prov:Entity; prov:wasGeneratedBy :activity; prov:generatedAtTime TIMESTAMP ."
+	_SD_LOG_PROV ":activity prov:endedAtTime TIMESTAMP ."
+	SD_LOAD_RDF_FILE "$graphName" "$SD_ACTIVITY_DIR/prov.ttl"
+	
+	if [ $SD_DEBUG -eq 0 ]; then rm -rf "$SD_ACTIVITY_DIR" ; fi
+	
+	_SD_ACTIVITY_STATUS="nop"
+}
+
+
+# on return sets:
+#	SD_ACTIVITY_STATUS='nop'
+function _SD_INVALIDATE_GRAPH {
+	local graphName="$1"
+	
+	_SD_LOG_PROV ":activity prov:invalidated :graph. :graph a prov:Entity; sd:name <$g>; prov:invalidatedAtTime TIMESTAMP; prov:wasInvalidatedBy :activity ."	
+	_SD_LOG_PROV ":activity prov:endedAtTime TIMESTAMP ."
+	SD_LOAD_RDF_FILE "$graphName" "$SD_ACTIVITY_DIR/prov.ttl"
+	_SD_ACTIVITY_LOG "invalidated due error"
+	_SD_ACTIVITY_STATUS="nop"
+}
+

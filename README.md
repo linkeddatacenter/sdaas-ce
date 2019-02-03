@@ -101,6 +101,7 @@ exit
 docker rm -f sdmp 
 ```
 
+Have a look also to the [developer wiki](https://github.com/linkeddatacenter/sdaas-ce/wiki)
 
 ## Credits and license
 

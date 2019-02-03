@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+
+### fixed
+
+- Let REASONER engine warmup at start
+
+
 ## [2.2.1]
 
 ### Added

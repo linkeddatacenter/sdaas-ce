@@ -38,6 +38,8 @@ function SD_BEGIN_INGESTION {
 	SD_CLEAN_CACHE
 	SD_START_LOGGING
 	SD_LOG "LinkedData.Center SDaaS platform ($_SD_RELEASE_NAME) using '$SD_QUADSTORE' graph technology."
+	## Ensure that the blazegraph instance is running
+	curl --retry 3 -s -f  "$SD_REASONER_ENDPOINT/status" || SD_FATAL_ERROR "No running internal reasoner (bg) instance."
 	if [ $_SD_REBOOT -eq 1 ]; then 
 		SD_LOG "Erasing knowledge base...(it could take a while)"
 		SD_SPARQL_UPDATE "DROP ALL"; 

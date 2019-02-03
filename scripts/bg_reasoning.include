@@ -185,8 +185,5 @@ function SD_REASONER_LOAD {
 	if [ $SD_DEBUG -lt 10 ]; then  rm -f "$sharedFile" ; fi	  
 }
 
-## Ensure that the blazegraph instance is running
-curl -s -f  "$SD_REASONER_ENDPOINT/status" > /dev/null 2>&1 || SD_FATAL_ERROR "No running internal reasoner (bg) instance. Please wait few seconds and retry"
-
 
 

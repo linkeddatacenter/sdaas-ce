@@ -8,7 +8,7 @@ function setup {
 	SD_REASONER_ENDPOINT="http://localhost:9999/blazegraph"
 	STUB_CURL="--cmd"
 	SD_INCLUDE logging
-	SD_INCLUDE bg_reasoning 
+	SD_INCLUDE bg_reasoning true
 	CREATE_STUB_CACHE
 }
 
