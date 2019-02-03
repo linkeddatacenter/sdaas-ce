@@ -5,10 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 
 
+### Added
+
+- activity module
+- SD_URISPACE,  SD_ACTIVITY_URI and _SD_ACTIVITY_STATUS variables support
+- functional test improvements
+
 ### fixed
 
 - Let REASONER engine warmup at start
 
+### changed
 
 ## [2.2.1]
 
