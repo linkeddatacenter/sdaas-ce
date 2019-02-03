@@ -7,8 +7,43 @@ SD_INCLUDE activity
 SD_REQUIRES_VAR SD_CACHE
 SD_REQUIRES_CMD SD_LOG  find curl realpath tail
 
+
+# A downloader must accept at least two parameters:
+# $1 = the url to download
+# $2 = the location of the output file
+# Other paramethers can be added
+#
+# It must return 0 if download succeded or > 0 otherwhise
+#
+# It sholud also to send download info to a debugging file
+# 
+
+function _SD_CURL_DOWNLOADER {
+	SD_REQUIRES_VAR 1 2
+	local url=$1
+	local outputPath=$2
+	shift 2
+	local httpStatus=$(curl \
+		--silent \
+		-L \
+		--output "$outputPath" \
+		--write-out '%{http_code}'\
+		--retry 3 --retry-delay 3 --retry-max-time 30 \
+		--compressed \
+		--retry-connrefused \
+		$@ "$url" )
+		
+	if [ "$httpStatus" != "200" ] ; then
+		SD_DEBUG_INFO "download of url $url failed with result $httpStatus, output in $outputPath"
+		return 1
+	else
+		return 0
+	fi	
+}
+
+
 ### default command used to get web resources
-SD_DEFAULT_DOWNLOADER=${SD_DEFAULT_DOWNLOADER:-curl --silent -L --retry 3 --retry-delay 5 --retry-max-time 30 --compressed} 	## TODO: when curl 7.52.0. consider to add --retry-connrefused 
+SD_DEFAULT_DOWNLOADER=${SD_DEFAULT_DOWNLOADER:-_SD_CURL_DOWNLOADER}
 
 
 
@@ -26,18 +61,16 @@ SD_DEFAULT_DOWNLOADER=${SD_DEFAULT_DOWNLOADER:-curl --silent -L --retry 3 --retr
 # @arg $SD_DEFAULT_DOWNLOADER a default download command (like curl)
 # @arg $SD_DEBUG_FILE a file to store debug info
 function _SD_EXTRACT {
-	SD_REQUIRES_VAR SD_DEFAULT_DOWNLOADER SD_ACTIVITY_DIR _SD_SOURCES SD_DEBUG_FILE
-	_SD_LOG_PROV ":learn prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime TIMESTAMP ."
+	_SD_LOG_PROV ":activity prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime TIMESTAMP ."
 	
 	local downloadRequest
 	for downloadRequest in "${_SD_SOURCES[@]}"; do
 		##### parse downloadRequest
 		local url extension downloaderOpts downloader
 		IFS='|' read  url extension downloaderOpts downloader  <<< "$downloadRequest"
-		extension=${extension:=auto}
-		downloader=${downloader:=$SD_DEFAULT_DOWNLOADER}
+		extension=${extension:-auto}
+		downloader=${downloader:-$SD_DEFAULT_DOWNLOADER}
 
-	
 		##### add schema to url if a file is passed
 		if [ -f "$url" ]; then url="file://localhost$(realpath "$url")"; url=${url// /%20}; fi
 		
@@ -50,25 +83,17 @@ function _SD_EXTRACT {
 		fi
 		local outPath="in/$(_SD_MK_UID "$url")${extension}"
 		
-		SD_DEBUG_INFO "_SD_EXTRACT downloader='$downloader' url='$url' downloaderOpts='$downloaderOpts' outPath='$outPath'"
-		##### allow error happens during download execution using set -e
-		local old_setting=${-//[^e]/}
-		set -e
-		$downloader "$url" $downloaderOpts 2>> "$SD_DEBUG_FILE" 1> "$SD_ACTIVITY_DIR/$outPath"
-		local downloadStatus=$?
-		if [[ -n "$old_setting" ]]; then set -e; else set +e; fi	
-		##### continue with default set options
+		SD_DEBUG_INFO "in _SD_EXTRACT downloader='$downloader' url='$url' downloaderOpts='$downloaderOpts' outPath='$outPath'"
 		
-		if [ $downloadStatus -ne 0 ]; then
+		if $downloader "$url" "$SD_ACTIVITY_DIR/$outPath" $downloaderOpts ; then
+			_SD_ACTIVITY_LOG "downloaded $url"
+			_SD_LOG_PROV ":activity prov:used <$url> . :extraction prov:generated <$outPath> ."
+		else
 			_SD_ACTIVITY_LOG "error downloading $url - $(tail -1 "$SD_DEBUG_FILE")"
 			_SD_LOG_PROV ":extraction prov:invalidated <$url>."
 			return 1
-		else
-			_SD_ACTIVITY_LOG "downloaded $url"
-			_SD_LOG_PROV ":learn prov:used <$url> . :extraction prov:generated <$outPath> ."
 		fi
 	done
-	
 	_SD_LOG_PROV ":extraction prov:endedAtTime TIMESTAMP ."
 }
 
@@ -96,7 +121,7 @@ function _SD_TRANSFORMER {
 function _SD_TRANSFORM {
 	SD_REQUIRES_VAR SD_ACTIVITY_DIR
 	
-	_SD_LOG_PROV ":learn prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime TIMESTAMP ."
+	_SD_LOG_PROV ":activity prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime TIMESTAMP ."
 	
 	local transformationRequest
 	for transformationRequest in "${_SD_TRANSFORMATIONS[@]}"; do
@@ -180,12 +205,13 @@ function SD_LEARN {
 			;;
 	esac
 	
+	# start an activity in not yes started
 	if [ "$_SD_ACTIVITY_STATUS" != "running" ] ; then
-		local comment="starting unplanned learning of graph <$g>."
+		local comment="learning of graph <$g>"
 		_SD_START_ACTIVITY "$comment"
-		_SD_ACTIVITY_LOG "$comment"
 	fi
 	
+	# ETL process
 	if _SD_EXTRACT ; then
 		_SD_TRANSFORM 
 		_SD_COMMIT_ACTIVITY "$g"

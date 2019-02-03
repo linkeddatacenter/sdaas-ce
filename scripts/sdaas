@@ -56,6 +56,9 @@ function _SDAAS_FATAL_ERROR {
 			 
 		-q, --quiet
 		   Do not show progress meter or error messages.
+		   
+		-u, --urispace
+		   use this namespace when creating new URIs. Default urn:sdaas:resource:		
 			
 		--reboot
 		   WARNING!!! erase all knowledge base before executing the rebuild process
@@ -71,7 +74,7 @@ function _SDAAS_FATAL_ERROR {
 
 
 ### Parse command line options
-__parsed=$(getopt --options=qvda:k:f: --longoptions=quiet,verbose:,debug,reboot,version,file:,graph-engine:,accrual-policy: --name "$0" -- "$@")	 || _SDAAS_FATAL_ERROR
+__parsed=$(getopt --options=qvda:k:f:u: --longoptions=quiet,verbose:,debug,reboot,version,file:,graph-engine:,accrual-policy:,urispace: --name "$0" -- "$@")	 || _SDAAS_FATAL_ERROR
 eval set -- "$__parsed"
 unset __parsed 
 
@@ -113,6 +116,10 @@ while true; do
 			SD_ACCRUAL_POLICY="$2"
 	    	shift 2
 	    	;;
+	    -u|--urispace)
+	    	SD_URISPACE="$2"
+	    	shift 2
+	    	;;
         --)
             shift
             break
@@ -139,6 +146,7 @@ else
 		SD_DEBUG=${SD_DEBUG}
 		SD_QUADSTORE=${SD_QUADSTORE}
 		SD_ACCRUAL_POLICY=${SD_ACCRUAL_POLICY}
+		SD_URISPACE=${SD_URISPACE}
 		. "$_SDAAS_DIR/platform.include"
 		PS1="sdaas > "
 	EOT

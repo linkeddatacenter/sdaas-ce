@@ -37,9 +37,17 @@ function SD_BEGIN_INGESTION {
 	# Cleanup the entire knowledge base
 	SD_CLEAN_CACHE
 	SD_START_LOGGING
+	
+	# Warmup reasoner
+	local retry=1
+	while ! curl -s -f "$SD_REASONER_ENDPOINT/status"  > /dev/null ; do
+		SD_LOG "Reasoning engine warming up $retry/3"
+		sleep $(($retry*2))
+		let retry++
+		[ $retry -le 3 ] || SD_FATAL_ERROR "Sorry... internale reasoner startup failed.."
+	done 
+	
 	SD_LOG "LinkedData.Center SDaaS platform ($_SD_RELEASE_NAME) using '$SD_QUADSTORE' graph technology."
-	## Ensure that the blazegraph instance is running
-	curl --retry 3 -s -f  "$SD_REASONER_ENDPOINT/status" || SD_FATAL_ERROR "No running internal reasoner (bg) instance."
 	if [ $_SD_REBOOT -eq 1 ]; then 
 		SD_LOG "Erasing knowledge base...(it could take a while)"
 		SD_SPARQL_UPDATE "DROP ALL"; 
@@ -55,18 +63,18 @@ function SD_THATS_ALL_FOLKS {
 
 
 
-function SD_HELP {
+function SD_STATUS {
 	cat <<-EOT
 		Smart Data as a Service (SDaaS) platform vocabulary
 		Copyright (C) 2018 http://linkeddata.center/
 			
-		Platform variables:
+		Configuration variables:
 		-------------------
 		  
 		$(set | egrep "^SD_.+=")
 		 	
 		 	
-		Platform functions:
+		Available functions:
 		-------------------
 		 	
 		$(set | egrep "^SD_.+ ()")

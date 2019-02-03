@@ -7,11 +7,12 @@ SD_REQUIRES_CMD SD_LOAD_RDF_FILE SD_LOG md5sum find realpath tail awk mktemp
 
 SD_URISPACE=${SD_URISPACE:-"urn:sdaas:resource:"}
 SD_AGENT_URI=${SD_AGENT_URI:-"https://linkeddata.center/agent/anassimene#me"}
+_SD_ACCRUAL_PLAN=${_SD_ACCRUAL_PLAN:-"replace"}
 
 SD_ACTIVITY_DIR=''
 SD_ACTIVITY_ID=''
 SD_ACTIVITY_URI=''
-SD_ACTIVITY_STATUS='nop'	
+_SD_ACTIVITY_STATUS='noop'	
 
 # @description
 #	append a prov statement after substituting variables:
@@ -42,7 +43,7 @@ function _SD_ACTIVITY_LOG {
 #	_SD_ACTIVITY_STATUS='running'
 #
 function _SD_START_ACTIVITY {
-	local uriOrComment="${1:-'a knowledge base ingestion activity'}"	
+	local uriOrComment="${1:-'generic data ingestion activity'}"	
 	SD_ACTIVITY_DIR="$(realpath "${2:-$(mktemp -d --tmpdir="$SD_CACHE" activity-XXXXXXXXXX)}")"
 	
 	SD_ACTIVITY_ID="$(basename "$SD_ACTIVITY_DIR")"
@@ -77,6 +78,7 @@ function _SD_START_ACTIVITY {
 	EOT
 	_SD_LOG_PROV ":activity prov:startedAtTime TIMESTAMP ."
 	_SD_ACTIVITY_STATUS='running'
+	_SD_ACTIVITY_LOG "starded $uriOrComment plan"
 }
 
 
@@ -89,13 +91,15 @@ function _SD_MK_UID {
 
 
 # on return sets:
-#	_SD_ACTIVITY_STATUS='nop'
+#	_SD_ACTIVITY_STATUS='noop'
 function _SD_COMMIT_ACTIVITY {
 	local graphName="$1"
 	
-	if [ "$SD_ACCRUAL_POLICY" = "replace" ]; then  
-		_SD_ACTIVITY_LOG "cleaning graph <$g>."
+	if [ "$_SD_ACCRUAL_PLAN" = "replace" ]; then  
+		_SD_ACTIVITY_LOG "replacing graph <$g> contents"
 		SD_SPARQL_UPDATE "DROP SILENT GRAPH <$g>" ;
+	else
+		_SD_ACTIVITY_LOG "appending data to graph <$g>"
 	fi
 		
 	
@@ -110,12 +114,12 @@ function _SD_COMMIT_ACTIVITY {
 	
 	if [ $SD_DEBUG -eq 0 ]; then rm -rf "$SD_ACTIVITY_DIR" ; fi
 	
-	_SD_ACTIVITY_STATUS="nop"
+	_SD_ACTIVITY_STATUS='noop'
 }
 
 
 # on return sets:
-#	SD_ACTIVITY_STATUS='nop'
+#	SD_ACTIVITY_STATUS=noop'
 function _SD_INVALIDATE_GRAPH {
 	local graphName="$1"
 	
@@ -123,6 +127,6 @@ function _SD_INVALIDATE_GRAPH {
 	_SD_LOG_PROV ":activity prov:endedAtTime TIMESTAMP ."
 	SD_LOAD_RDF_FILE "$graphName" "$SD_ACTIVITY_DIR/prov.ttl"
 	_SD_ACTIVITY_LOG "invalidated due error"
-	_SD_ACTIVITY_STATUS="nop"
+	_SD_ACTIVITY_STATUS="noop"
 }
 

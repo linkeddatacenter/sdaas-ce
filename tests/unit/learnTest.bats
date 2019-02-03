@@ -2,6 +2,8 @@
 
 function SD_LOAD_RDF_FILE { : ; }
 
+function DOWNLOADER_STUB { : ; }
+
 function setup {
 	for stub in asserting caching date curl; do
 		. "$BATS_TEST_DIRNAME/stubs/${stub}_stub.include"
@@ -20,50 +22,26 @@ function teardown {
 }
 
 
-
-function _prov {
-	>&2 echo "------PROV-----"
-	>&2 cat /tmp/stub_cache/activity.test/prov.ttl
-	>&2 echo "---------------"
-}
-
-
-
-function DOWNLOADER_STUB { 
-	echo "empty content"
-}
-
 @test "_SD_EXTRACT" {
 	SD_DEFAULT_DOWNLOADER=DOWNLOADER_STUB
-	_SD_SOURCES=("$BATS_TEST_DIRNAME/data/two_triples.nt" "$BATS_TEST_DIRNAME/data/two_triples.ttl" "http://example.com/data|.rdf|other content|echo")
 	_SD_START_ACTIVITY "commento esplicito" "$SD_CACHE/activity.test"
 	
 	filename1=$(_SD_MK_UID "file://localhost${BATS_TEST_DIRNAME}/data/two_triples.nt")
 	filename2=$(_SD_MK_UID "file://localhost${BATS_TEST_DIRNAME}/data/two_triples.ttl")
 	filename3=$(_SD_MK_UID "http://example.com/data")
+	_SD_SOURCES=("$BATS_TEST_DIRNAME/data/two_triples.nt" "$BATS_TEST_DIRNAME/data/two_triples.ttl" "http://example.com/data|.rdf|other content|echo")
 	run _SD_EXTRACT
 	[ $status -eq 0 ]
 	[ "${lines[0]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test downloaded file://localhost${BATS_TEST_DIRNAME}/data/two_triples.nt" ]
 	[ "${lines[1]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test downloaded file://localhost${BATS_TEST_DIRNAME}/data/two_triples.ttl" ]
-	[ "${lines[2]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test downloaded http://example.com/data" ]
-	[ -f "${SD_ACTIVITY_DIR}/in/$filename1.nt" ]
-	[ -f "${SD_ACTIVITY_DIR}/in/$filename2.ttl" ]
-	[ -f "${SD_ACTIVITY_DIR}/in/$filename3.rdf" ]
-	
-	run cat "$SD_ACTIVITY_DIR/in/$filename1.nt"
-	[ $status -eq 0 ]
-	[ "$output" = "empty content" ]
-	
-	run cat "$SD_ACTIVITY_DIR/in/$filename3.rdf"
-	[ $status -eq 0 ]
-	[ "$output" = "http://example.com/data other content" ]
+	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test downloaded http://example.com/data" ]
 	
 	run cat "$SD_ACTIVITY_DIR/prov.ttl"
 	[ $status -eq 0 ]
-	[ "${lines[14]}" = ':learn prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
-	[ "${lines[15]}" = ":learn prov:used <file://localhost${BATS_TEST_DIRNAME}/data/two_triples.nt> . :extraction prov:generated <in/$filename1.nt> ." ]
-	[ "${lines[16]}" = ":learn prov:used <file://localhost${BATS_TEST_DIRNAME}/data/two_triples.ttl> . :extraction prov:generated <in/$filename2.ttl> ." ]
-	[ "${lines[17]}" = ":learn prov:used <http://example.com/data> . :extraction prov:generated <in/$filename3.rdf> ." ]
+	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
+	[ "${lines[15]}" = ":activity prov:used <file://localhost${BATS_TEST_DIRNAME}/data/two_triples.nt> . :extraction prov:generated <in/$filename1.nt> ." ]
+	[ "${lines[16]}" = ":activity prov:used <file://localhost${BATS_TEST_DIRNAME}/data/two_triples.ttl> . :extraction prov:generated <in/$filename2.ttl> ." ]
+	[ "${lines[17]}" = ":activity prov:used <http://example.com/data> . :extraction prov:generated <in/$filename3.rdf> ." ]
 	[ "${lines[18]}" = ':extraction prov:endedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
 }
 
@@ -94,7 +72,7 @@ function TRANSFORMER_STUB {
 	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test files in 'cutted/*' have been processed with 'tr -d 'Y''. The results were placed in 'out'." ]
 	run cat "$SD_ACTIVITY_DIR/prov.ttl"
 	[ $status -eq 0 ]
-	[ "${lines[14]}" = ':learn prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
+	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
 	[ "${lines[15]}" = ':transformation prov:used <in/file1.nt.gz)>; prov:generated <unzipped/file1.nt> .' ]
 	[ "${lines[16]}" = ':transformation prov:used <in/file2.ttl.gz)>; prov:generated <unzipped/file2.ttl> .' ]
 	[ "${lines[17]}" = ':transformation prov:used <unzipped/file1.nt)>; prov:generated <out/file1.rdf> .' ]

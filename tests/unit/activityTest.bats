@@ -18,7 +18,7 @@ function teardown {
 
 
 @test "_SD_START_ACTIVITY" {
-	_SD_ACTIVITY_STATUS="nop"
+	_SD_ACTIVITY_STATUS="noop"
 	SD_URISPACE="urn:"
 	_SD_START_ACTIVITY "commento esplicito" "$SD_CACHE/activity.test"
 	[ -d "$SD_ACTIVITY_DIR" ]

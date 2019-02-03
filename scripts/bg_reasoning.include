@@ -98,7 +98,6 @@ function SD_REASONER_QUERY {
 		*) accept="$request"; ;;
 	esac	
 
-	local traceFile=$(SD_MK_DEBUG_TMP_FILE sparql_query_trace)
 	local buffer=$(SD_MK_DEBUG_TMP_FILE sparql_query_output)
 	local httpStatus=$(curl \
 		-X POST \
@@ -106,10 +105,10 @@ function SD_REASONER_QUERY {
 		--silent \
 		--output "$buffer" \
 		--write-out '%{http_code}'\
+		--retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused \
 		--data-binary "$query" \
 		--header 'Content-Type: application/sparql-query' \
 		--header "Accept: $accept" \
-		--trace-ascii "$traceFile" \
 		"${endpoint}/namespace/${namespace}/sparql")
 		
 	if [ ! "$httpStatus" = "200" ] ; then
@@ -148,6 +147,7 @@ function SD_REASONER_UPDATE {
 		--silent \
 		--output "$output" \
 		--write-out '%{http_code}'\
+		--retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused \
 		--data-binary "$data" \
 		--header 'Content-Type: application/sparql-update' \
 		"${endpoint}/namespace/${namespace}/sparql")
