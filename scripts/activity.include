@@ -20,14 +20,14 @@ _SD_ACTIVITY_STATUS='noop'
 #
 # @arg $1 a prov statement template
 function _SD_LOG_PROV {
-	local provStatement="$1" 
-	provStatement="${provStatement/TIMESTAMP/\"$(date '+%Y-%m-%dT%T')\"^^xsd:datetime}"
+	local now="$(date '+%Y-%m-%dT%T')"
+	local provStatement="${1//TIMESTAMP/\"$now\"^^xsd:datetime}"
 	echo "$provStatement" >> "$SD_ACTIVITY_DIR/prov.ttl"
 }
 
 
 function _SD_ACTIVITY_LOG {
-	SD_LOG "$SD_ACTIVITY_ID $1" "$2"
+	SD_LOG "activity $SD_ACTIVITY_ID $1" "$2"
 }
 
 # @description
@@ -44,7 +44,7 @@ function _SD_ACTIVITY_LOG {
 #
 function _SD_START_ACTIVITY {
 	local uriOrComment="${1:-'generic data ingestion activity'}"	
-	SD_ACTIVITY_DIR="$(realpath "${2:-$(mktemp -d --tmpdir="$SD_CACHE" activity-XXXXXXXXXX)}")"
+	SD_ACTIVITY_DIR="$(realpath "${2:-$(mktemp -d --tmpdir="$SD_CACHE" XXXXXXXXXX)}")"
 	
 	SD_ACTIVITY_ID="$(basename "$SD_ACTIVITY_DIR")"
 	SD_ACTIVITY_URI="${SD_URISPACE}${SD_ACTIVITY_ID}_activity"
@@ -65,20 +65,20 @@ function _SD_START_ACTIVITY {
 		@prefix prov: <http://www.w3.org/ns/prov#> .
 		@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 		@prefix xsd: <http://www.w3.org/2000/10/XMLSchema#> .
+		@prefix dct: <http://purl.org/dc/terms/> .
+		@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 		@prefix kees: <http://linkeddata.center/kees/v1#> .
 				
 		:activity a prov:Activity;
-			prov:qualifiedAssociation :activity_owner
-		.
+		    prov:qualifiedAssociation :activity_owner.
 		:activity_owner a prov:Association ;
-			prov:agent <$SD_AGENT_URI> ;
-			prov:hadRole kees:namedGraphGenerator ;
-			prov:hadPlan $plan
-		.
+		    prov:agent <$SD_AGENT_URI> ;
+		    prov:hadRole kees:namedGraphGenerator ;
+		    prov:hadPlan $plan.
 	EOT
 	_SD_LOG_PROV ":activity prov:startedAtTime TIMESTAMP ."
 	_SD_ACTIVITY_STATUS='running'
-	_SD_ACTIVITY_LOG "starded $uriOrComment plan"
+	_SD_ACTIVITY_LOG "starded $uriOrComment"
 }
 
 
@@ -96,20 +96,23 @@ function _SD_COMMIT_ACTIVITY {
 	local graphName="$1"
 	
 	if [ "$_SD_ACCRUAL_PLAN" = "replace" ]; then  
-		_SD_ACTIVITY_LOG "replacing graph <$g> contents"
-		SD_SPARQL_UPDATE "DROP SILENT GRAPH <$g>" ;
+		_SD_ACTIVITY_LOG "completed by replacing graph <$graphName>"
+		SD_SPARQL_UPDATE "DROP SILENT GRAPH <$graphName>" ;
 	else
-		_SD_ACTIVITY_LOG "appending data to graph <$g>"
+		_SD_ACTIVITY_LOG "completed by appending data to graph <$graphName>"
 	fi
 		
-	
 	local rdfFile
 	for rdfFile in $(find "$SD_ACTIVITY_DIR/out" -name "*" -type f  -print); do
 		SD_LOAD_RDF_FILE "$graphName" "$rdfFile"
 	done
-	
-	_SD_LOG_PROV ":activity prov:generated :graph. :graph a prov:Entity; prov:wasGeneratedBy :activity; prov:generatedAtTime TIMESTAMP ."
-	_SD_LOG_PROV ":activity prov:endedAtTime TIMESTAMP ."
+	_SD_LOG_PROV "
+:activity prov:endedAtTime TIMESTAMP ; prov:generated :graph .
+:graph sd:name <$graphName>; 
+	prov:wasGeneratedBy :activity ; 
+	dct:created TIMESTAMP ;
+	dct:modified TIMESTAMP . 
+"
 	SD_LOAD_RDF_FILE "$graphName" "$SD_ACTIVITY_DIR/prov.ttl"
 	
 	if [ $SD_DEBUG -eq 0 ]; then rm -rf "$SD_ACTIVITY_DIR" ; fi
@@ -123,10 +126,14 @@ function _SD_COMMIT_ACTIVITY {
 function _SD_INVALIDATE_GRAPH {
 	local graphName="$1"
 	
-	_SD_LOG_PROV ":activity prov:invalidated :graph. :graph a prov:Entity; sd:name <$g>; prov:invalidatedAtTime TIMESTAMP; prov:wasInvalidatedBy :activity ."	
-	_SD_LOG_PROV ":activity prov:endedAtTime TIMESTAMP ."
+	_SD_LOG_PROV "
+:activity prov:endedAtTime TIMESTAMP; prov:invalidated :graph . 
+:graph sd:name <$graphName>; 
+	prov:invalidatedAtTime TIMESTAMP; 
+	prov:wasInvalidatedBy :activity .
+"	
 	SD_LOAD_RDF_FILE "$graphName" "$SD_ACTIVITY_DIR/prov.ttl"
-	_SD_ACTIVITY_LOG "invalidated due error"
+	_SD_ACTIVITY_LOG "invalidated graph $graphName due error"
 	_SD_ACTIVITY_STATUS="noop"
 }
 

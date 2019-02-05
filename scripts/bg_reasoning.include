@@ -3,6 +3,7 @@
 if [ ! -z ${__module_bg_reasoning+x} ]; then return ; else __module_bg_reasoning=1 ; fi
 
 SD_INCLUDE service_registry
+SD_INCLUDE curl_utils
 
 SD_REQUIRES_CMD mktemp realpath basename dirname gzip head cut tail
 
@@ -86,7 +87,7 @@ function SD_REASONER_QUERY {
 	local request="$2"
 	local query="$3"
 	
-	SD_DEBUG_INFO "In SD_REASONER_QUERY with reasonerId=$reasonerId accept='$accept' query='${query:0:40}'"
+	SD_DEBUG_INFO "In SD_REASONER_QUERY with reasonerId=$reasonerId request='$request' query='${query:0:40}'"
 
 	local endpoint namespace archetype
 	IFS='|' read  endpoint namespace archetype <<< $(SD_FETCH_SERVICE "$reasonerId")
@@ -98,34 +99,26 @@ function SD_REASONER_QUERY {
 		*) accept="$request"; ;;
 	esac	
 
-	local buffer=$(SD_MK_DEBUG_TMP_FILE sparql_query_output)
-	local httpStatus=$(curl \
-		-X POST \
-		-L \
-		--silent \
-		--output "$buffer" \
-		--write-out '%{http_code}'\
-		--retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused \
-		--data-binary "$query" \
-		--header 'Content-Type: application/sparql-query' \
-		--header "Accept: $accept" \
-		"${endpoint}/namespace/${namespace}/sparql")
-		
-	if [ ! "$httpStatus" = "200" ] ; then
-		SD_FATAL_ERROR "SD_REASONER_QUERY returned $httpStatus: see $buffer"
-	fi	
-	SD_DEBUG_INFO "See unfiltered output in $buffer"
+	local outputBuffer=$(SD_MK_DEBUG_TMP_FILE sparql_query_output)
+	_SD_CURL_POST \
+		"${endpoint}/namespace/${namespace}/sparql" \
+		"$outputBuffer" \
+		"$query" \
+		"application/sparql-query" \
+		"$accept" \
+	|| SD_FATAL_ERROR "SD_REASONER_QUERY failed, see $outputBuffer"	
+	SD_DEBUG_INFO "See unfiltered output in $outputBuffer"
 	
 	# Post processing
 	case "$request" in
-		csv-h) tail -n +2 "$buffer"; ;;
-		csv-1) head -2 "$buffer" | tail -1; ;;
-		csv-f1) head -2 "$buffer" | tail -1 | cut --delimiter=',' -f1; ;;
-		bool) if grep -q "<boolean>true</boolean>" "$buffer" ; then echo true;  else echo false; fi; ;;
-		*) cat "$buffer"; ;;
+		csv-h) tail -n +2 "$outputBuffer"; ;;
+		csv-1) head -2 "$outputBuffer" | tail -1; ;;
+		csv-f1) head -2 "$outputBuffer" | tail -1 | cut --delimiter=',' -f1; ;;
+		bool) if grep -q "<boolean>true</boolean>" "$outputBuffer" ; then echo true;  else echo false; fi; ;;
+		*) cat "$outputBuffer"; ;;
 	esac	
 	
-	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$traceFile" "$buffer" ; fi
+	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$traceFile" "$outputBuffer" ; fi
 }
 
 
@@ -138,22 +131,13 @@ function SD_REASONER_UPDATE {
 	local endpoint namespace archetype
 	IFS='|' read  endpoint namespace archetype <<< $(SD_FETCH_SERVICE "$reasonerId")
 
-	local output=$(SD_MK_DEBUG_TMP_FILE SD_REASONER_UPDATE_output)
-	
-	SD_DEBUG_INFO "Calling SPARQL UPDATE, output in $output ..."
-	local httpStatus=$(curl \
-		-X POST \
-		-L \
-		--silent \
-		--output "$output" \
-		--write-out '%{http_code}'\
-		--retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused \
-		--data-binary "$data" \
-		--header 'Content-Type: application/sparql-update' \
-		"${endpoint}/namespace/${namespace}/sparql")
-	if [ ! $httpStatus -eq 200 ] ; then
-		SD_FATAL_ERROR "SD_REASONER_UPDATE returned $httpStatus: see $output"
-	fi
+	local output=$(SD_MK_DEBUG_TMP_FILE SD_REASONER_UPDATE_output)	
+	_SD_CURL_POST \
+		"${endpoint}/namespace/${namespace}/sparql" \
+		"$output" \
+		"$data" \
+		"application/sparql-update" \
+	|| SD_FATAL_ERROR "SD_REASONER_UPDATE returned $httpStatus: see $output"
 	
 	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$output"; fi
 }

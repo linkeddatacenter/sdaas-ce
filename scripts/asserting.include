@@ -43,6 +43,10 @@ function SD_INCLUDE {
   SD_REQUIRES_VAR _SDAAS_DIR
   local -r file="$1"
   shift
+  
+  # test if the module was already in cluded
+  if eval "[ ! -z \${__module_${file}+x} ]" ; then return  ; fi
+
   if [ -f "$file" ]; then
   	source "$file" "$@"  
   elif [ -f "$_SDAAS_DIR/$file.include" ] ; then

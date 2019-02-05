@@ -1,0 +1,83 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
+if [ ! -z ${__module_curl_utils+x} ]; then return ; else __module_curl_utils=1 ; fi
+
+SD_REQUIRES_CMD SD_DEBUG_INFO curl
+
+
+### default command used to get web resources
+SD_DEFAULT_DOWNLOADER=${SD_DEFAULT_DOWNLOADER:-_SD_CURL_DOWNLOADER}
+
+
+# A downloader must accept at least two parameters:
+# $1 = the url to download
+# $2 = the location of the output file
+# Other paramethers can be added
+#
+# It must return 0 if download succeded or > 0 otherwhise
+#
+# It sholud also to send download info to a debugging file
+# 
+function _SD_CURL_DOWNLOADER {
+	SD_REQUIRES_VAR 1 2
+	local url=$1
+	local outputPath=$2
+	shift 2
+	local httpStatus=$(curl \
+		--silent \
+		-L \
+		--output "$outputPath" \
+		--write-out '%{http_code}'\
+		--retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused \
+		--compressed \
+		$* "$url" )
+		
+	if [ "$httpStatus" != "200" ] ; then
+		SD_DEBUG_INFO "download of url $url failed with result $httpStatus, output in $outputPath"
+		return 1
+	else
+		return 0
+	fi	
+}
+
+# A _SD_CURL_POST must accept at  five parameters:
+# $1 = the url to download
+# $2 = the location of the output file
+# $3 = the payload to send to url (default empty)
+# $4 = the payload mime type (default text/plain)
+# $5 = accept header contentt (default */*)
+#
+# It must return 0 if download succeded or > 0 otherwhise
+#
+# It sholud also to send download info to a debugging file
+# 
+function _SD_CURL_POST {
+	SD_REQUIRES_VAR 1 2 3 4
+	local url=$1
+	local outputPath=$2
+	local payload=${3:-''}
+	local contentType=${4-'text/plain'}
+	local accept=${5-'*/*'}
+	
+	SD_DEBUG_INFO "in _SD_CURL_POST url=$url outputPath=$outputPath payload=${payload:0:40} contentType=$contentType accept=$accept"
+	local httpStatus=$(curl \
+		-X POST \
+		-L \
+		--silent \
+		--output "$outputPath" \
+		--write-out '%{http_code}'\
+		--retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused \
+		--data-binary "$payload" \
+		--compressed \
+		--header "Content-Type: $contentType" \
+		--header "Accept: $accept" \
+		"$url" )
+		
+	if [ "$httpStatus" != "200" ] ; then
+		SD_DEBUG_INFO "post to url $url failed with result $httpStatus, output in $outputPath"
+		return 1
+	else
+		return 0
+	fi	
+}
+

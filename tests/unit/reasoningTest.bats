@@ -16,7 +16,11 @@ function teardown {
 
 @test "SD_EVAL_CONSTRUCTOR" {
 	run SD_EVAL_CONSTRUCTOR  graph constructor "$SD_CACHE/eval_constructor.ttl"
-	[ "${lines[0]}" = 'sdaas Sun Dec 24 00:00:00 UTC 2017 - Evaluating axiom constructor ...' ]
-	[ "${lines[1]}" = 'SD_SPARQL_QUERY text/turtle constructor' ]
-	[ "${lines[2]}" = "SD_LOAD_RDF_FILE graph $SD_CACHE/eval_constructor.ttl turtle" ]
+	#echo "$output" > /tmp/x
+	[[ "${lines[0]}" =~ 'reasoning on graph <graph>' ]]
+	[[ "${lines[1]}" =~ 'evaluating axiom constructor ...' ]]
+	[  "${lines[2]}" =  'SD_SPARQL_QUERY text/turtle constructor' ]
+	[[ "${lines[3]}" =~ 'completed by replacing graph <graph>' ]]
+	[  "${lines[4]}" =  'SD_SPARQL_UPDATE DROP SILENT GRAPH <graph>' ]
+	[[ "${lines[5]}" =~ 'SD_LOAD_RDF_FILE graph' ]]
 }

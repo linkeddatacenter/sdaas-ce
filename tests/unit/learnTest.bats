@@ -26,22 +26,22 @@ function teardown {
 	SD_DEFAULT_DOWNLOADER=DOWNLOADER_STUB
 	_SD_START_ACTIVITY "commento esplicito" "$SD_CACHE/activity.test"
 	
-	filename1=$(_SD_MK_UID "file://localhost${BATS_TEST_DIRNAME}/data/two_triples.nt")
-	filename2=$(_SD_MK_UID "file://localhost${BATS_TEST_DIRNAME}/data/two_triples.ttl")
+	filename1=$(_SD_MK_UID "${BATS_TEST_DIRNAME}/data/two_triples.nt")
+	filename2=$(_SD_MK_UID "${BATS_TEST_DIRNAME}/data/two_triples.ttl")
 	filename3=$(_SD_MK_UID "http://example.com/data")
 	_SD_SOURCES=("$BATS_TEST_DIRNAME/data/two_triples.nt" "$BATS_TEST_DIRNAME/data/two_triples.ttl" "http://example.com/data|.rdf|other content|echo")
 	run _SD_EXTRACT
 	[ $status -eq 0 ]
-	[ "${lines[0]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test downloaded file://localhost${BATS_TEST_DIRNAME}/data/two_triples.nt" ]
-	[ "${lines[1]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test downloaded file://localhost${BATS_TEST_DIRNAME}/data/two_triples.ttl" ]
-	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test downloaded http://example.com/data" ]
+	[ "${lines[0]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test downloaded ${BATS_TEST_DIRNAME}/data/two_triples.nt" ]
+	[ "${lines[1]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test downloaded ${BATS_TEST_DIRNAME}/data/two_triples.ttl" ]
+	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test downloaded http://example.com/data" ]
 	
 	run cat "$SD_ACTIVITY_DIR/prov.ttl"
 	[ $status -eq 0 ]
 	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
-	[ "${lines[15]}" = ":activity prov:used <file://localhost${BATS_TEST_DIRNAME}/data/two_triples.nt> . :extraction prov:generated <in/$filename1.nt> ." ]
-	[ "${lines[16]}" = ":activity prov:used <file://localhost${BATS_TEST_DIRNAME}/data/two_triples.ttl> . :extraction prov:generated <in/$filename2.ttl> ." ]
-	[ "${lines[17]}" = ":activity prov:used <http://example.com/data> . :extraction prov:generated <in/$filename3.rdf> ." ]
+	[ "${lines[15]}" = ":extraction prov:generated <urn:sdaas:cache:activity.test:in/$filename1.nt> ." ]
+	[ "${lines[16]}" = ":extraction prov:generated <urn:sdaas:cache:activity.test:in/$filename2.ttl> ." ]
+	[ "${lines[17]}" = ":extraction prov:generated <urn:sdaas:cache:activity.test:in/$filename3.rdf> ." ]
 	[ "${lines[18]}" = ':extraction prov:endedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
 }
 
@@ -66,19 +66,21 @@ function TRANSFORMER_STUB {
 	
 	run _SD_TRANSFORM
 	[ $status -eq 0 ]
-	[ "${lines[0]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test files in 'in/*.gz' have been processed with 'cat'. The results were placed in 'unzipped'." ]
-	[ "${lines[1]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test files in 'unzipped/*' have been processed with 'cat'. The results were placed in 'out'." ]
-	[ "${lines[2]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test files in 'in/*.csv' have been processed with 'tail -n +2'. The results were placed in 'cutted'." ]
-	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity.test files in 'cutted/*' have been processed with 'tr -d 'Y''. The results were placed in 'out'." ]
+	#echo "$output" > /tmp/x
+	[ "${lines[0]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'in/*.gz' processed with 'cat'. Results sent to 'unzipped'" ]
+	[ "${lines[1]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'unzipped/*' processed with 'cat'. Results sent to 'out'" ]
+	[ "${lines[2]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'in/*.csv' processed with 'tail -n +2'. Results sent to 'cutted'" ]
+	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'cutted/*' processed with 'tr -d 'Y''. Results sent to 'out'" ]
 	run cat "$SD_ACTIVITY_DIR/prov.ttl"
+	#cp "$SD_ACTIVITY_DIR/prov.ttl" /tmp/x
 	[ $status -eq 0 ]
 	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
-	[ "${lines[15]}" = ':transformation prov:used <in/file1.nt.gz)>; prov:generated <unzipped/file1.nt> .' ]
-	[ "${lines[16]}" = ':transformation prov:used <in/file2.ttl.gz)>; prov:generated <unzipped/file2.ttl> .' ]
-	[ "${lines[17]}" = ':transformation prov:used <unzipped/file1.nt)>; prov:generated <out/file1.rdf> .' ]
-	[ "${lines[18]}" = ':transformation prov:used <unzipped/file2.ttl)>; prov:generated <out/file2.rdf> .' ]
-	[ "${lines[19]}" = ':transformation prov:used <in/file3.csv)>; prov:generated <cutted/file3.csv> .' ]
-	[ "${lines[20]}" = ':transformation prov:used <cutted/file3.csv)>; prov:generated <out/file3.csv> .' ]
+	[ "${lines[15]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:in/file1.nt.gz)>; prov:generated <urn:sdaas:cache:activity.test:unzipped/file1.nt> .' ]
+	[ "${lines[16]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:in/file2.ttl.gz)>; prov:generated <urn:sdaas:cache:activity.test:unzipped/file2.ttl> .' ]
+	[ "${lines[17]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:unzipped/file1.nt)>; prov:generated <urn:sdaas:cache:activity.test:out/file1.rdf> .' ]
+	[ "${lines[18]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:unzipped/file2.ttl)>; prov:generated <urn:sdaas:cache:activity.test:out/file2.rdf> .' ]
+	[ "${lines[19]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:in/file3.csv)>; prov:generated <urn:sdaas:cache:activity.test:cutted/file3.csv> .' ]
+	[ "${lines[20]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:cutted/file3.csv)>; prov:generated <urn:sdaas:cache:activity.test:out/file3.csv> .' ]
 	[ "${lines[21]}" = ':transformation prov:endedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
 }
 

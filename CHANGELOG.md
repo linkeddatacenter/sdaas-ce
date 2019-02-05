@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+### changed
+
+- optimized SD_LEARN when no transformations required
+- optimized SD_LEARN when file loading is required
+- optimized SD_INCLUDE
+
+### added
+
+- module curl_utils
 
 ## [2.3.0]
 
