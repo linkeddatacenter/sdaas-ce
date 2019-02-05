@@ -9,10 +9,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - optimized SD_LEARN when no transformations required
 - optimized SD_LEARN when file loading is required
 - optimized SD_INCLUDE
+- SD_EVAL_CONSTRUCTOR creates metadata
+- SD_EVAL_CONSTRUCTOR
+- SD_REASONING_BY do nothing now.
 
 ### added
 
 - module curl_utils
+- SD_EVAL_CONSTRUCTOR accept url as a constructor
+
 
 ## [2.3.0]
 
