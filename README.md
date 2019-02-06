@@ -54,7 +54,7 @@ exit
 ```
 
 
-## Functional and system test
+## Functional and system tests
 
 To run functional and system tests you will need to start a local instance of blazegraph.
 By default, test scripts expect blazegraph endpoint at http://localhost:8080/bigdata 

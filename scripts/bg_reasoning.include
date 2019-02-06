@@ -95,17 +95,18 @@ function SD_REASONER_QUERY {
 	local accept
 	case "$request" in
 		csv*) accept="text/csv" ; ;;
-		xml|bool) accept="application/sparql-results+xml";  ;;
-		*) accept="$request"; ;;
-	esac	
-
+		bool|xml) accept="application/sparql-results+xml" ; ;;
+		*) accept="$request" ; ;;
+	esac
+	
 	local outputBuffer=$(SD_MK_DEBUG_TMP_FILE sparql_query_output)
-	_SD_CURL_POST \
+	_SD_CURL_CMD \
 		"${endpoint}/namespace/${namespace}/sparql" \
 		"$outputBuffer" \
-		"$query" \
-		"application/sparql-query" \
-		"$accept" \
+		-X POST \
+		--data-binary "$query" \
+		--header "Content-Type: application/sparql-query" \
+		--header "Accept: $accept" \
 	|| SD_FATAL_ERROR "SD_REASONER_QUERY failed, see $outputBuffer"	
 	SD_DEBUG_INFO "See unfiltered output in $outputBuffer"
 	
@@ -115,10 +116,10 @@ function SD_REASONER_QUERY {
 		csv-1) head -2 "$outputBuffer" | tail -1; ;;
 		csv-f1) head -2 "$outputBuffer" | tail -1 | cut --delimiter=',' -f1; ;;
 		bool) if grep -q "<boolean>true</boolean>" "$outputBuffer" ; then echo true;  else echo false; fi; ;;
-		*) cat "$outputBuffer"; ;;
-	esac	
+		*) cat "$outputBuffer" ; ;;
+	esac
 	
-	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$traceFile" "$outputBuffer" ; fi
+	if [ $SD_DEBUG -eq 0 ] ; then  rm -f "$traceFile" "$outputBuffer" ; fi
 }
 
 
@@ -132,11 +133,12 @@ function SD_REASONER_UPDATE {
 	IFS='|' read  endpoint namespace archetype <<< $(SD_FETCH_SERVICE "$reasonerId")
 
 	local output=$(SD_MK_DEBUG_TMP_FILE SD_REASONER_UPDATE_output)	
-	_SD_CURL_POST \
+	_SD_CURL_CMD \
 		"${endpoint}/namespace/${namespace}/sparql" \
 		"$output" \
-		"$data" \
-		"application/sparql-update" \
+		-X POST \
+		--data-binary "$data" \
+		--header "Content-Type: application/sparql-update" \
 	|| SD_FATAL_ERROR "SD_REASONER_UPDATE returned $httpStatus: see $output"
 	
 	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$output"; fi

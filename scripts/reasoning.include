@@ -25,7 +25,7 @@ function SD_EVAL_CONSTRUCTOR {
 	# If constructor is an URL, download it first
 	if [[ "${constructor:0:10}" =~ "://" ]]; then
 		local queryFile="${SD_ACTIVITY_DIR}/in/constructor.query"
-		_SD_CURL_DOWNLOADER "$constructor" "$queryFile" || SD_FATAL "Unable to download ${constructor:0:40}"
+		_SD_CURL_CMD "$constructor" "$queryFile" || SD_FATAL "Unable to download ${constructor:0:40}"
 		constructor="@$queryFile"
 	fi
 	

@@ -12,12 +12,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - SD_EVAL_CONSTRUCTOR creates metadata
 - SD_EVAL_CONSTRUCTOR
 - SD_REASONING_BY do nothing now.
+- _SD_CURL_DOWNLOADER moved to _SD_CURL_CMD
 
 ### added
 
 - module curl_utils
 - SD_EVAL_CONSTRUCTOR accept url as a constructor
 
+
+### removed
+
+- _SD_CURL_POST
 
 ## [2.3.0]
 
