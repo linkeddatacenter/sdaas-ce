@@ -38,4 +38,3 @@ function _SD_CURL_CMD {
 		return 0
 	fi	
 }
-

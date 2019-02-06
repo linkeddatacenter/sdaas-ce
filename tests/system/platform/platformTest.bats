@@ -42,7 +42,7 @@ function doTest {
 	[[ "${lines[26]}" =~ "graphName,RDF_statements"  ]]
 	[[ "${lines[27]}" =~ "urn:graph:istat,15981"  ]]
 	[[ "${lines[28]}" =~ "http://schema.org/,8472"  ]]
-	[[ "${lines[29]}" =~ "urn:kees:config,109"  ]]
-	[[ "${lines[30]}" =~ "urn:graph:calculated_trusts,25"  ]]
+	[[ "${lines[29]}" =~ "urn:kees:config,55"  ]]
+	[[ "${lines[30]}" =~ "urn:graph:calculated_trusts,23"  ]]
 	[[ "${lines[31]}" =~ "urn:graph:trustmap_default,13"  ]]
 }

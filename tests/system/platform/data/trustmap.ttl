@@ -24,13 +24,6 @@
     daq:metric kees:trustGraphMetric;
     daq:value 1.00 ;
 	daq:isEstimated false .
-
-[] a qb:Observation ;
- 	rdfs:comment "Lexical proximity could create false positive";
-	daq:computedOn <urn:graph:cities_with_similar_name> ; 
-    daq:metric kees:trustGraphMetric;
-    daq:value 0.70 ;
-	daq:isEstimated true .	
 	
 [] a qb:Observation ;
  	rdfs:comment "Deterministic algorithm";

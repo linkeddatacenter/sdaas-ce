@@ -1,0 +1,14 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Permission to copy and modify is granted under the MIT license
+# Finds all incompleted named graph
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX sd: <http://www.w3.org/ns/sparql-service-description#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+SELECT DISTINCT ?g WHERE {
+    ?x sd:name ?g.
+	{ ?x  prov:invalidatedAtTime [] }
+    UNION
+    { FILTER NOT EXISTS { ?y sd:name ?g;  dct:created [] }}
+    UNION
+    { FILTER NOT EXISTS { ?z sd:name ?g;  dct:modified [] }}
+}

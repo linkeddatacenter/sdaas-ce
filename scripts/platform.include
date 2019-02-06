@@ -58,7 +58,15 @@ function SD_BEGIN_INGESTION {
 function SD_THATS_ALL_FOLKS {
 	#SD_LOG "Computing knowledge base configuration default axioms."
 	#SD_SPARQL_UPDATE @$_SDAAS_DIR/axioms/sdaas-axioms.sparq_update
-	SD_LOG "Knowledge ingestion succesfully completed in $(( SECONDS - _SD_START )) seconds."
+	local inconsistentGraphs="$(SD_SPARQL_QUERY csv-h "@$_SDAAS_DIR/axioms/uncompleted_graphs.sparq_select")"
+	if [ -z "$inconsistentGraphs" ] ; then
+		SD_LOG "Knowledge ingestion succesfully completed in $(( SECONDS - _SD_START )) seconds."
+		return 0
+	else 
+		SD_LOG "WARNING: the knowledge base contains following inconsistent graphs:"
+		echo "$inconsistentGraphs"
+		return 1
+	fi
 }
 
 

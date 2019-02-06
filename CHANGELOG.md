@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - module curl_utils
 - SD_EVAL_CONSTRUCTOR accept url as a constructor
+- final consistency check
 
 
 ### removed
