@@ -3,21 +3,35 @@
 # run it with the command:
 #  sdaas -f build.sdaas
 ###############################################################################
+
+# Stop on any error
 set -a
 
+# Define a bulk of RDF data dump files
 KEES_SRCs=("data/kees.ttl" "data/introspection.ttl" "data/trustmap.ttl")
 
+# Define a transformation pipeline
+ISTAT_GATEWAY=("|in|out|.ttl|iconv -f ISO88592 -t UTF-8|tr -d '\r'|gateways/istat")
 
+
+# Ingest data from a set of files
 SD_LEARN "urn:kees:config" KEES_SRCs[@]
+
+# Ingest data from a simple RDF web resource 
 SD_LEARN http://schema.org/ http://schema.org/version/3.4/schema.ttl
+
+# Ingest data from a  web resource through a gateway
 SD_LEARN \
 	"urn:graph:istat" \
 	'https://s3-eu-west-1.amazonaws.com/demo.hub1.linkeddata.center/data/comuni.csv' \
-	"|in|out|.ttl|iconv -f ISO88592  -t UTF-8|tr -d '\r'|gateways/istat"
-	
+	ISTAT_GATEWAY[@]
+
+# Evaluate some reasonings:	
 SD_EVAL_CONSTRUCTOR "urn:graph:trustmap_default" @axioms/default_trustmap.construct 
 SD_EVAL_CONSTRUCTOR "urn:graph:calculated_trusts" @axioms/calculated_trusts.construct
 
+# Answer predefined questions
 SD_CREATE_DATA_DISTRIBUTION
 
+# Do final knowledge base consistence checks
 SD_THATS_ALL_FOLKS
