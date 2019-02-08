@@ -25,12 +25,11 @@ function _SD_CURL_CMD {
 	local outputPath=$2
 	shift 2
 	
-	# quote all other parameters
-	local extraOptions	
-	for i in "$@" ; do  extraOptions+=" \"$i\"" ; done
-
-	local httpStatus=$(eval curl $_SD_DEFAULT_CURL_OPTIONS $extraOptions -s -w "%{http_code}" -o "$outputPath" "$url")
-		
+	local curlCmd=(curl $_SD_DEFAULT_CURL_OPTIONS )
+	curlCmd+=("$@")
+	
+	curlCmd+=(-s -w "%{http_code}" -o "$outputPath" "$url")
+	local httpStatus=$("${curlCmd[@]}")	
 	if [ "$httpStatus" != "200" ] ; then
 		SD_DEBUG_INFO "access to $url failed with result $httpStatus, output in $outputPath"
 		return 1

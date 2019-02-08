@@ -119,7 +119,7 @@ function SD_REASONER_QUERY {
 		*) cat "$outputBuffer" ; ;;
 	esac
 	
-	if [ $SD_DEBUG -eq 0 ] ; then  rm -f "$traceFile" "$outputBuffer" ; fi
+	if [ $SD_DEBUG -eq 0 ] ; then  rm -f "$outputBuffer" ; fi
 }
 
 

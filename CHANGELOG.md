@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+
+### changed
+
+- optimized _SD_CURL_CMD (removed eval)
+
 ## [2.3.1]
 
 ### changed
