@@ -103,6 +103,21 @@ docker rm -f sdmp
 
 Have a look also to the [developer wiki](https://github.com/linkeddatacenter/sdaas-ce/wiki)
 
+
+## Push to docker hub
+
+To push a new docker image to docker hub:
+
+```
+docker build -t linkeddatacenter/sdaas-ce .
+docker login
+# input the docker hub credentials...
+docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:x.x.x
+docker push linkeddatacenter/sdaas-ce:x.x.x
+docker push linkeddatacenter/sdaas-ce
+```
+
+
 ## Credits and license
 
 The sdaas community edition platform is derived from [LinkedData.Center SDaas Product](https://it.linkeddata.center/p/sdaas) and licensed with MIT by LinkedData.Center
