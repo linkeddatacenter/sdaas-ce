@@ -107,7 +107,7 @@ Have a look also to the [developer wiki](https://github.com/linkeddatacenter/sda
 
 The sdaas community edition platform is derived from [LinkedData.Center SDaas Product](https://it.linkeddata.center/p/sdaas) and licensed with MIT by LinkedData.Center
 
-Copyright (C) 2018 LinkedData.Center SRL
+Copyright (C) 2018-2019 LinkedData.Center SRL
  - All Rights Reserved
 Permission to copy and modify is granted under the [MIT license](LICENSE)
 

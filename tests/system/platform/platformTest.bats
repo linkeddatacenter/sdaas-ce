@@ -27,7 +27,7 @@ function doTest {
 	[[ "${lines[11]}" =~ "completed by replacing graph <http://schema.org/>"  ]]
 	[[ "${lines[12]}" =~ "starded learning of graph <urn:graph:istat>"  ]]
 	[[ "${lines[13]}" =~ "downloaded https://s3-eu-west-1.amazonaws.com/demo.hub1.linkeddata.center/data/comuni.csv"  ]]
-	[[ "${lines[14]}" =~ "files in 'in/*' processed with 'iconv -f ISO88592 -t UTF-8|tr -d '\r'|gateways/istat'. Results sent to 'out'"  ]]
+	[[ "${lines[14]}" =~ "transformation pipeline: in/* -> cat -> iconv -f ISO88592 -t UTF-8|tr -d '\r'|gateways/istat -> out"  ]]
 	[[ "${lines[15]}" =~ "completed by replacing graph <urn:graph:istat>"  ]]
 	[[ "${lines[16]}" =~ "starded reasoning on graph <urn:graph:trustmap_default>"  ]]
 	[[ "${lines[17]}" =~ "evaluating axiom @axioms/default_trustmap.construct..."  ]]

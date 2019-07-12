@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [2.3.2]
 
 ### fixed
 
@@ -14,6 +15,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### changed
 
 - optimized _SD_CURL_CMD (removed eval)
+
+### added
+
+- new sparql extension for sparql queries in SD_CREATE_DATA_DISTRIBUTION
 
 ## [2.3.1]
 
@@ -104,8 +109,8 @@ aligned with SDaaS [2.1.0]
 
 First release, aligned with SDaaS [2.0.3] (Talete)
 
-
-[Unreleased]: https://bitbucket.org/linkeddatacenter/sdaas/compare/master%0D2.3.1
+[Unreleased]: https://bitbucket.org/linkeddatacenter/sdaas/compare/master%0D2.3.2
+[2.3.2]: https://bitbucket.org/linkeddatacenter/sdaas/compare/2.3.2%0D2.3.1
 [2.3.1]: https://bitbucket.org/linkeddatacenter/sdaas/compare/2.3.1%0D2.3.0
 [2.3.0]: https://bitbucket.org/linkeddatacenter/sdaas/compare/2.3.0%0D2.2.1
 [2.2.1]: https://bitbucket.org/linkeddatacenter/sdaas/compare/2.2.1%0D2.2.0
