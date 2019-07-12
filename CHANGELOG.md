@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 
 
+### fixed
+
+- debug messages
+- error in moving files  from empty directory in _SD_TRANSFORM (SD_LEARNING)
+- removed useless awk dependency in teaching
+
 ### changed
 
 - optimized _SD_CURL_CMD (removed eval)

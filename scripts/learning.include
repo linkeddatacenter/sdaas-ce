@@ -92,7 +92,9 @@ function _SD_TRANSFORM {
 	# If no transformation, just move all files in input queue to the output queueu
 	# equivalent to _SD_TRANSFORMATIONS=('|in|out|keep|') but faster
 	if [ -z "$_SD_TRANSFORMATIONS" ] ; then
-		mv "$SD_ACTIVITY_DIR"/in/* "$SD_ACTIVITY_DIR"/out/
+		for file in $(find "$SD_ACTIVITY_DIR/in" -name "*" -type f  -print); do
+			mv -f "$file" "$SD_ACTIVITY_DIR"/out/ || SD_FATAL_ERROR "error moving files from in to out in _SD_TRANSFORM"
+		done
 		return 0
 	fi
 	
@@ -130,13 +132,13 @@ function _SD_TRANSFORM {
 				outputFile="$outputDir/${outputFileName%.*}"	# remove old extension
 				outputFile+="${postprocessor}"		# add new estension (if set)
 			fi	
-			SD_DEBUG_INFO "$SD_DEFAULT_TRANSFORMER preprocessor='$preprocessor' inputFile='$SD_ACTIVITY_DIR/$inputFile' pipeline='$pipeline' output='$SD_ACTIVITY_DIR/$outputFile'"
+			SD_DEBUG_INFO "In _SD_TRANSFORM preprocessor='$preprocessor' inputFile='$SD_ACTIVITY_DIR/$inputFile' pipeline='$pipeline' output='$SD_ACTIVITY_DIR/$outputFile'"
 			$preprocessor "$SD_ACTIVITY_DIR/$inputFile" | eval $pipeline 2>> "$SD_DEBUG_FILE" 1> "$SD_ACTIVITY_DIR/$outputFile"
 			if [ $? -ne 0 ]; then SD_FATAL_ERROR "_SD_TRANSFORMER cant execute transformation" ; fi
 			_SD_LOG_PROV ":transformation prov:used <urn:sdaas:cache:${SD_ACTIVITY_ID}:$inputFile)>; prov:generated <urn:sdaas:cache:${SD_ACTIVITY_ID}:$outputFile> ."
 			
 		done		
-		_SD_ACTIVITY_LOG "files in '$inputDir/$fileNameFilter' processed with '$pipeline'. Results sent to '$outputDir'"	
+		_SD_ACTIVITY_LOG "transformation pipeline: $inputDir/$fileNameFilter -> $preprocessor -> $pipeline -> $outputDir"	
 	done
 	
 	_SD_LOG_PROV ":transformation prov:endedAtTime TIMESTAMP ."	
@@ -148,8 +150,7 @@ function _SD_TRANSFORM {
 #
 # @arg $1 the name the graph to,load
 # @arg $2 a source URI or an array of source URIs. If not provided defaults to $1
-# @arg $3 a data dump URL or an array of data dumps. If not provided defaults to $2
-# @arg $4 an optional transformation or an array transformation
+# @arg $3 an optional transformation or an array transformation
 #
 #
 # @example
