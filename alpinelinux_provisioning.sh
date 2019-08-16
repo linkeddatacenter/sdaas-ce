@@ -22,4 +22,5 @@ apk --no-cache add \
 	openssl \
 	raptor2 \
 	sed \
-	net-tools
+	net-tools \
+	gettext
