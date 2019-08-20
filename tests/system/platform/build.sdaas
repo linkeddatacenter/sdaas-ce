@@ -7,6 +7,8 @@
 # Stop on any error
 set -a
 
+SD_INCLUDE testing
+
 # Define a bulk of RDF data dump files
 KEES_SRCs=("data/kees.ttl" "data/introspection.ttl" "data/trustmap.ttl")
 
@@ -33,5 +35,7 @@ SD_EVAL_CONSTRUCTOR "urn:graph:calculated_trusts" @axioms/calculated_trusts.cons
 # Answer predefined questions
 SD_CREATE_DATA_DISTRIBUTION
 
+# test knowledge base
+SD_DATA_TEST
 # Do final knowledge base consistence checks
 SD_THATS_ALL_FOLKS

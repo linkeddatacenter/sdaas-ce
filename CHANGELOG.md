@@ -5,15 +5,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [unreleased]
 
 
-## [2.4.0] WORKING RELEASE in DEV_2.4 BRANCH !!!
+## [2.4.0]
 
 ### added
 
 - ruleset plugin
+- testing plugin
 
 ### fixed
 
 - missing "S" in _SD_QUESTIONS_DIR in teaching.include
+
+
+### changed
+
+- optimized ENV position in docker file
 
 ## [2.3.2]
 
