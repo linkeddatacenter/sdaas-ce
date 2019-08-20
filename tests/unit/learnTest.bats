@@ -67,10 +67,10 @@ function TRANSFORMER_STUB {
 	run _SD_TRANSFORM
 	[ $status -eq 0 ]
 	#echo "$output" > /tmp/x
-	[ "${lines[0]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'in/*.gz' processed with 'cat'. Results sent to 'unzipped'" ]
-	[ "${lines[1]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'unzipped/*' processed with 'cat'. Results sent to 'out'" ]
-	[ "${lines[2]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'in/*.csv' processed with 'tail -n +2'. Results sent to 'cutted'" ]
-	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test files in 'cutted/*' processed with 'tr -d 'Y''. Results sent to 'out'" ]
+	[ "${lines[0]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test transformation pipeline: in/*.gz -> zcat -> cat -> unzipped" ]
+	[ "${lines[1]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test transformation pipeline: unzipped/* -> cat -> cat -> out" ]
+	[ "${lines[2]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test transformation pipeline: in/*.csv -> cat -> tail -n +2 -> cutted" ]
+	[ "${lines[3]}" = "sdaas Sun Dec 24 00:00:00 UTC 2017 - activity activity.test transformation pipeline: cutted/* -> cat -> tr -d 'Y' -> out" ]
 	run cat "$SD_ACTIVITY_DIR/prov.ttl"
 	#cp "$SD_ACTIVITY_DIR/prov.ttl" /tmp/x
 	[ $status -eq 0 ]

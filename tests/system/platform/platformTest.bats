@@ -12,7 +12,7 @@ function doTest {
 @test "Ingestion platform acceptance test..." {
 	run doTest
 	[  $status -eq 0 ]
-	# echo "$output" > /tmp/x
+	#echo "$output" > /tmp/x
 	[[ "${lines[0]}"  =~ "SD_START_LOGGING logging"  ]]
 	[[ "${lines[1]}"  =~ "SD_START_LOGGING debug info in .cache/session_"  ]]
 	[[ "${lines[2]}"  =~ "LinkedData.Center SDaaS platform (Anassimene) using 'kb' graph technology."  ]]
@@ -38,11 +38,13 @@ function doTest {
 	[[ "${lines[22]}" =~ "Copying questions/README.md"  ]]
 	[[ "${lines[23]}" =~ "Generating answers for triplecounts tabular question"  ]]
 	[[ "${lines[24]}" =~ "Distribution completed"  ]]
-	[[ "${lines[25]}" =~ "Knowledge ingestion succesfully completed"  ]]
-	[[ "${lines[26]}" =~ "graphName,RDF_statements"  ]]
-	[[ "${lines[27]}" =~ "urn:graph:istat,15981"  ]]
-	[[ "${lines[28]}" =~ "http://schema.org/,8472"  ]]
-	[[ "${lines[29]}" =~ "urn:kees:config,55"  ]]
-	[[ "${lines[30]}" =~ "urn:graph:calculated_trusts,23"  ]]
-	[[ "${lines[31]}" =~ "urn:graph:trustmap_default,13"  ]]
+	[[ "${lines[25]}" =~ "Testing knowledge graph integrity..."  ]]
+	[[ "${lines[26]}" =~ "1_istat_exists.ask...OK"  ]]
+	[[ "${lines[27]}" =~ "Knowledge ingestion succesfully completed"  ]]
+	[[ "${lines[28]}" =~ "graphName,RDF_statements"  ]]
+	[[ "${lines[29]}" =~ "urn:graph:istat,15981"  ]]
+	[[ "${lines[30]}" =~ "http://schema.org/,8472"  ]]
+	[[ "${lines[31]}" =~ "urn:kees:config,55"  ]]
+	[[ "${lines[32]}" =~ "urn:graph:calculated_trusts,23"  ]]
+	[[ "${lines[33]}" =~ "urn:graph:trustmap_default,13"  ]]
 }

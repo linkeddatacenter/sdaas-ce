@@ -1,0 +1,21 @@
+# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+if [ ! -z ${__module_testing+x} ]; then return ; else __module_testing=1 ; fi
+
+
+#  extra files to be copied in the distribution
+function SD_DATA_TEST {
+	local testDir=${1:-"tests"}
+	
+	if [ ! -d "$testDir" ]; then return 0; fi
+	
+	SD_LOG  "Testing knowledge graph integrity..."
+	
+	for testFile in $(ls -v ${testDir}/*ask); do
+	    echo -n "   $(basename $testFile)..."
+	    case "$(SD_SPARQL_QUERY xml @$testFile)" in
+	        *true* ) echo "OK";;
+	        *false* ) echo "FAIL";;
+	    esac
+	done
+}
+

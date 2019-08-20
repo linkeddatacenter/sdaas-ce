@@ -6,7 +6,7 @@ if [ ! -z ${__module_answering+x} ]; then return ; else __module_answering=1 ; f
 #  extra files to be copied in the distribution
 function SD_CREATE_DATA_DISTRIBUTION {
 	_SD_DIST_DIR=${_SD_DIST_DIR:="distrib/$(date +'%s')"}
-	_SD_QUESTIONS_DIR=${_SD_QUESTION_DIR:="questions"}
+	_SD_QUESTIONS_DIR=${_SD_QUESTIONS_DIR:-"questions"}
 	mkdir -p "$_SD_DIST_DIR"
 	local query
 	for query in "$_SD_QUESTIONS_DIR"/*.* ; do
