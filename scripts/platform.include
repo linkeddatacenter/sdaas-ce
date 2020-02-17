@@ -39,13 +39,17 @@ function SD_BEGIN_INGESTION {
 	SD_START_LOGGING
 	
 	# Warmup reasoner
-	local retry=1
-	while ! curl -s -f -I "$SD_REASONER_ENDPOINT/status"  > /dev/null ; do
-		SD_LOG "Reasoning engine warming up $retry"
-		sleep $(($retry*2))
-		let retry++
-		[ $retry -le 5 ] || SD_FATAL_ERROR "Sorry... internal reasoner startup failed.."
-	done 
+	if [ $SD_NOWARMUP -eq 0 ]; then
+		local retry=1
+		while ! curl -s -f -I "$SD_REASONER_ENDPOINT/status"  > /dev/null ; do
+			SD_LOG "Reasoning engine warming up $retry"
+			sleep $(($retry*2))
+			let retry++
+			[ $retry -le 5 ] || SD_FATAL_ERROR "Sorry... internal reasoner startup failed.."
+		done 
+	else
+		SD_LOG "Reasoning engine warming up skipped"
+	fi
 	
 	SD_LOG "LinkedData.Center SDaaS platform ($_SD_RELEASE_NAME) using '$SD_QUADSTORE' graph technology."
 	if [ $_SD_REBOOT -eq 1 ]; then 

@@ -12,7 +12,7 @@ _SD_REBOOT=0
 SD_VERBOSE=${SD_VERBOSE:-1}
 SD_DEBUG=${SD_DEBUG:-0}
 SD_QUADSTORE=${SD_QUADSTORE:-kb}
-
+SD_NOWARMUP=0
 
 function _SDAAS_FATAL_ERROR {
 	>&2 cat <<-EOT
@@ -62,6 +62,8 @@ function _SDAAS_FATAL_ERROR {
 			
 		--reboot
 		   WARNING!!! erase all knowledge base before executing the rebuild process
+		   
+		--no-warmup skipp the reasoner warmup (usefull if reasoner in sot needed)
 			
 		--verbose <verbose_level>
 		   -v is equivalent to --verbose 1, --verbose 0 is an alias of -q
@@ -74,7 +76,7 @@ function _SDAAS_FATAL_ERROR {
 
 
 ### Parse command line options
-__parsed=$(getopt --options=qvda:k:f:u: --longoptions=quiet,verbose:,debug,reboot,version,file:,graph-engine:,accrual-policy:,urispace: --name "$0" -- "$@")	 || _SDAAS_FATAL_ERROR
+__parsed=$(getopt --options=qvda:k:f:u: --longoptions=quiet,verbose:,debug,reboot,version,file:,graph-engine:,accrual-policy:,urispace:,no-warmup --name "$0" -- "$@")	 || _SDAAS_FATAL_ERROR
 eval set -- "$__parsed"
 unset __parsed 
 
@@ -120,6 +122,10 @@ while true; do
 	    	SD_URISPACE="$2"
 	    	shift 2
 	    	;;
+	    --no-warmup)
+	    	SD_NOWARMUP=1
+	    	shift
+	    	;;
         --)
             shift
             break
@@ -147,6 +153,7 @@ else
 		SD_QUADSTORE=${SD_QUADSTORE}
 		SD_ACCRUAL_POLICY=${SD_ACCRUAL_POLICY}
 		SD_URISPACE=${SD_URISPACE}
+		SD_NOWARMUP=${SD_NOWARMUP}
 		. "$_SDAAS_DIR/platform.include"
 		PS1="sdaas > "
 	EOT

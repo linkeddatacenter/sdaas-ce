@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [2.5.0]
+
+### added
+
+- --no-warmup option and SD_NOWARMUP env variable support
+
 ### fixed
 
 - missing SD_START_RULESET_ACTIVITY is ruleset when update
@@ -131,7 +137,8 @@ aligned with SDaaS [2.1.0]
 First release, aligned with SDaaS [2.0.3] (Talete)
 
 
-[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.4.0...HEAD
+[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.5.0...HEAD
+[2.5.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.4.0...2.5.0
 [2.4.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.3.2...2.4.0
 [2.3.2]: https://github.com/linkeddatacenter/sdaas-ce/compare/2.3.1...2.3.2
 [2.3.1]: https://github.com/linkeddatacenter/sdaas-ce/compare/2.3.0...2.3.1
