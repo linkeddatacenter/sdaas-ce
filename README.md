@@ -2,7 +2,8 @@
 
 # Welcome to LinkedData.Center SDaaS Platform Community Edition (SDaaS-CE)
 
-A vanilla open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
+A platform to build knowledge graphs.
+This is  vanilla open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
 See documentation in [SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home).
 
 Try a short [on-line demo of the platform](https://en.linkeddata.center/l/sdaas-ce-demo/).
