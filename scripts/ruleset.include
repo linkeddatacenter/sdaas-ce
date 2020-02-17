@@ -83,8 +83,15 @@ function SD_EVAL_RULESET {
 				;;
 			update)
 				(
+					SD_START_RULESET_ACTIVITY "$ruleName" "$axiomName" "${rule}/$axiom" 
 					export rule axiom graphNS axiomName ruleName graphName
 					cat "${rule}/$axiom" | envsubst | SD_SPARQL_UPDATE "@-"
+					if [ $? -eq 0 ]; then	
+						_SD_COMMIT_REASONING "$graphName"	
+					else
+						_SD_INVALIDATE_GRAPH "$graphName"
+						return 1
+					fi	
 				)
 				;;				
 			reasoning)

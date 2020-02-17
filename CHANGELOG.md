@@ -1,9 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+This project adheres to [Semantic Versioning](http://semver.org/). 
 
 ## [unreleased]
 
+### fixed
+
+- missing SD_START_RULESET_ACTIVITY is ruleset when update
 
 ## [2.4.0]
 
