@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (C) 2019 LinkedData.Center - All Rights Reserved
+# Copyright (C) 2019-2020 LinkedData.Center - All Rights Reserved
 # Permission to copy and modify is granted under the MIT license
 
 _SDAAS_DIR="$(dirname "$( realpath "$0" )")"

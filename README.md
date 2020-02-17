@@ -44,6 +44,11 @@ docker run --rm -it -v "$(pwd):/workspace" -w /workspace bash
 ```
 
 
+## smoke test ###
+
+	./scripts/sdaas --no-warmup
+	exit
+
 ## Unit tests ###
 
 In order to run unit tests bats is needed (see https://github.com/bats-core/bats-core ):
@@ -114,7 +119,6 @@ docker build -t linkeddatacenter/sdaas-ce .
 docker login
 # input the docker hub credentials...
 docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:x.x.x
-docker push linkeddatacenter/sdaas-ce:x.x.x
 docker push linkeddatacenter/sdaas-ce
 ```
 

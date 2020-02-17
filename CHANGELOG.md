@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+### changed
+
+- copyright header in some files
+
 ## [2.5.0]
 
 ### added
