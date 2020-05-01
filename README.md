@@ -13,12 +13,17 @@ Try a short [on-line demo of the platform](https://en.linkeddata.center/l/sdaas-
 ```
 docker build -t linkeddatacenter/sdaas-ce .
 docker run --name sdmp -d -p 8080:8080 linkeddatacenter/sdaas-ce
-docker exec -t sdmp sdaas -f build.sdaas --reboot
-# browse knowledge base at http://localhost:8080/sdaas
-# when finish:
-docker rm -f sdmp
 ```
+browse knowledge base at http://localhost:8080/sdaas
 
+
+To build a demo environment run:
+
+	docker exec -t sdmp sdaas -f build.sdaas --reboot
+
+when finished:
+
+	docker rm -f sdmp
 
 ## Development environment ##
 
@@ -63,7 +68,7 @@ exit
 ## Functional and system tests
 
 To run functional and system tests you will need to start a local instance of blazegraph.
-By default, test scripts expect blazegraph endpoint at http://localhost:8080/bigdata 
+By default, test scripts expect blazegraph endpoint at http://localhost:8080/sdaas 
 but you can configure a different address exporting the the SD_REASONER_ENDPOINT.
 The instance of blazegraph must share /workspace volume with sdaas.
 
