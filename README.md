@@ -103,7 +103,7 @@ To push a new docker image to docker hub:
 
 The sdaas community edition platform is derived from [LinkedData.Center SDaas Product](https://it.linkeddata.center/p/sdaas) and licensed with MIT by LinkedData.Center
 
-Copyright (C) 2018-2019 LinkedData.Center SRL
+Copyright (C) 2018-2020 LinkedData.Center SRL
  - All Rights Reserved
 Permission to copy and modify is granted under the [MIT license](LICENSE)
 

@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### changed
 
+- version changed to 3 and name to "Anassimene"
 - copyright header in some files
 - aligned with sdaas_rdfstore 2.0.0
 - OS moved from alpine to debian
