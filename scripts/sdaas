@@ -4,8 +4,8 @@
 
 _SDAAS_DIR="$(dirname "$( realpath "$0" )")"
 
-_SDAAS_VERSION="2"
-_SDAAS_AGENT_NAME="Anassimandro"
+_SDAAS_VERSION="3"
+_SDAAS_AGENT_NAME="Anassimene"
 
 _SD_MUST_EXIT=0
 _SD_REBOOT=0

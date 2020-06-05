@@ -4,9 +4,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+
+
+## [3.0.0]
+
 ### changed
 
+- version changed to 3 and name to "Anassimene"
 - copyright header in some files
+- aligned with sdaas_rdfstore 2.0.0
+- OS moved from alpine to debian
+- default user is jetty
+
+### Removed
+
+- alpinelinux_provisioning.sh script
 
 ## [2.5.0]
 
@@ -141,7 +153,8 @@ aligned with SDaaS [2.1.0]
 First release, aligned with SDaaS [2.0.3] (Talete)
 
 
-[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.5.0...HEAD
+[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.0.0...HEAD
+[3.0.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.5.0...3.0.0
 [2.5.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.4.0...2.5.0
 [2.4.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.3.2...2.4.0
 [2.3.2]: https://github.com/linkeddatacenter/sdaas-ce/compare/2.3.1...2.3.2

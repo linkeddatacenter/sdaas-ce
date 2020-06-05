@@ -13,7 +13,7 @@ SD_INCLUDE testing
 KEES_SRCs=("data/kees.ttl" "data/introspection.ttl" "data/trustmap.ttl")
 
 # Define a transformation pipeline
-ISTAT_GATEWAY=("|in|out|.ttl|iconv -f ISO88592 -t UTF-8|tr -d '\r'|gateways/istat")
+ISTAT_GATEWAY=("|in|out|.ttl|iconv -f ISO88592 -t UTF-8|tr -d '\r' | awk -f gateways/istat.awk")
 
 
 # Ingest data from a set of files
