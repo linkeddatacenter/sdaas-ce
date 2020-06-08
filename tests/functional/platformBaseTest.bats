@@ -16,5 +16,4 @@
 	[ $__module_bg_reasoning -eq 1 ]
 	[ $__module_kb -eq 1 ]
 	[ $__module_learning -eq 1 ]
-	[ $__module_service_registry -eq 1 ]
 }

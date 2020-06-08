@@ -1,4 +1,0 @@
-if [ ! -z ${__module_service_registry+x} ]; then return ; else __module_service_registry=1 ; fi
-function SD_REGISTER_SERVICE { echo test ; }
-function SD_FETCH_SERVICE {	echo "an_endpoint|a_namespace|$1" ; }
-function SD_UNREGISTER_SERVICE { : ; }

@@ -3,84 +3,82 @@
 # Welcome to LinkedData.Center SDaaS Platform Community Edition (SDaaS-CE)
 
 A platform to build knowledge graphs.
-This is  vanilla open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
+
+This is vanilla open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
 See documentation in [SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home).
+
+The SDaaS requires [docker](https://www.docker.com/) 
+
+This implementation embeds a sdaas-rdfstore based on blazegraph.
 
 Try a short [on-line demo of the platform](https://en.linkeddata.center/l/sdaas-ce-demo/).
 
 ## 🚀 Quickstart
 
+This command will start a sdaas platform attached to an internal rdfstore with a micro memory foorprint
 
-	docker run --name sdmp -d -p 8080:8080 linkeddatacenter/sdaas-ce
-	docker exec -t sdmp sdaas -f build.sdaas --reboot
+	docker run --rm -ti -p 8080:8080 linkeddatacenter/sdaas-ce --reboot
 
-browse knowledge base at http://localhost:8080/sdaas
+browse local reasoner at http://localhost:8080/sdaas
 
-when finished:
+This command is the same but does not expose the workbench and use a small  memory foorprint
 
-	docker rm -f sdmp
+	docker run --rm -ti -e SDAAS_SIZE=small linkeddatacenter/sdaas-ce
+
+
+To run sdaas platform and starting the local rdfstore run:
+
+	docker run --rm -ti -e SD_NOWARMUP=1 linkeddatacenter/sdaas-ce
+	SD_START_LOCAL_REASONING_ENGINE
+
 
 ## Start test environment
 
 *Note on windows user: to mount local volume from a git bash `export MSYS_NO_PATHCONV=1` [see this note](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471)*
 
-	docker build -t sdaas-dev -f Dockerfile.dev .
-	docker run --name sdmp -d -p 8080:8080 -v ${PWD}:/workspace sdaas-dev
-	docker exec -ti sdmp bash
+	docker build -t sdaas  .
+	docker run --name sdmp --rm -ti -p 8080:8080 -v ${PWD}:/workspace --entrypoint bash sdaas
 
 
-## Smoke tests 
+**Smoke tests:** 
 
-Test sdaas cli:
+Test sdaas cli without the local reasoner:
 
-	sdaas --no-warmup
-	exit
-	
-run a quick platform test:
+	scripts/sdaas --no-warmup
 
-	cd tests/system/platform 
-	sdaas sdaas -f build.sdaas --reboot
-	cd ../../..
 
-point a browser to http://localhost:8080/sdaas/#query  and execute:
-
-	SELECT (COUNT(?s) AS ?edges) WHERE{?s?p?o}
-
-You shoud get about 24544 edges
-
-## Unit tests
+**Unit tests:**
 
 In order to run unit tests bats is needed (see https://github.com/bats-core/bats-core ):
 
 	bats tests/unit/
+	
 
-
-## Functional tests
+**Functional tests:**
 
 To run functional and system tests you will need the local instance of blazegraph.
 By default, test scripts expect blazegraph endpoint at http://localhost:8080/sdaas 
-but you can configure a different address exporting the the SD_REASONER_ENDPOINT.
+but you can configure a different address exporting the the SD_SPARQL_ENDPOINT.
 The instance of blazegraph must share /workspace volume with sdaas.
 
-**WARNING**: blazegraph needs at least 2GB RAM to run functional tests.
 
 For functional test execute: 
 
+	SD_START_LOCAL_REASONING_ENGINE
 	bats tests/functional
 
-## System tests
+**System tests:**
 
 For system test, verify that the host is able to access Internet then  execute 
 
 	bats tests/system/platform
+	SD_SPARQL_QUERY csv "SELECT (COUNT(?s) AS ?edges) WHERE{?s?p?o}"
+	SD_SPARQL_UPDATE "DROP ALL"
 
-
-## Free test environment
 
 To free the docker resources:
 
 	exit
-	docker rm -f sdmp 
 
 
 Have a look also to the [developer wiki](https://github.com/linkeddatacenter/sdaas-ce/wiki)

@@ -1,11 +1,11 @@
 #!/usr/bin/env bats
 
 function setup {
-	for stub in asserting caching rapper gzip curl chmod service_registry; do
+	for stub in asserting caching gzip curl chmod ; do
 		. "$BATS_TEST_DIRNAME/stubs/${stub}_stub.include"
 	done
 	
-	SD_REASONER_ENDPOINT="http://localhost:9999/blazegraph"
+	SD_REASONER_ENDPOINT="http://localhost:8080/sdaas"
 	STUB_CURL="--cmd"
 	SD_INCLUDE logging
 	SD_INCLUDE bg_reasoning true
@@ -17,30 +17,28 @@ function teardown {
 }
 
 
-@test "SD_CREATE_REASONER for kb" {	
+@test "No SD_CREATE_REASONER for kb" {	
 	run SD_CREATE_REASONER kb
-	[[ ${lines[0]} =~ "curl -s -X POST --data-binary"  ]]
-	[[ ${lines[3]} =~ "com.bigdata.rdf.sail.namespace=kb-"  ]]
-	[[ ${lines[17]} =~ "--header Content-Type:text/plain http://localhost:9999/blazegraph/namespace"  ]]
+	[ "$status" -ne 0 ]
 }
 
 
-@test "SD_DESTROY_REASONER" { 
-	run SD_DESTROY_REASONER 1
-	[[ ${lines[0]} =~ "curl -s -X DELETE an_endpoint/namespace/a_namespace"  ]]
+@test "no SD_DESTROY_REASONER" { 
+	run SD_DESTROY_REASONER "$SD_REASONER_ENDPOINT"
+	[ "$status" -ne 0 ]
 }
 
 
 
 @test "SD_REASONER_QUERY" {
-	run SD_REASONER_QUERY 1 'text/csv' '@query' 'tracefile'
+	run SD_REASONER_QUERY "$SD_REASONER_ENDPOINT/sparql" 'text/csv' '@query' 'tracefile'
 	[[ ${lines[0]} =~ "--header Content-Type: application/sparql-query" ]]
 }
 
 
 
 @test "SD_REASONER_LOAD" {
-	run SD_REASONER_LOAD 1 "$BATS_TEST_DIRNAME/data/two_triples.nt" guess graph
+	run SD_REASONER_LOAD  "$SD_REASONER_ENDPOINT/sparql" graph "$BATS_TEST_DIRNAME/data/two_triples.nt" guess 
 	#echo "$output" > /tmp/x.out
 	[[ ${lines[0]} = "gzip -c $BATS_TEST_DIRNAME/data/two_triples.nt" ]]
 	[[ ${lines[1]} = *"LOAD <file://"*".nt.gz> INTO GRAPH <graph>"* ]]

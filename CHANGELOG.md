@@ -4,9 +4,34 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [3.1.0]
 
+### Added
+
+- variables SD_UPLOAD_DIR, _SD_LOCAL_REASONER_STARTED, SDAAS_SIZE
+- functions to bg_reasoning: SD_START_LOCAL_REASONING_ENGINE, SD_WARMUP_REASONING_ENGINE, SD_STOP_LOCAL_REASONING_ENGINE
+- entrypoint script 
+
+### changed
+
+- aligned with sdaas_rdfstore 2.1.1
+- native local native kb implementation
+- change implementation of bg_reasoning
+- Swapped paramether in SD_REASONER_LOAD
+
+### Removed
+
+- service_registry
+- SDAAS binary from PATH
+
+### Fixed
+
+- SD_NOWARMUP from environment now works
+- typos in help and documentation
 
 ## [3.0.0]
+
+bridge release
 
 ### changed
 

@@ -12,12 +12,12 @@ _SD_REBOOT=0
 SD_VERBOSE=${SD_VERBOSE:-1}
 SD_DEBUG=${SD_DEBUG:-0}
 SD_QUADSTORE=${SD_QUADSTORE:-kb}
-SD_NOWARMUP=0
+SD_NOWARMUP=${SD_NOWARMUP:-0}
 
 function _SDAAS_FATAL_ERROR {
 	>&2 cat <<-EOT
 		Smart Data as a Service (SDaaS) platform - '$_SDAAS_AGENT_NAME' edition
-		Copyright (C) 2018 http://linkeddata.center/
+		Copyright (C) 2018-2020 http://linkeddata.center/
 			
 		valid options:
 			
@@ -33,7 +33,7 @@ function _SDAAS_FATAL_ERROR {
 		    defines the backed technology to be used. Supported technologies:
 		       kb (default) : use the kb archetype of the sddas reasoner as rdfstore. 
 		           Requires a running local instance of blazegraph, forces "pull" policy in a one step (i.e. no chunks support).
-		           This is the only option in the sdaas community edition
+		           This is the only option available in the sdaas community edition
 		       blazegraph: use a remote blazegraph instance (you need setup env variables SD_BG_ENDPOINT and  SD_BG_NAMESPACE)
 		       ekb: use a LinkedData.Center GDaaS instance (you need setup env variables SD_KBUSER and SD_KBPASSWORD)
 		       neptune: use a aws neptune instance (you need setup SD_NEPTUNE_INSTANCE, only works on same VPN as neptune host)
@@ -57,13 +57,15 @@ function _SDAAS_FATAL_ERROR {
 		-q, --quiet
 		   Do not show progress meter or error messages.
 		   
-		-u, --urispace
-		   use this namespace when creating new URIs. Default urn:sdaas:resource:		
+		-u, --urispace <uri namespace>
+		   use this namespace when creating new URIs. Default urn:sdaas:resource:
+		    same as defining the SD_URISPACE=<uri namespace> environment variable	
 			
 		--reboot
 		   WARNING!!! erase all knowledge base before executing the rebuild process
 		   
-		--no-warmup skipp the reasoner warmup (usefull if reasoner in sot needed)
+		--no-warmup skipp the reasoner warmup (usefull if reasoner in not loaded at startup) 
+		    same as defining the SD_NOWARMUP=1 environment variable
 			
 		--verbose <verbose_level>
 		   -v is equivalent to --verbose 1, --verbose 0 is an alias of -q
