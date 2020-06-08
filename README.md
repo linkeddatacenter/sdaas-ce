@@ -19,14 +19,14 @@ This command will start a sdaas platform attached to an internal rdfstore with a
 
 	docker run --rm -ti -p 8080:8080 linkeddatacenter/sdaas-ce --reboot
 
-browse local reasoner at http://localhost:8080/sdaas
+browse local reasoner at http://localhost:8080/sdaas type `exit` to leave the platform.
 
 This command is the same but does not expose the workbench and use a small  memory foorprint
 
 	docker run --rm -ti -e SDAAS_SIZE=small linkeddatacenter/sdaas-ce
 
 
-To run sdaas platform and starting the local rdfstore run:
+To run sdaas platform and starting by hand the local rdfstore:
 
 	docker run --rm -ti -e SD_NOWARMUP=1 linkeddatacenter/sdaas-ce
 	SD_START_LOCAL_REASONING_ENGINE
