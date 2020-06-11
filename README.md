@@ -50,8 +50,9 @@ Use this command to start and stop by hand a local micro rdfstore:
 
 Manually start sdaas cli without the local reasoner 
 
-	docker run --name sdmp --rm -ti -p 8080:8080 -v ${PWD}:/workspace --entrypoint bash sdaas
+	docker run --name sdmp --rm -ti -v ${PWD}:/workspace --entrypoint bash sdaas
 	scripts/sdaas --no-warmup
+	exit
 
 
 **Unit tests:**
@@ -71,7 +72,7 @@ The instance of blazegraph must share /workspace volume with sdaas.
 
 For functional test execute: 
 
-	SD_START_LOCAL_REASONING_ENGINE
+	/sdaas-start -d  #start embedded graph engine in background
 	bats tests/functional
 
 **System tests:**
@@ -79,8 +80,10 @@ For functional test execute:
 For system test, verify that the host is able to access Internet then  execute 
 
 	bats tests/system/platform
+	scripts/sdaas
 	SD_SPARQL_QUERY csv "SELECT (COUNT(?s) AS ?edges) WHERE{?s?p?o}"
 	SD_SPARQL_UPDATE "DROP ALL"
+	exit
 
 
 To free the docker resources:

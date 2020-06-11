@@ -10,10 +10,10 @@ function doTest {
 
 @test "Ingestion platform acceptance test..." {
 	run doTest
+	echo "$output" > /tmp/x
 	[  $status -eq 0 ]
-	#echo "$output" > /tmp/x
 	[[ "${lines[0]}"  =~ "SD_START_LOGGING logging"  ]]
-	[[ "${lines[1]}"  =~ "SD_START_LOGGING debug info in .cache/session_"  ]]
+	[[ "${lines[1]}"  =~ "SD_START_LOGGING debug info in /workspace/.cache/session_"  ]]
 	[[ "${lines[2]}"  =~ "LinkedData.Center SDaaS platform (Anassimene) using 'kb' graph technology."  ]]
 	[[ "${lines[3]}"  =~ "Erasing the knowledge base... (it could take a while)"  ]]
 	[[ "${lines[4]}"  =~ "starded learning of graph <urn:kees:config>"  ]]

@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+### Fixed
+
+- SD_QUEUE --> SD_CACHE in dockerfile
+- tests in README.md
 
 ## [3.2.0]
 

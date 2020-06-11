@@ -18,7 +18,7 @@ ENV SDAAS_LOG_DIR="$SDAAS_WORKSPACE"
 
 
 ###### Runtime variables
-ENV SD_QUEUE="$SDAAS_LOG_DIR/.queue"
+ENV SD_CACHE="$SDAAS_LOG_DIR/.cache"
 ENV SD_UPLOAD_DIR /var/spool/sdaas
 ENV SD_SPARQL_ENDPOINT http://localhost:8080/sdaas/sparql
 ENV SD_QUADSTORE kb
