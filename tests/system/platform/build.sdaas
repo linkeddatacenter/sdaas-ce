@@ -33,7 +33,7 @@ SD_EVAL_CONSTRUCTOR "urn:graph:trustmap_default" @axioms/default_trustmap.constr
 SD_EVAL_CONSTRUCTOR "urn:graph:calculated_trusts" @axioms/calculated_trusts.construct
 
 # Answer predefined questions
-SD_CREATE_DATA_DISTRIBUTION
+SD_CREATE_DATA_DISTRIBUTION /tmp/distrib
 
 # test knowledge base
 SD_DATA_TEST

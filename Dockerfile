@@ -1,6 +1,6 @@
 # Copyright (C) 2019-2020 LinkedData.Center - All Rights Reserved
 # Permission to copy and modify is granted under the MIT license
-FROM  linkeddatacenter/sdaas-rdfstore:2.1.2
+FROM  linkeddatacenter/sdaas-rdfstore:2.1.3
 
 LABEL authors="enrico@linkeddata.center"
 
@@ -11,22 +11,28 @@ RUN apt-get update ; \
 		gettext \
 		bats
 
-ENV SDAAS_BIN_DIR "/opt/sdaas-bin"
-ENV SDAAS_LOG_DIR /var/log/sdaas
-ENV SD_UPLOAD_DIR /tmp/upload
+###### Variables affecting the image building
+ENV SDAAS_BIN_DIR=/opt/sdaas
+ENV SDAAS_WORKSPACE=/workspace
+ENV SDAAS_LOG_DIR="$SDAAS_WORKSPACE"
+
+
+###### Runtime variables
+ENV SD_QUEUE="$SDAAS_LOG_DIR/.queue"
+ENV SD_UPLOAD_DIR /var/spool/sdaas
 ENV SD_SPARQL_ENDPOINT http://localhost:8080/sdaas/sparql
 ENV SD_QUADSTORE kb
-ENV SDAAS_SIZE micro
 
 COPY scripts "$SDAAS_BIN_DIR"
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY sdaas-entrypoint.sh /sdaas-entrypoint.sh
 
-RUN chmod -R 0755 "$SDAAS_BIN_DIR" /docker-entrypoint.sh; \
-	mkdir -p /workspace "$SDAAS_LOG_DIR" "$SD_UPLOAD_DIR" ; \
-	chown -R jetty.jetty /workspace /docker-entrypoint.sh "$SDAAS_LOG_DIR" "$SD_UPLOAD_DIR"
+RUN mkdir -p "${SDAAS_BIN_DIR}" "${SDAAS_LOG_DIR}" "${SD_UPLOAD_DIR}" "${SDAAS_WORKSPACE}" ; \
+	chmod -R 0755 "$SDAAS_BIN_DIR" /sdaas-entrypoint.sh; \
+	chown -R jetty.jetty "${SDAAS_WORKSPACE}" "$SDAAS_LOG_DIR" "$SD_UPLOAD_DIR"
+
 
 USER jetty
-WORKDIR  /workspace
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+WORKDIR "${SDAAS_WORKSPACE}"
+ENTRYPOINT ["/sdaas-entrypoint.sh"]
 CMD [""]

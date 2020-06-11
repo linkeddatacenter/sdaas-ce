@@ -1,46 +1,38 @@
 # Copyright (C) 2019 LinkedData.Center - All Rights Reserved
 # Permission to copy and modify is granted under the MIT license
-if [ ! -z ${__module_answering+x} ]; then return ; else __module_answering=1 ; fi
+if [ ! -z ${__module_teaching+x} ]; then return ; else __module_teaching=1 ; fi
 
 
-#  extra files to be copied in the distribution
+
 function SD_CREATE_DATA_DISTRIBUTION {
-	_SD_DIST_DIR=${_SD_DIST_DIR:="distrib/$(date +'%s')"}
-	_SD_QUESTIONS_DIR=${_SD_QUESTIONS_DIR:-"questions"}
-	mkdir -p "$_SD_DIST_DIR"
+	local distDir=${1:-"distrib/$(date +'%s')"}
+	local questionsDir=${2:-"questions"}
+	
+	mkdir -p "$distDir" || SD_FATAL_ERROR "Can't create $distDir"
 	local query
-	for query in "$_SD_QUESTIONS_DIR"/*.* ; do
+	for query in "$questionsDir"/*.* ; do
 		local filename=$(basename "$query")
 		local extension="${filename##*.}"
 		local filename="${filename%.*}"
 		case "$extension" in
 			sparql|rq|select)			
 				SD_LOG "Generating answers for $filename tabular question"
-				SD_SPARQL_QUERY "text/csv"  "@$query" >  "$_SD_DIST_DIR/$filename.csv"
+				SD_SPARQL_QUERY "text/csv"  "@$query" >  "$distDir/$filename.csv"
 				;;
 			construct)		
 				SD_LOG "Generating answers for $filename graph question"
-				SD_SPARQL_QUERY "text/turtle" "@$query" >  "$_SD_DIST_DIR/$filename.ttl"
+				SD_SPARQL_QUERY "text/turtle" "@$query" >  "$distDir/$filename.ttl"
 				;;
 			script)
-				SD_LOG "Generating answers from script in $_SD_DIST_DIR"
-				. $query
+				SD_LOG "Generating custom answers from script in $query"
+				. $query $distDir
 				;;
 			md)
-				SD_LOG "Copying $query"
-				cp $query "$_SD_DIST_DIR"
+				SD_LOG "Copying documentation file $query"
+				cp $query "$distDir"
 		esac 
 	done
 	
-	# Copy other files
-	for var in "$@" ;do
-		if [ -f "$var" ]; then
-			cp "$var" "$_SD_DIST_DIR"
-		fi
-	done
-	
-	printf "\n\n-------\nData extracted on $(date) from knowledge base\n" >> "$_SD_DIST_DIR/README.md"
-	
-	SD_LOG "Distribution completed in $_SD_DIST_DIR:"
+	SD_LOG "Distribution completed in $distDir:"
 }
 

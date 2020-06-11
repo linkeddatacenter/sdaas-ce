@@ -181,7 +181,7 @@ function SD_LEARN {
 			;;
 	esac
 	
-	# start an activity in not yes started
+	# start an activity in not yet started
 	if [ "$_SD_ACTIVITY_STATUS" != "running" ] ; then
 		_SD_START_ACTIVITY "learning of graph <$g>"
 	fi

@@ -29,7 +29,7 @@ function SD_START_LOCAL_REASONING_ENGINE {
 			SD_FATAL_ERROR "Error launcing local reasoner"
 		fi
 	fi
-	SD_LOG "$memoryFootprint SPARQL endpoint: http://localhost:8080/sdaas/sparql (logs in $SD_CACHE/rdfstore.log)"
+	SD_LOG "$memoryFootprint SPARQL endpoint available at http://localhost:8080/sdaas/sparql (logs in $SD_CACHE/rdfstore.log)"
 }
 
 
@@ -49,10 +49,10 @@ function SD_WARMUP_REASONING_ENGINE {
 	fi
 }
 
+
+
 ##
 # @description  creates a reasoner based on blazegraph
-#
-# @returns the blazegraph endpoin (you can use with SD_CREATE_REASONER
 ##
 function SD_STOP_LOCAL_REASONING_ENGINE {
 	SD_DEBUG_INFO "$(/sdaas-stop)"
@@ -96,7 +96,7 @@ function SD_CREATE_REASONER {
 		"$endpoint/namespace")" || SD_FATAL_ERROR "SD_CREATE_REASONER error creating namespace"
 	SD_DEBUG_INFO "$cmdResult"
 	
-	## Load specific archetipe resources
+	## Load specific archetype resources
 	if [ -r "${archetypes}/${archetype}.ttl" ] ; then
 		SD_REASONER_LOAD $namespace "${archetypes}/${archetype}.ttl" turtle "urn:sdaas:archetype:${archetype}"
 	fi
@@ -198,7 +198,7 @@ function SD_REASONER_UPDATE {
 		-X POST \
 		--data-binary "$data" \
 		--header "Content-Type: application/sparql-update" \
-	|| SD_FATAL_ERROR "SD_REASONER_UPDATE returned $httpStatus: see $output"
+	|| SD_FATAL_ERROR "SD_REASONER_UPDATE failed: see $output"
 	
 	if [ $SD_DEBUG -eq 0 ]; then  rm -f "$output"; fi
 }

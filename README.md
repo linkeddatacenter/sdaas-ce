@@ -4,7 +4,7 @@
 
 A platform to build knowledge graphs.
 
-This is vanilla open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
+This is an open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
 See documentation in [SDaaS wiki](https://bitbucket.org/linkeddatacenter/sdaas/wiki/Home).
 
 The SDaaS requires [docker](https://www.docker.com/) 
@@ -21,29 +21,36 @@ This command will start a sdaas platform attached to an internal rdfstore with a
 
 browse local reasoner at http://localhost:8080/sdaas type `exit` to leave the platform.
 
-This command is the same but does not expose the workbench and use a small  memory foorprint
+This command is the same as the previous but does not expose the workbench and uses a small memory foorprint
 
 	docker run --rm -ti -e SDAAS_SIZE=small linkeddatacenter/sdaas-ce
 
 
-To run sdaas platform and starting by hand the local rdfstore:
+To run sdaas platform withouth the local rdfstore 
 
 	docker run --rm -ti -e SD_NOWARMUP=1 linkeddatacenter/sdaas-ce
-	SD_START_LOCAL_REASONING_ENGINE
+	
+Use this command to start and stop by hand a local micro rdfstore:
+
+	SD_START_LOCAL_REASONING_ENGINE # you can specify the required memory footprint, default=micro
+	SD_STOP_LOCAL_REASONING_ENGINE
 
 
 ## Start test environment
 
-*Note on windows user: to mount local volume from a git bash `export MSYS_NO_PATHCONV=1` [see this note](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471)*
+** build local image:**
+
 
 	docker build -t sdaas  .
-	docker run --name sdmp --rm -ti -p 8080:8080 -v ${PWD}:/workspace --entrypoint bash sdaas
 
 
 **Smoke tests:** 
 
-Test sdaas cli without the local reasoner:
+*Note on windows user: to mount local volume from a git bash `export MSYS_NO_PATHCONV=1` [see this note](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471)*
 
+Manually start sdaas cli without the local reasoner 
+
+	docker run --name sdmp --rm -ti -p 8080:8080 -v ${PWD}:/workspace --entrypoint bash sdaas
 	scripts/sdaas --no-warmup
 
 
