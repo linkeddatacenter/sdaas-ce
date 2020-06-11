@@ -4,6 +4,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+
+## [3.2.0]
+
+### Added
+
+- params to SD_CREATE_DATA_DISTRIBUTION
+
+### Removed
+
+- variables _SD_DIST_DIR and _SD_QUESTIONS_DIR in SD_CREATE_DATA_DISTRIBUTION
+- readme in distand extra file copied
+
+### Fixed:
+
+- renamed __module_answering in __module_teaching
+
 ## [3.1.0]
 
 ### Added
@@ -12,7 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - functions to bg_reasoning: SD_START_LOCAL_REASONING_ENGINE, SD_WARMUP_REASONING_ENGINE, SD_STOP_LOCAL_REASONING_ENGINE
 - entrypoint script 
 
-### changed
+### Changed
 
 - aligned with sdaas_rdfstore 2.1.1
 - native local native kb implementation
@@ -178,7 +194,9 @@ aligned with SDaaS [2.1.0]
 First release, aligned with SDaaS [2.0.3] (Talete)
 
 
-[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.0.0...HEAD
+[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.0...HEAD
+[3.2.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.0...3.1.0
+[3.1.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.1.0...3.0.0
 [3.0.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.5.0...3.0.0
 [2.5.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.4.0...2.5.0
 [2.4.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.3.2...2.4.0

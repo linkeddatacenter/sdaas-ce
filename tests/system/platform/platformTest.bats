@@ -1,11 +1,10 @@
 #!/usr/bin/env bats
 
 function doTest {
-    export _SD_DIST_DIR=/tmp/distrib
     rm -rf "/tmp/distrib"
     cd $BATS_TEST_DIRNAME
     ../../../scripts/sdaas -f build.sdaas --reboot
-    cat $_SD_DIST_DIR/triplecounts.csv
+    cat /tmp/distrib/triplecounts.csv
  }
 
 
@@ -35,9 +34,9 @@ function doTest {
 	[[ "${lines[19]}" =~ "starded reasoning on graph <urn:graph:calculated_trusts>"  ]]
 	[[ "${lines[20]}" =~ "evaluating axiom @axioms/calculated_trusts.construct..."  ]]
 	[[ "${lines[21]}" =~ "completed by replacing graph <urn:graph:calculated_trusts>"  ]]
-	[[ "${lines[22]}" =~ "Copying questions/README.md"  ]]
+	[[ "${lines[22]}" =~ "Copying documentation file questions/README.md"  ]]
 	[[ "${lines[23]}" =~ "Generating answers for triplecounts tabular question"  ]]
-	[[ "${lines[24]}" =~ "Distribution completed"  ]]
+	[[ "${lines[24]}" =~ "Distribution completed in /tmp/distrib"  ]]
 	[[ "${lines[25]}" =~ "Testing knowledge graph integrity..."  ]]
 	[[ "${lines[26]}" =~ "1_istat_exists.ask...OK"  ]]
 	[[ "${lines[27]}" =~ "Knowledge ingestion succesfully completed"  ]]

@@ -41,7 +41,7 @@ function SD_BEGIN_INGESTION {
 	
 	# Auto Warmup rdfstore
 	if [ $SD_NOWARMUP -eq 0 ]; then
-		SD_SPARQL_WARMUP
+		SD_WARMUP
 	fi
 	
 	SD_LOG "LinkedData.Center SDaaS platform ($_SD_RELEASE_NAME) using '$SD_QUADSTORE' graph technology."
