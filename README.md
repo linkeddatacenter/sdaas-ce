@@ -41,7 +41,7 @@ Use this command to start and stop by hand a local micro rdfstore:
 ** build local image:**
 
 
-	docker build -t sdaas  .
+	docker build -t sdaas .
 
 
 **Smoke tests:** 
@@ -82,6 +82,8 @@ For system test, verify that the host is able to access Internet then  execute
 	bats tests/system/platform
 	scripts/sdaas
 	SD_SPARQL_QUERY csv "SELECT (COUNT(?s) AS ?edges) WHERE{?s?p?o}"
+	curl -d ESTCARD http://localhost:8080/sdaas/sparql
+	# in both case you should read 24544 triples
 	SD_SPARQL_UPDATE "DROP ALL"
 	exit
 
@@ -99,8 +101,8 @@ Have a look also to the [developer wiki](https://github.com/linkeddatacenter/sda
 To push a new docker image to docker hub:
 
 
-	docker build -t linkeddatacenter/sdaas-ce .
 	docker login
+	docker build -t linkeddatacenter/sdaas-ce .
 	# input the docker hub credentials...
 	docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:x.x.x
 	docker push linkeddatacenter/sdaas-ce

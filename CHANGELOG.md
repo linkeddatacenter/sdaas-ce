@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [3.2.1]
+
 ### Fixed
 
 - SD_QUEUE --> SD_CACHE in dockerfile
@@ -198,7 +200,8 @@ aligned with SDaaS [2.1.0]
 First release, aligned with SDaaS [2.0.3] (Talete)
 
 
-[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.0...HEAD
+[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.1...HEAD
+[3.2.1]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.1...3.1.0
 [3.2.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.0...3.1.0
 [3.1.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.1.0...3.0.0
 [3.0.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/2.5.0...3.0.0
