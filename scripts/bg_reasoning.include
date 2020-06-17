@@ -77,9 +77,10 @@ function SD_STOP_LOCAL_REASONING_ENGINE {
 # @return the sparql service endpoint fot reasoner 
 ##
 function SD_CREATE_REASONER {
+	SD_REQUIRES_VAR 1
 	local archetype="$1"
-	local endpoint=${1:-"http://localhost:8080/sdaas"}
-	local namespace="${2:-"$1-$RANDOM"}"
+	local endpoint=${2:-"http://localhost:8080/sdaas"}
+	local namespace="${3:-"$1-$RANDOM"}"
 	
 	[ "$namespace" != "kb" ] || SD_FATAL_ERROR "SD_CREATE_REASONER kb namespace is reserved"
 
@@ -90,11 +91,17 @@ function SD_CREATE_REASONER {
 	[ -f  "${archetypes}/${archetype}.txt" ] || SD_FATAL_ERROR "Invalid reasoner archetype $archetype."
 
 	local description=$(cat "$archetypes/${archetype}.txt" | sed "s/%namespace/$namespace/g")
-	local cmdResult="$(curl -s -X POST \
+	
+	local outputBuffer=$(SD_MK_DEBUG_TMP_FILE new_namespace)
+	_SD_CURL_CMD \
+		"$endpoint/namespace" \
+		"$outputBuffer" \
+		-X POST \
 		--data-binary "$description" \
 		--header 'Content-Type:text/plain' \
-		"$endpoint/namespace")" || SD_FATAL_ERROR "SD_CREATE_REASONER error creating namespace"
-	SD_DEBUG_INFO "$cmdResult"
+	|| SD_FATAL_ERROR "SD_CREATE_REASONER error creating namespace, see $outputBuffer"	
+	SD_DEBUG_INFO "See create namespace output in $outputBuffer"
+	if [ $SD_DEBUG -eq 0 ] ; then  rm -f "$outputBuffer" ; fi
 	
 	## Load specific archetype resources
 	if [ -r "${archetypes}/${archetype}.ttl" ] ; then
@@ -110,14 +117,16 @@ function SD_CREATE_REASONER {
 # @arg $1 a blazegraph namespace sparql endpoint
 ##
 function SD_DESTROY_REASONER {
-	local endpoint="$1"
+	SD_REQUIRES_VAR 1
+	local sparqlEndpoint="$1"
 		
 	SD_DEBUG_INFO "In SD_DESTROY_REASONER ${endpoint}"
 	
-	[[ "$endpoint" =~ "namespace/.+/sparql" ]] || SD_FATAL_ERROR "SD_DESTROY_REASONER unable to destroy $endpoint"
+	[[ $sparqlEndpoint =~ namespace/.+/sparql ]] || SD_FATAL_ERROR "SD_DESTROY_REASONER unable to destroy $endpoint"
 	
 	## Ignore errors in deleting a reasoner	
-	SD_DEBUG_INFO "$(curl -s -X DELETE "$namespaceEndpoint")"
+	endpoint=$(dirname "$sparqlEndpoint")
+	SD_DEBUG_INFO "$(_SD_CURL_CMD "$endpoint" - -X DELETE)"
 }
 
 

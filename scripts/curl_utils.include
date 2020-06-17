@@ -13,7 +13,7 @@ _SD_DEFAULT_CURL_OPTIONS=${_SD_DEFAULT_CURL_OPTIONS:-"-L --compressed --retry 3 
 # A downloader must accept at least two parameters:
 # $1 = the url to download
 # $2 = the location of the output file
-# Other paramethers can be added
+# Other parameters can be added
 #
 # It must return 0 if download succeded or > 0 otherwhise
 #
@@ -30,10 +30,10 @@ function _SD_CURL_CMD {
 	
 	curlCmd+=(-s -w "%{http_code}" -o "$outputPath" "$url")
 	local httpStatus=$("${curlCmd[@]}")	
-	if [ "$httpStatus" != "200" ] ; then
+	if [[ $httpStatus == 2* ]] ; then
+		return 0
+	else
 		SD_DEBUG_INFO "access to $url failed with result $httpStatus, output in $outputPath"
 		return 1
-	else
-		return 0
 	fi	
 }

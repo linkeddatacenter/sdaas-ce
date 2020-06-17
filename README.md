@@ -51,7 +51,7 @@ Use this command to start and stop by hand a local micro rdfstore:
 Manually start sdaas cli without the local reasoner 
 
 	docker run --name sdmp --rm -ti -v ${PWD}:/workspace --entrypoint bash sdaas
-	scripts/sdaas --no-warmup
+	scripts/sdaas
 	exit
 
 
