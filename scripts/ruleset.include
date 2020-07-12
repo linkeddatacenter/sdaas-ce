@@ -57,7 +57,7 @@ function _SD_COMMIT_REASONING {
 
 
 
-# $1 must be the grap base name space
+# $1 must be the graph base name space
 # $2 must be the rule directory that contains axioms
 # A rule can be:
 #  - a sparql query construct directive (if axiomExtension = construct)
