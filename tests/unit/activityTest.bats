@@ -31,7 +31,7 @@ function teardown {
 	[ "${lines[0]}"  = "@prefix : <urn:activity.test_> ." ]
 	[ "${lines[1]}"  = "@prefix prov: <http://www.w3.org/ns/prov#> ." ]
 	[ "${lines[2]}"  = "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ." ]
-	[ "${lines[3]}"  = "@prefix xsd: <http://www.w3.org/2000/10/XMLSchema#> ." ]	
+	[ "${lines[3]}"  = "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ." ]	
 	[ "${lines[4]}"  = "@prefix dct: <http://purl.org/dc/terms/> ." ]
 	[ "${lines[5]}"  = "@prefix sd: <http://www.w3.org/ns/sparql-service-description#> ." ]
 	[ "${lines[6]}"  = "@prefix kees: <http://linkeddata.center/kees/v1#> ." ]	
@@ -41,6 +41,6 @@ function teardown {
 	[ "${lines[10]}" = "    prov:agent <https://linkeddata.center/agent/anassimene#me> ;" ]
 	[ "${lines[11]}" = "    prov:hadRole kees:namedGraphGenerator ;" ]
 	[ "${lines[12]}" = "    prov:hadPlan \"\"\"commento esplicito\"\"\"." ]
-	[ "${lines[13]}" = ":activity prov:startedAtTime \"Sun Dec 24 00:00:00 UTC 2017\"^^xsd:datetime ." ]
+	[ "${lines[13]}" = ":activity prov:startedAtTime \"Sun Dec 24 00:00:00 UTC 2017\"^^xsd:dateTime ." ]
 }
 

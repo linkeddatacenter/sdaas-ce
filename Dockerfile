@@ -1,15 +1,31 @@
 # Copyright (C) 2019-2020 LinkedData.Center - All Rights Reserved
 # Permission to copy and modify is granted under the MIT license
-FROM  linkeddatacenter/sdaas-rdfstore:2.1.4
+FROM alpine/helm as helm
+FROM mikefarah/yq as yq
+FROM  linkeddatacenter/sdaas-rdfstore:2.1.5
 
 LABEL authors="enrico@linkeddata.center"
 
 USER root
-RUN apt-get update ; \
+COPY --from=helm /usr/bin/helm /usr/bin/helm
+COPY --from=yq /usr/bin/yq /usr/bin/yq
+
+ARG SHACLVER=1.3.2
+ARG SHACLROOT=/opt/shacl-${SHACLVER}/bin
+
+RUN apt-get update && \
 	apt-get install -y --no-install-recommends \
-		curl \
 		gettext \
-		bats
+		bats \
+		git \
+		unzip \
+		jq \
+		csvtool && \
+    curl --output /tmp/shacl.zip  https://repo1.maven.org/maven2/org/topbraid/shacl/${SHACLVER}/shacl-${SHACLVER}-bin.zip && \
+    unzip /tmp/shacl.zip -d /opt && \
+    chmod +x ${SHACLROOT}/*
+
+
 
 ###### Variables affecting the image building
 ENV SDAAS_BIN_DIR=/opt/sdaas

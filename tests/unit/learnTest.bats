@@ -38,11 +38,11 @@ function teardown {
 	
 	run cat "$SD_ACTIVITY_DIR/prov.ttl"
 	[ $status -eq 0 ]
-	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
+	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :extraction. :extraction a prov:Activity; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:dateTime .' ]
 	[ "${lines[15]}" = ":extraction prov:generated <urn:sdaas:cache:activity.test:in/$filename1.nt> ." ]
 	[ "${lines[16]}" = ":extraction prov:generated <urn:sdaas:cache:activity.test:in/$filename2.ttl> ." ]
 	[ "${lines[17]}" = ":extraction prov:generated <urn:sdaas:cache:activity.test:in/$filename3.rdf> ." ]
-	[ "${lines[18]}" = ':extraction prov:endedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
+	[ "${lines[18]}" = ':extraction prov:endedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:dateTime .' ]
 }
 
 
@@ -74,13 +74,13 @@ function TRANSFORMER_STUB {
 	run cat "$SD_ACTIVITY_DIR/prov.ttl"
 	#cp "$SD_ACTIVITY_DIR/prov.ttl" /tmp/x
 	[ $status -eq 0 ]
-	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
+	[ "${lines[14]}" = ':activity prov:wasInfluencedBy :transformation. :transformation a prov:Activity; prov:wasInformedBy :extraction; prov:startedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:dateTime .' ]
 	[ "${lines[15]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:in/file1.nt.gz)>; prov:generated <urn:sdaas:cache:activity.test:unzipped/file1.nt> .' ]
 	[ "${lines[16]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:in/file2.ttl.gz)>; prov:generated <urn:sdaas:cache:activity.test:unzipped/file2.ttl> .' ]
 	[ "${lines[17]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:unzipped/file1.nt)>; prov:generated <urn:sdaas:cache:activity.test:out/file1.rdf> .' ]
 	[ "${lines[18]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:unzipped/file2.ttl)>; prov:generated <urn:sdaas:cache:activity.test:out/file2.rdf> .' ]
 	[ "${lines[19]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:in/file3.csv)>; prov:generated <urn:sdaas:cache:activity.test:cutted/file3.csv> .' ]
 	[ "${lines[20]}" = ':transformation prov:used <urn:sdaas:cache:activity.test:cutted/file3.csv)>; prov:generated <urn:sdaas:cache:activity.test:out/file3.csv> .' ]
-	[ "${lines[21]}" = ':transformation prov:endedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:datetime .' ]
+	[ "${lines[21]}" = ':transformation prov:endedAtTime "Sun Dec 24 00:00:00 UTC 2017"^^xsd:dateTime .' ]
 }
 

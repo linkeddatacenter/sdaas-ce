@@ -46,13 +46,18 @@ Use this command to start and stop by hand a local micro rdfstore:
 
 **Smoke tests:** 
 
-*Note on windows user: to mount local volume from a git bash `export MSYS_NO_PATHCONV=1` [see this note](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line#34386471)*
-
 Manually start sdaas cli without the local reasoner 
 
-	docker run --name sdmp --rm -ti -v ${PWD}:/workspace --entrypoint bash sdaas
-	scripts/sdaas
-	exit
+```
+docker run --name sdmp --rm -ti -v ${PWD}:/workspace --entrypoint bash sdaas
+git --version
+jq --version
+yq --version
+gettext --version
+csvtool
+scripts/sdaas
+exit
+```
 
 
 **Unit tests:**
@@ -72,21 +77,24 @@ The instance of blazegraph must share /workspace volume with sdaas.
 
 For functional test execute: 
 
-	/sdaas-start -d  #start embedded graph engine in background
-	bats tests/functional
+```
+/sdaas-start -d  #start embedded graph engine in background
+bats tests/functional
+```
 
 **System tests:**
 
 For system test, verify that the host is able to access Internet then  execute 
 
-	bats tests/system/platform
-	scripts/sdaas
-	SD_SPARQL_QUERY csv "SELECT (COUNT(?s) AS ?edges) WHERE{?s?p?o}"
-	curl -d ESTCARD http://localhost:8080/sdaas/sparql
-	# in both case you should read 24544 triples
-	SD_SPARQL_UPDATE "DROP ALL"
-	exit
-
+```
+bats tests/system/platform
+scripts/sdaas
+SD_SPARQL_QUERY csv "SELECT (COUNT(?s) AS ?edges) WHERE{?s?p?o}"
+curl -d ESTCARD http://localhost:8080/sdaas/sparql
+# in both case you should >  31K triples 
+SD_SPARQL_UPDATE "DROP ALL"
+exit
+```
 
 To free the docker resources:
 
@@ -100,20 +108,21 @@ Have a look also to the [developer wiki](https://github.com/linkeddatacenter/sda
 
 To push a new docker image to docker hub:
 
-
-	docker login
-	docker build -t linkeddatacenter/sdaas-ce .
-	# input the docker hub credentials...
-	docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:x.x.x
-	docker push linkeddatacenter/sdaas-ce
-
+```
+docker login
+# input the docker hub credentials...
+docker build -t linkeddatacenter/sdaas-ce .
+docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:3.3.0
+docker push linkeddatacenter/sdaas-ce
+docker push linkeddatacenter/sdaas-ce:3.3.0
+```
 
 
 ## Credits and license
 
 The sdaas community edition platform is derived from [LinkedData.Center SDaas Product](https://it.linkeddata.center/p/sdaas) and licensed with MIT by LinkedData.Center
 
-Copyright (C) 2018-2020 LinkedData.Center SRL
+Copyright (C) 2018-2021 LinkedData.Center SRL
  - All Rights Reserved
 Permission to copy and modify is granted under the [MIT license](LICENSE)
 
