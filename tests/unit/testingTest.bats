@@ -20,4 +20,5 @@ function teardown {
 	[[ "${lines[0]}" =~ 'sdaas Sun Dec 24 00:00:00 UTC 2017 - Testing knowledge graph integrity...' ]]
 	[[ "${lines[1]}" =~ '01_test.ask...SD_SPARQL_QUERY xml @tests/unit/data/testing/01_test.ask' ]]
 	[[ "${lines[2]}" =~ '02_test.ask...SD_SPARQL_QUERY xml @tests/unit/data/testing/02_test.ask' ]]
+	[[ "${lines[3]}" =~ '03_test.select...SD_SPARQL_QUERY csv-h @tests/unit/data/testing/03_test.select' ]]
 }

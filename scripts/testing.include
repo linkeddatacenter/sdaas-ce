@@ -13,38 +13,35 @@ function SD_DATA_TEST {
 	
 	SD_LOG  "Testing knowledge graph integrity..."
 	
-	if [ $(find ${testDir} -name "*.ask" ) ] ; then
-		for testFile in $(ls -v ${testDir}/*ask); do
-		    echo -n "   $(basename $testFile)..."
-		    case "$(SD_SPARQL_QUERY xml @$testFile)" in
-		        *true* ) echo "OK";;
-		        *false* ) 
-		        	echo "FAIL"
-		        	if [ "$failMode" = "FASTFAIL" ]; then
-		        		SD_FATAL_ERROR "test FASTFAIL"
-		        	else
-		        		failedTests=$((failedTests++))
-		        	fi
-		        	;;
-		    esac
-		done
-	fi
-	
-	if [ $(find ${testDir} -name "*.select" ) ] ; then
-		for testFile in $(ls -v ${testDir}/*select); do
-		    echo -n "   $(basename $testFile)..."
-		    if [ -z "$(SD_SPARQL_QUERY csv-h @$testFile)" ] ; then
-		    	echo "OK"
-		    else
+
+	for testFile in $(find ${testDir} -name "*.ask"); do
+	    echo -n "   $(basename $testFile)..."
+	    case "$(SD_SPARQL_QUERY xml @$testFile)" in
+	        *true* ) echo "OK";;
+	        *false* ) 
 	        	echo "FAIL"
 	        	if [ "$failMode" = "FASTFAIL" ]; then
 	        		SD_FATAL_ERROR "test FASTFAIL"
 	        	else
 	        		failedTests=$((failedTests++))
 	        	fi
-		    fi
-		done
-	fi
+	        	;;
+	    esac
+	done
+
+	for testFile in $(find ${testDir} -name "*.select" ); do
+	    echo -n "   $(basename $testFile)..."
+	    if [ -z "$(SD_SPARQL_QUERY csv-h @$testFile)" ] ; then
+	    	echo "OK"
+	    else
+        	echo "FAIL"
+        	if [ "$failMode" = "FASTFAIL" ]; then
+        		SD_FATAL_ERROR "test FASTFAIL"
+        	else
+        		failedTests=$((failedTests++))
+        	fi
+	    fi
+	done
 	
 	if [ "$failMode" = "FAILCHECK " ] && [ $failedTests -gt 0 ] ; then
 		SD_FATAL_ERROR "abort on$failedTests test failed."
