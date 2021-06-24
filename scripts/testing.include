@@ -5,17 +5,46 @@ if [ ! -z ${__module_testing+x} ]; then return ; else __module_testing=1 ; fi
 #  extra files to be copied in the distribution
 function SD_DATA_TEST {
 	local testDir=${1:-"tests"}
+	local failMode=${2:-CONTINUE}
+	
+	local failedTests=0
 	
 	if [ ! -d "$testDir" ]; then return 0; fi
 	
 	SD_LOG  "Testing knowledge graph integrity..."
 	
-	for testFile in $(ls -v ${testDir}/*ask); do
+
+	for testFile in $(find ${testDir} -name "*.ask"); do
 	    echo -n "   $(basename $testFile)..."
 	    case "$(SD_SPARQL_QUERY xml @$testFile)" in
 	        *true* ) echo "OK";;
-	        *false* ) echo "FAIL";;
+	        *false* ) 
+	        	echo "FAIL"
+	        	if [ "$failMode" = "FASTFAIL" ]; then
+	        		SD_FATAL_ERROR "test FASTFAIL"
+	        	else
+	        		failedTests=$((failedTests++))
+	        	fi
+	        	;;
 	    esac
 	done
+
+	for testFile in $(find ${testDir} -name "*.select" ); do
+	    echo -n "   $(basename $testFile)..."
+	    if [ -z "$(SD_SPARQL_QUERY csv-h @$testFile)" ] ; then
+	    	echo "OK"
+	    else
+        	echo "FAIL"
+        	if [ "$failMode" = "FASTFAIL" ]; then
+        		SD_FATAL_ERROR "test FASTFAIL"
+        	else
+        		failedTests=$((failedTests++))
+        	fi
+	    fi
+	done
+	
+	if [ "$failMode" = "FAILCHECK " ] && [ $failedTests -gt 0 ] ; then
+		SD_FATAL_ERROR "abort on$failedTests test failed."
+	fi
 }
 

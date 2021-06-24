@@ -4,6 +4,27 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [3.3.0]
+
+### Fixed
+
+- bug #16 (bad dateTime spelling)
+- bug #15 (obsolete namespace for xsd)
+
+### Changed
+
+- aligned with new rdfStore (issue #17)
+- changed the default SD_CACHE . Now is /tmp/sdaas (issue #13)
+- prov plan message "calling axiom.." changed to "inferencing axiom.." (issue #7)
+- more time to warmup (issue #9)
+
+### Added
+
+- Add support to select in testing ( #issue 14)
+- issue #8 . Added a extra parameter to SD_DATA_TEST: if equal to "FASTFAIL" returns 1 on first test failed, if equal to "FAILCHECK" return 1 if one test failed
+- added git, helm, yq, jq, unzip and csvtool support (issue #10)
+- added shacl support enhancement (issue #11)
+
 ## [3.2.2]
 
 ### Fixed

@@ -21,7 +21,7 @@ _SD_ACTIVITY_STATUS='noop'
 # @arg $1 a prov statement template
 function _SD_LOG_PROV {
 	local now="$(date '+%Y-%m-%dT%T')"
-	local provStatement="${1//TIMESTAMP/\"$now\"^^xsd:datetime}"
+	local provStatement="${1//TIMESTAMP/\"$now\"^^xsd:dateTime}"
 	echo "$provStatement" >> "$SD_ACTIVITY_DIR/prov.ttl"
 }
 
@@ -64,7 +64,7 @@ function _SD_START_ACTIVITY {
 		@prefix : <${SD_URISPACE}${SD_ACTIVITY_ID}_> .
 		@prefix prov: <http://www.w3.org/ns/prov#> .
 		@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-		@prefix xsd: <http://www.w3.org/2000/10/XMLSchema#> .
+		@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 		@prefix dct: <http://purl.org/dc/terms/> .
 		@prefix sd: <http://www.w3.org/ns/sparql-service-description#> .
 		@prefix kees: <http://linkeddata.center/kees/v1#> .

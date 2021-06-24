@@ -20,7 +20,7 @@ ISTAT_GATEWAY=("|in|out|.ttl|iconv -f ISO88592 -t UTF-8|tr -d '\r' | awk -f gate
 SD_LEARN "urn:kees:config" KEES_SRCs[@]
 
 # Ingest data from a simple RDF web resource 
-SD_LEARN http://schema.org/ http://schema.org/version/3.4/schema.ttl
+SD_LEARN http://schema.org/ https://schema.org/version/latest/schemaorg-current-https.ttl
 
 # Ingest data from a  web resource through a gateway
 SD_LEARN \

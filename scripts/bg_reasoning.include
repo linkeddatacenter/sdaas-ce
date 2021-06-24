@@ -44,7 +44,7 @@ function SD_WARMUP_REASONING_ENGINE {
 			SD_LOG "Reasoning engine warming up $retry"
 			sleep $(($retry*2))
 			let retry++
-			[ $retry -le 5 ] || SD_FATAL_ERROR "Sorry... internal reasoner startup failed.."
+			[ $retry -le 6 ] || SD_FATAL_ERROR "Sorry... internal reasoner startup failed.."
 		done 
 	fi
 }
