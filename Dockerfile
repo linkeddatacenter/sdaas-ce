@@ -31,6 +31,7 @@ RUN apt-get update && \
 ENV SDAAS_BIN_DIR=/opt/sdaas
 ENV SDAAS_WORKSPACE=/workspace
 ENV SDAAS_LOG_DIR="$SDAAS_WORKSPACE"
+ENV PATH=${SHACLROOT}:${PATH}
 
 
 ###### Runtime variables

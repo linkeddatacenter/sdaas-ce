@@ -54,7 +54,8 @@ git --version
 jq --version
 yq --version
 gettext --version
-csvtool
+command -v csvtool
+command -v shaclvalidate.sh
 scripts/sdaas
 exit
 ```
