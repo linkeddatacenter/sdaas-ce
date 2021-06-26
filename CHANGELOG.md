@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [3.3.1]
+
+### Fixed
+
+- bug #19 (FAILCHECK mode does not work)
+
 ## [3.3.0]
 
 ### Fixed
