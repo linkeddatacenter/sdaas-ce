@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [3.3.1]
+
+### Fixed
+
+- bug #19 (FAILCHECK mode does not work)
+- references in change log
+
 ## [3.3.0]
 
 ### Fixed
@@ -228,7 +235,9 @@ aligned with SDaaS [2.1.0]
 First release, aligned with SDaaS [2.0.3] (Talete)
 
 
-[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.2...HEAD
+[Unreleased]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.3.1...HEAD
+[3.3.1]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.3.1...3.3.0
+[3.3.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.3.0...3.2.2
 [3.2.2]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.2...3.1.1
 [3.2.1]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.1...3.1.0
 [3.2.0]:  https://github.com/linkeddatacenter/sdaas-ce/compare/3.2.0...3.1.0

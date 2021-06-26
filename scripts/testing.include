@@ -23,7 +23,7 @@ function SD_DATA_TEST {
 	        	if [ "$failMode" = "FASTFAIL" ]; then
 	        		SD_FATAL_ERROR "test FASTFAIL"
 	        	else
-	        		failedTests=$((failedTests++))
+	        		((failedTests++))
 	        	fi
 	        	;;
 	    esac
@@ -38,13 +38,13 @@ function SD_DATA_TEST {
         	if [ "$failMode" = "FASTFAIL" ]; then
         		SD_FATAL_ERROR "test FASTFAIL"
         	else
-        		failedTests=$((failedTests++))
+        		((failedTests++))
         	fi
 	    fi
 	done
 	
-	if [ "$failMode" = "FAILCHECK " ] && [ $failedTests -gt 0 ] ; then
-		SD_FATAL_ERROR "abort on$failedTests test failed."
+	if [ "$failMode" = "FAILCHECK " -a $failedTests -gt 0 ] ; then
+		SD_FATAL_ERROR "abort on $failedTests test failed."
 	fi
 }
 
