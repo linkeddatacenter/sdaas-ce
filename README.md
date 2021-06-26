@@ -113,9 +113,9 @@ To push a new docker image to docker hub:
 docker login
 # input the docker hub credentials...
 docker build -t linkeddatacenter/sdaas-ce .
-docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:3.3.0
+docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:3.3.1
 docker push linkeddatacenter/sdaas-ce
-docker push linkeddatacenter/sdaas-ce:3.3.0
+docker push linkeddatacenter/sdaas-ce:3.3.1
 ```
 
 
