@@ -43,7 +43,7 @@ function SD_DATA_TEST {
 	    fi
 	done
 	
-	if [ "$failMode" = "FAILCHECK " -a $failedTests -gt 0 ] ; then
+	if [ "$failMode" = "FAILCHECK" -a $failedTests -gt 0 ] ; then
 		SD_FATAL_ERROR "abort on $failedTests test failed."
 	fi
 }
