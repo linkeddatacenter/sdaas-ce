@@ -11,7 +11,19 @@ The SDaaS requires [docker](https://www.docker.com/)
 
 This implementation embeds a sdaas-rdfstore based on blazegraph.
 
-Try a short [on-line demo of the platform](https://en.linkeddata.center/l/sdaas-ce-demo/).
+
+
+> ## End of Support approaching
+>
+> Starting from the major release of version 4 of SDaaS Enterprise Edition, planned for 2024 Q1,
+> The Community Edition will no longer be actively developed by LinkedData.Center.
+>
+> If you plan to use SDaaS for professional use, please consider moving to Enterprise Edition.
+> Contact https://LinkedData.Center for more info, prices, support and documentation.
+> 
+> This repository will continue to exists and maintained and support from community is welcome
+>
+> As always, documentation, support, and training for SDaaS Community Edition will continue to be available by LinkedData.Center as professional services.
 
 ## 🚀 Quickstart
 
