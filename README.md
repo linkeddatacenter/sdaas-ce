@@ -16,7 +16,7 @@ This implementation embeds a sdaas-rdfstore based on blazegraph.
 > ## End of Support approaching
 >
 > Starting from the major release of version 4 of SDaaS Enterprise Edition, planned for 2024 Q1,
-> The Community Edition will no longer be actively developed by LinkedData.Center.
+> The Community Edition 3.x will no longer supported by LinkedData.Center.
 >
 > If you plan to use SDaaS for professional use, please consider moving to Enterprise Edition.
 > Contact https://LinkedData.Center for more info, prices, support and documentation.
@@ -135,7 +135,7 @@ docker push linkeddatacenter/sdaas-ce:3.3.1
 
 The sdaas community edition platform is derived from [LinkedData.Center SDaas Product](https://it.linkeddata.center/p/sdaas) and licensed with MIT by LinkedData.Center
 
-Copyright (C) 2018-2021 LinkedData.Center SRL
+Copyright (C) 2018-2023 LinkedData.Center SRL
  - All Rights Reserved
 Permission to copy and modify is granted under the [MIT license](LICENSE)
 
