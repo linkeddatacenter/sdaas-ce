@@ -1,9 +1,0 @@
-if [ ! -z ${__module_bg_reasoning+x} ]; then return ; else __module_bg_reasoning=1 ; fi
-
-SD_REASONER_ENDPOINT="http://localhost:9999/blazegraph"
-
-function SD_CREATE_REASONER { >&2 echo "SD_CREATE_REASONER $@" ; echo "1" ;}
-function SD_REASONER_QUERY { >&2 echo "SD_REASONER_QUERY" ; }
-function SD_REASONER_UPDATE { >&2 echo "SD_REASONER_UPDATE" ; }
-function SD_REASONER_LOAD { >&2 echo "SD_REASONER_LOAD" ; }
-function SD_DESTROY_REASONER { >&2 echo "SD_DESTROY_REASONER" ; }

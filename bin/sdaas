@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Copyright (C) 2023 LinkedData.Center - All Rights Reserved
+
+exec bash --init-file $SDAAS_INSTALL_DIR/core "$@"

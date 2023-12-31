@@ -1,1 +1,0 @@
-function gzip { >&2 echo ${STUB_GZIP:="gzip $@"} ; }

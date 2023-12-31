@@ -1,3 +1,0 @@
-ASK {
-	GRAPH <urn:graph:istat> {?s ?p ?o}
-}

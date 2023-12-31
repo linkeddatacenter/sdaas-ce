@@ -1,0 +1,63 @@
+if [[ ! -z ${__module_view+x} ]]; then return ; else __module_view=1 ; fi
+# Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
+
+
+################################################################################
+## Core commands definition
+################################################################################
+
+sd_view_config() {
+	if [[ "$#" -ne 0 ]]; then
+	 	sd_log -p ERROR "extra parameters found"
+		return 1
+	fi
+	_view_config_compgen() {
+		for var in $(compgen -v "$1"); do
+			printf "$var=\"${!var}\"\n"
+		done
+	}
+
+	_view_config_compgen SDAAS_
+	_view_config_compgen SD_
+	_view_config_compgen STORE_
+}
+
+
+sd_view_modules() {
+	if [[ "$#" -ne 0 ]]; then
+	 	sd_log -p ERROR "extra parameters found"
+		return 1
+	fi
+	local moduleName moduleVar status
+
+	for modulePath in $(ls "$SDAAS_INSTALL_DIR"); do
+		moduleName="$(basename "$modulePath")"
+		moduleVar=$(printf "__module_%s" "$moduleName")
+		if [[ $(eval echo "\${$moduleVar}") ]]; then	
+			status=" --cached"
+		else 
+			status=""
+		fi	
+		printf "%s%s\n" "$(basename "$moduleName")" "$status" 
+	done
+}
+
+
+
+sd_view_module() {
+	if [[ "$#" -ne 1 ]]; then
+	 	sd_log -p ERROR "a module is required"
+		return 1
+	fi
+	local MODULE=${1}
+
+	if [[ -z "$MODULE" ]]; then
+		sd_log -p ERROR "No module name specified (try 'sd view modules')"
+		return 1
+	fi
+
+	for command in $(grep 'sd_.*() {$' "$SDAAS_INSTALL_DIR/$MODULE" | awk '{print $1}' | sed 's/()//'); do
+		printf "%s()\n" "$command" 
+	done
+}
+

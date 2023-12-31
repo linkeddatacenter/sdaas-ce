@@ -1,0 +1,220 @@
+if [[ ! -z ${__module_core+x} ]]; then return ; else __module_core=1 ; fi
+# Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
+
+
+################################################################################
+## Costants (read only variables)
+################################################################################
+SDAAS_VERSION="4.0"
+SDAAS_VERSION_NAME="Pitagora"
+SDAAS_REFERENCE_DOC="https://sdaas.netlify.app/reference/command"
+
+################################################################################
+## Configuration variables' default values
+################################################################################
+STORE=${STORE:-"http://kb:8080/sdaas/sparql"}
+STORE_TYPE=${STORE_TYPE:-w3c}
+
+SD_LOG_PRIORITY=${SD_LOG_PRIORITY:-5}
+SD_TMP_DIR=${SD_TMP_DIR:-"/tmp"}
+SD_APPLICATION_ID=${SD_APPLICATION_ID:-"SDaaS-EE"}
+SD_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
+SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"$SD_APPLICATION_ID $SDAAS_VERSION"}
+
+
+################################################################################
+## Core functions definition
+################################################################################
+
+sd_log() {
+	# parse and validate inputs
+	local PRIORITY=5
+	local SIZE=1024
+	local FILE MESSAGE
+	local OPTIND opt; while getopts ":f:p:S:" opt; do
+        case "${opt}" in
+            p) PRIORITY="${OPTARG}" ;;
+            f) FILE="$(readlink -f "${OPTARG}")" ;;
+            S) 
+				(( OPTARG += 0 ))  # cast to integer
+				if [[ $OPTARG -gt 0 ]]; then 
+					SIZE=$OPTARG;
+				fi
+                ;;
+        esac
+    done; shift $((OPTIND-1))	
+
+	MESSAGE="$@"
+	MESSAGE="${MESSAGE:0:$SIZE}" 
+
+	# normalize priority level
+	case "${PRIORITY^^}" in
+		CRITICAL | 2) PRIORITY=2 ;;
+		ERROR | 3) PRIORITY=3 ;;
+		WARNING | 4) PRIORITY=4 ;;
+		NOTICE | 5) PRIORITY=5 ;;
+		INFORMATIONAL | 6) PRIORITY=6 ;;
+		DEBUG | 7) PRIORITY=7 ;;
+		* ) 
+		    MESSAGE="invalid log priority $PRIORITY"
+			PRIORITY=3
+			;;
+	esac
+	
+	# normalize priority level mnemonic
+	local mnemonic
+	case "${PRIORITY^^}" in
+		2) mnemonic=CRITICAL ;;
+		3) mnemonic=ERROR ;;
+		4) mnemonic=WARNING ;;
+		5) mnemonic=NOTICE ;;
+		6) mnemonic=INFORMATIONAL ;;
+		7) mnemonic=DEBUG ;;
+		* ) mnemonic="$PRIORITY"
+			;;
+	esac
+
+	# format and print log message
+	if [[ "$PRIORITY" -le "$SD_LOG_PRIORITY" ]]; then 
+		echo "[$mnemonic] [sdaas-$$ ${FUNCNAME[1]}] "$MESSAGE"" >&2
+		if [[ -r "$FILE" ]]; then
+			local file_size=$(stat -c %s "$FILE")
+			if [[ "$file_size" -gt 1024 ]]; then
+				head -c 1024 "$FILE" >&2
+				echo "...see more info at $FILE (size=$file_size bytes)" >&2
+			else
+				cat "$FILE" >&2
+			fi
+		fi
+	fi
+}
+
+
+sd_validate() {
+	local var="$1"
+	local regexp="$2"
+    if ! [[ "${!var}" =~ $regexp ]]; then
+		sd_log -p ERROR "${FUNCNAME[2]} parameter $var does not match '$regexp'"
+		return 1
+	fi
+}
+
+
+sd_abort() {
+	sd_log -p CRITICAL "***** CRITICAL ERROR DETECTED ($1) EXITING"
+	exit 2
+}
+
+
+sd_include() {	
+	local forceFlag=0
+	if [[ "$1" == "-f" ]]; then
+		forceFlag=1
+		shift
+	fi
+	local module="$1"
+	if [[ "$forceFlag" -eq 1 ]]; then
+		unset "__module_$1"
+		sd_log "forced reloading of module $module"
+	fi
+
+	# test if the module was already included
+	if eval "[ ! -z \${__module_${module}+x} ]" ; then return ; fi 
+
+	if [[ -e "$HOME/modules/$module" ]]; then
+		# try local defined module (override default installation)
+		source "$HOME/modules/$module" "$@" 
+	elif [[ -e "$SDAAS_INSTALL_DIR/$module" ]]; then
+		source "$SDAAS_INSTALL_DIR/$module" "$@" 
+	else 
+		sd_log -p ERROR "unknow module $module"
+		return 1
+	fi
+}
+
+
+sd_curl() {
+	sd_log -p DEBUG "executing sd_curl $@"
+	curl -L -A "$SDAAS_SIGNATURE" --retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused "$@"
+}
+
+
+sd() {
+	local abortOnFail=${SD_ABORT_ON_FAIL:-false}
+	local help=false
+	local OPTIND opt ; while getopts ":hA" opt; do 
+        case "${opt}" in
+			h) help=true ;;
+			A) abortOnFail=true ;;
+			*) 
+				sd_log -p ERROR "Invalid option: -$OPTARG . Usage: sd [-h] [-A] MODULE FUNCTION" 
+				return 1 
+				;;
+        esac
+    done; shift $((OPTIND-1))	
+
+	local module="$1"
+	local function_name="$2"
+	sd_validate module "^[a-z][a-z0-9-]+$" || return 1
+	sd_validate function_name "^[a-z][a-z0-9-]+$"  || return 2
+	shift 2
+
+	if $help ; then
+		# print the URL of the manual
+		echo "$SDAAS_REFERENCE_DOC/sd_${module}_${function_name}"
+		return 0
+	fi
+
+	# load module
+	sd_include "$module" || return 3
+
+	## test module signature
+	local module_signature="__module_${module}"
+	[[  "${!module_signature}" -eq 1 ]] || sd_abort "Invalid signature for module $module"
+
+	# build and execute a command
+	"sd_${module}_${function_name}" "$@"
+	local status="$?"
+	if $abortOnFail && [[ $status -gt 0 ]]; then
+		sd_abort "exit=$status, sd_${module}_${function_name}"
+	fi
+	return $status
+}
+
+
+sd_uuid() { 
+	local prefix="${1:-"urn:uuid:"}"
+	echo -n "$prefix"
+	cat /proc/sys/kernel/random/uuid
+}
+
+
+
+################################################################################
+## module commands definition
+################################################################################
+
+sd_core_version() {
+	echo "$SDAAS_VERSION"
+}
+
+
+
+################################################################################
+## Commands shortcut
+################################################################################
+sd_list() { sd sparql query -O 'csv-h' "$@"; }
+sd_rule() { sd sparql query -O ntriples "$@"; }
+sd_test() { sd sparql query -O test "$@"; }
+
+
+
+###########################
+# Module initialization
+###########################
+if [[ "$1" != "NO_SPLASH" ]]; then
+	sd_log -p INFORMATIONAL -f /etc/splash.txt "Copyright (C) 2018-2023 https://linkeddata.center"
+fi
+
+# Set the prompt in interactive mode
+PS1="sdaas > "
