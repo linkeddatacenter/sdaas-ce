@@ -4,9 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
-### Fixed
+Complete project refactory
 
-- reopened bug #19 (FAILCHECK mode does not work): removed extra blank
+
 
 ## [3.3.1]
 

@@ -1,0 +1,116 @@
+if [[ ! -z ${__module_sparql+x} ]]; then return ; else __module_sparql=1 ; fi
+# Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
+
+sd_include driver
+
+################################################################################
+## Core commands definition
+################################################################################
+
+sd_sparql_update() {
+    # parse and validate inputs
+    local sid="STORE"
+    local OPTIND opt; while getopts ":s:" opt; do
+        case "${opt}" in
+            s) sid="${OPTARG}" ;;
+			*) 
+				sd_log -p ERROR "Invalid option: -$OPTARG ." 
+				return 1 
+				;;
+        esac
+    done; shift $((OPTIND-1))	
+    local update_command="${1:-"@-"}"
+    
+    # call driver function
+    sd_log -p DEBUG "calling sd_driver_update '$sid' '$update_command'"
+    sd_driver_update "$sid" "$update_command"
+}
+
+
+
+sd_sparql_query() {
+    # parse and validate inputs
+    local sid="STORE"
+    local out_format="xml"
+    local OPTIND opt; while getopts ":O:s:" opt; do
+        case "${opt}" in
+            O) out_format="${OPTARG}" ;;
+            s) sid="${OPTARG}" ;;
+			*) 
+				sd_log -p ERROR "Invalid option: -$OPTARG ." 
+				return 1 
+				;;
+        esac
+    done; shift $((OPTIND-1))
+    local query_command="${1:-"@-"}"
+
+    # Validate out_format
+    local media_type
+	case "${out_format}" in
+		csv*) media_type="text/csv" ;;
+        tsl) media_type="text/tab-separated-values" ;;
+        json) media_type="application/sparql-results+json" ;;
+        xml|boolean|test) media_type="application/sparql-results+xml" ;;
+        ntriples) media_type="application/n-triples" ;;
+        turtle) media_type="text/turtle" ;;
+        rdfxml) media_type="application/rdf+xml" ;;
+        *) 
+            sd_log -p ERROR "format $out_format not supported"
+            return 1
+            ;;
+	esac
+   
+    # call driver function and post-processing results
+    function query {
+        sd_log -p DEBUG "calling sd_driver_query '$sid' '$media_type' '$query_command', using $out_format as output processor"
+        sd_driver_query "$sid" "$media_type" "$query_command"
+    }
+
+	case "$out_format" in
+		csv-h) query | csvtool drop 1 - ;;
+		csv-1) query | csvtool head 2 - | csvtool drop 1 -;;
+		csv-f1) query | csvtool head 2 - | csvtool drop 1 - | csvtool format '%(1)\n' - ;;
+		boolean) query | xmllint --xpath "//*[local-name()='boolean']/text()" - 2>/dev/null;;
+        test)  query | \
+            xmllint --xpath "((count(//*[local-name()='results']/*) + count(//*[local-name()='boolean'])) = 0) \
+                or //*[local-name()='boolean'][text()='true']" - 2>/dev/null \
+            |  grep -q "true"
+            ;;
+		*) query ;;
+	esac
+}
+
+
+sd_sparql_graph() {
+    # parse and validate inputs
+    local sid="STORE"
+    local accualPolicy="POST"
+    local inputFormat="guess"
+    local resource="@-"
+    local OPTIND opt; while getopts ":s:a:r:f:" opt; do
+        case "${opt}" in
+            s) sid="${OPTARG}" ;;
+            a) accualPolicy="${OPTARG}" ;;
+            f) inputFormat="${OPTARG}" ;;
+            r) resource="${OPTARG}" ;;
+			*) 
+				sd_log -p ERROR "Invalid option: -$OPTARG ." 
+				return 1 
+				;;
+        esac
+    done; shift $((OPTIND-1))
+    local graph="$1"
+
+    # Try a good default if empty graph passed
+    if [[ -z "$graph" ]]; then
+        if [[ -n "$resource" && "${resource:0:1}" != "@" ]]; then
+            graph="$resource"
+        else
+            graph="$(sd_uuid)"
+        fi
+    fi
+
+    "sd_driver_load" "$sid" "$inputFormat" "$resource" "$accualPolicy" "$graph" 
+}
+
+

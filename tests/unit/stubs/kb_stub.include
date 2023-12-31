@@ -1,5 +1,0 @@
-if [ ! -z ${__module_kb+x} ]; then return ; else __module_kb=1 ; fi
-
-function SD_LOAD_RDF_FILE { >&2 echo "SD_LOAD_RDF_FILE $@" ; }
-function SD_SPARQL_QUERY  { >&2 echo "SD_SPARQL_QUERY $@" ; }
-function SD_SPARQL_UPDATE  { >&2 echo "SD_SPARQL_UPDATE $@" ; }

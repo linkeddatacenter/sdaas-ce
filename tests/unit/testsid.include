@@ -1,0 +1,24 @@
+
+function test_sid {
+	local cmd="$1"
+	shift 1
+
+	# test default STORE
+	run "$cmd" "$@"
+	[[ "$status" -eq 0 ]]
+
+	# test with good extra store
+	local MYSTORE=http://dummy.example.org/sparql
+	local MYSTORE_TYPE=testdriver
+	run "$cmd" -s MYSTORE "$@"
+	[[ "$status" -eq 0 ]]
+
+	
+	# test with bad store
+	run "$cmd" -s NOTEXIST "$@"
+	[[ "$status" -eq 1 ]]
+
+	# test extra options
+	run "$cmd" -z "$@"
+	[[ "$status" -gt 0 ]]
+}

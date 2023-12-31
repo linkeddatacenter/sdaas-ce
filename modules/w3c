@@ -1,0 +1,81 @@
+if [[ ! -z ${__module_w3c+x} ]]; then return ; else __module_w3c=1 ; fi
+# Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
+
+
+
+################################################################################
+## Driver function implementation
+################################################################################
+########################################################################
+
+sd_w3c_validate() {
+    return 0
+}
+
+
+sd_w3c_update() {
+    local sid="$1"
+    local update_command="$2"
+    sd_log -p DEBUG "sid=$sid update_command=$update_command"
+    SD_LAST_SPARQL_UPDATE_RESULT="$(sd_curl -s --fail-with-body -X POST --data-binary "$update_command" \
+        --header "Content-Type: application/sparql-update; charset=utf-8" "${!sid}" )" 
+
+    if [[ $? -eq 0 ]]; then 
+        sd_log -p DEBUG "$SD_LAST_SPARQL_UPDATE_RESULT"
+    else
+        sd_log -p ERROR "$SD_LAST_SPARQL_UPDATE_RESULT"
+        return 1
+    fi
+}
+
+
+sd_w3c_query() {
+    local sid="$1"
+    local mime_type="$2"
+    local query_command="$3"
+    
+	sd_curl -s --fail-with-body --compressed \
+        -X POST \
+        --data-binary "$query_command" \
+        --header "Content-Type: application/sparql-query; charset=utf-8" \
+        --header "Accept: $mime_type; charset=utf-8" \
+        "${!sid}"
+}
+
+
+
+# Loads all nTriples in stdin to a Graph
+sd_w3c_load() {
+    local sid="$1"
+    local graph="$2"
+    local accualPolicy="$3"
+
+    local first_line
+ 
+    function stream_data {
+        if [[ "$accualPolicy" == 'PUT' ]]; then
+            echo "DROP SILENT GRAPH <$graph>;"
+        fi
+        echo "INSERT DATA{ GRAPH <$graph> {" && echo "$first_line" && cat && echo "}}"
+    }
+
+    if ! read -r first_line; then
+        # return without doing nothing is stdin steram is empty
+        sd_log -p INFORMATIONAL "No data stream, load skipped"
+        return 0
+    else
+        stream_data | sd_w3c_update "$sid" "@-"
+    fi
+}
+
+
+
+sd_w3c_size() {
+    sd_w3c_query "$1" "text/csv" "SELECT (COUNT(?s) AS ?ntriples) WHERE { ?s ?p ?o }" | csvtool drop 1 -
+}
+
+
+sd_w3c_erase() {
+    sd_w3c_update "$1" "DROP SILENT ALL"
+}
+

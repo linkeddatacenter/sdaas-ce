@@ -1,0 +1,10 @@
+if [[ ! -z ${__module_testdriver+x} ]]; then return ; else __module_testdirver=1 ; fi
+# Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
+
+sd_testdriver_validate() { return 0; }
+sd_testdriver_load() { return 0; }
+sd_testdriver_size()  { return 0; }
+sd_testdriver_erase()  { return 0; }
+sd_testdriver_update()  { return 0; }
+sd_testdriver_query()  { return 0; }
+

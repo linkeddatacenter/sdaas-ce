@@ -1,0 +1,129 @@
+if [[ ! -z ${__module_driver+x} ]]; then return ; else __module_driver=1 ; fi
+# Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
+
+
+################################################################################
+## Core commands definition
+################################################################################
+
+sd_driver_validate() {
+    [[ "$#" -eq 1 ]] || return 99
+    local sid="$1"
+    sd_validate sid "^[a-zA-Z]+$" || return 1
+    sd_validate "$sid" "^https?:" || return 2
+    
+	## Validate and load the STORE driver
+	local driver_type_var="${sid}_TYPE"
+	local driver="${!driver_type_var}"
+
+    ## Lazy initialization of ${sid}_TYPE driver variable
+	if [[ -z "$driver" ]]; then
+		sd_log -p WARNING "valid driver for $sid not found, w3c used"
+		driver="w3c"
+		declare -g "$driver_type_var=$driver"
+	fi
+
+	sd_include "$driver" || sd_abort "internal error including driver $driver"
+
+    ## Call specific driver validation
+    "sd_${!driver_type_var}_validate" "$sid"
+}
+
+
+
+sd_driver_update() {
+    [[ "$#" -eq 2 ]] || return 99
+    local sid="$1"
+    local update_command="$2"
+
+    sd_driver_validate "$sid"  || return 1
+    # sd_validate not used for update_command becaus can be anything
+    
+    # call driver function
+    local driver_type_var="${sid}_TYPE"
+    "sd_${!driver_type_var}_update" "$sid" "$update_command"
+}
+
+
+sd_driver_query() {
+    [[ "$#" -eq 3 ]] || return 99
+    local sid="$1"
+    local mime_type="$2"
+    local query_command="$3"
+
+    sd_driver_validate "$sid" || return 1
+    sd_validate mime_type "^[a-z]+\/[a-z0-9.+-]+$" || return 2
+    # sd_validate not used for query_command becaus can be anithing
+
+    # call driver function and post-processing results
+    local driver_type_var="${sid}_TYPE"
+    "sd_${!driver_type_var}_query" "${sid}" "$mime_type" "$query_command"  | tr -d '\r'
+}
+
+
+sd_driver_load() {
+    [[ "$#" -eq 5 ]] || return 99
+    local sid="$1"
+    local inputFormat="$2"
+    local resource="$3"
+    local accualPolicy="$4"
+    local graph="$5"
+
+    sd_driver_validate "$sid" || return 1
+    sd_validate inputFormat "^(rdfxml|ntriples|turtle|trig|rss-tag-soup|grddl|guess|rdfa|json|nquads)$" || return 2
+    sd_validate resource "^((http|https|ftp|file)://.*/|@.+)" || return 3
+    sd_validate accualPolicy "^(PUT|POST)$" || return 4
+	
+    # Auto detect input base uri and rewrite resource and graph if needed
+    local input_baseuri 
+    if [[ "$resource" == "@-" ]]; then
+        resource="-"
+        input_baseuri="$graph"
+    elif [[ "${resource:0:1}" == "@" ]];  then
+        #  rewrite resource and additional check for file existence
+        resource="${resource:1}"
+        input_baseuri="$graph"
+
+        if [[ ! -r "$resource" ]]; then
+            sd_log -p ERROR "'$resource' file not found"
+            return 3
+        fi
+    else 
+        input_baseuri="$resource"
+
+        # if resource and empty graph rewrite graph
+        if [[ -z "$graph" ]]; then
+            graph="$resource"
+        fi
+    fi
+
+    sd_validate graph "^(http|https|ftp|file|urn):" || return 5
+
+    # call rapper and pipe it to driver load function
+    local driver_type_var="${sid}_TYPE"
+    rapper -i "$inputFormat" -I "$input_baseuri" -o "ntriples" -O "$graph" -wq "$resource" | "sd_${!driver_type_var}_load" "$sid" "$graph" "$accualPolicy"
+}
+
+
+sd_driver_size() {
+    [[ "$#" -eq 1 ]] || return 99
+    local sid="$1"
+    
+    sd_driver_validate "$sid" || return 1
+
+    # call driver function and post-processing results
+    local driver_type_var="${sid}_TYPE"
+    "sd_${!driver_type_var}_size" "$sid" 
+}
+
+
+
+sd_driver_erase() {
+    [[ "$#" -eq 1 ]] || return 99
+    local sid="$1"
+    sd_driver_validate "$sid" || return 1
+
+    # call driver function and post-processing results
+    local driver_type_var="${sid}_TYPE"
+    "sd_${!driver_type_var}_erase" "$sid" 
+}

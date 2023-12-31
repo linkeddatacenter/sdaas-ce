@@ -1,5 +1,0 @@
-if [ ! -z ${__module_caching+x} ]; then return ; else __module_caching=1 ; fi
-SD_CACHE="/tmp/stub_cache"
-function CREATE_STUB_CACHE { mkdir -p "$SD_CACHE" ; }
-function DROP_STUB_CACHE {  rm -rf "$SD_CACHE" ; }
-function SD_CLEAN_CACHE { rm -rf "$SD_CACHE/*" ; }

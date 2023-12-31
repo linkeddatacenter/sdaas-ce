@@ -1,54 +1,36 @@
-# Copyright (C) 2019-2020 LinkedData.Center - All Rights Reserved
-# Permission to copy and modify is granted under the MIT license
-FROM alpine/helm as helm
-FROM mikefarah/yq as yq
-FROM  linkeddatacenter/sdaas-rdfstore:2.1.5
+# Copyright (C) 2023 LinkedData.Center - All Rights Reserved
+FROM ubuntu:22.04
 
 LABEL authors="enrico@linkeddata.center"
 
-USER root
-COPY --from=helm /usr/bin/helm /usr/bin/helm
-COPY --from=yq /usr/bin/yq /usr/bin/yq
-
-ARG SHACLVER=1.3.2
-ARG SHACLROOT=/opt/shacl-${SHACLVER}/bin
-
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends \
-		gettext \
+		curl \
+		ca-certificates \
+		raptor2-utils \
 		bats \
-		git \
-		unzip \
 		jq \
-		csvtool && \
-    curl --output /tmp/shacl.zip  https://repo1.maven.org/maven2/org/topbraid/shacl/${SHACLVER}/shacl-${SHACLVER}-bin.zip && \
-    unzip /tmp/shacl.zip -d /opt && \
-    chmod +x ${SHACLROOT}/*
-
-
+		csvtool \
+		libxml2-utils
 
 ###### Variables affecting the image building
-ENV SDAAS_BIN_DIR=/opt/sdaas
+ENV SDAAS_INSTALL_DIR=/opt/sdaas
 ENV SDAAS_WORKSPACE=/workspace
-ENV SDAAS_LOG_DIR="$SDAAS_WORKSPACE"
-ENV PATH=${SHACLROOT}:${PATH}
 
+COPY modules "$SDAAS_INSTALL_DIR"
+COPY bin/sdaas /usr/bin/sdaas
+COPY /etc/* /etc/
+RUN chmod -R 0755 /usr/bin/sdaas
 
-###### Runtime variables
-ENV SD_UPLOAD_DIR /var/spool/sdaas
-ENV SD_SPARQL_ENDPOINT http://localhost:8080/sdaas/sparql
-ENV SD_QUADSTORE kb
-
-COPY scripts "$SDAAS_BIN_DIR"
-COPY sdaas-entrypoint.sh /sdaas-entrypoint.sh
-
-RUN mkdir -p "${SDAAS_BIN_DIR}" "${SDAAS_LOG_DIR}" "${SD_UPLOAD_DIR}" "${SDAAS_WORKSPACE}" ; \
-	chmod -R 0755 "$SDAAS_BIN_DIR" /sdaas-entrypoint.sh; \
-	chown -R jetty.jetty "${SDAAS_WORKSPACE}" "$SDAAS_LOG_DIR" "$SD_UPLOAD_DIR"
-
-
-USER jetty
-
+RUN useradd -m -d /workspace -s /bin/bash -g users -u 1001 sdaas
+USER sdaas
 WORKDIR "${SDAAS_WORKSPACE}"
-ENTRYPOINT ["/sdaas-entrypoint.sh"]
-CMD [""]
+
+## Variables affecting program execution
+ENV SD_LOG_PRIORITY=6
+ENV SD_TMP_DIR="/tmp"
+
+# Uncomment this to change the default web agent signature
+#ENV SD_APPLICATION_ID="example.org SDaaS"
+
+ENTRYPOINT ["/usr/bin/sdaas"]

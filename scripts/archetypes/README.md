@@ -1,1 +1,0 @@
-No archetipes available in community edition
