@@ -48,12 +48,12 @@ sd_w3c_query() {
 sd_w3c_load() {
     local sid="$1"
     local graph="$2"
-    local accualPolicy="$3"
+    local accrualPolicy="$3"
 
     local first_line
  
     function stream_data {
-        if [[ "$accualPolicy" == 'PUT' ]]; then
+        if [[ "$accrualPolicy" == 'PUT' ]]; then
             echo "DROP SILENT GRAPH <$graph>;"
         fi
         echo "INSERT DATA{ GRAPH <$graph> {" && echo "$first_line" && cat && echo "}}"
