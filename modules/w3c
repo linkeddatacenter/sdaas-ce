@@ -16,8 +16,17 @@ sd_w3c_validate() {
 sd_w3c_update() {
     local sid="$1"
     local update_command="$2"
-    sd_log -p DEBUG "sid=$sid update_command=$update_command"
-    SD_LAST_SPARQL_UPDATE_RESULT="$(sd_curl -s --fail-with-body -X POST --data-binary "$update_command" \
+
+    local data_mode
+    if [[ "$update_command" == "@-" ]]; then
+        data_mode="--data"
+    else
+        data_mode="--data-raw"
+    fi
+
+    SD_LAST_SPARQL_UPDATE_RESULT="$(sd_curl -s --fail-with-body \
+        -X POST \
+        "$data_mode" "$update_command" \
         --header "Content-Type: application/sparql-update; charset=utf-8" "${!sid}" )" 
 
     if [[ $? -eq 0 ]]; then 
@@ -34,9 +43,17 @@ sd_w3c_query() {
     local mime_type="$2"
     local query_command="$3"
     
+
+    local data_mode
+    if [[ "$query_command" == "@-" ]]; then
+        data_mode="--data"
+    else
+        data_mode="--data-raw"
+    fi
+
 	sd_curl -s --fail-with-body --compressed \
         -X POST \
-        --data-binary "$query_command" \
+        "$data_mode" "$query_command" \
         --header "Content-Type: application/sparql-query; charset=utf-8" \
         --header "Accept: $mime_type; charset=utf-8" \
         "${!sid}"
