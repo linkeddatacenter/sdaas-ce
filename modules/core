@@ -3,11 +3,13 @@ if [[ ! -z ${__module_core+x} ]]; then return ; else __module_core=1 ; fi
 
 
 ################################################################################
-## Costants (read only variables)
+## Costants (read only variables from DOCKER)
 ################################################################################
 SDAAS_VERSION="4.0"
 SDAAS_VERSION_NAME="Pitagora"
 SDAAS_REFERENCE_DOC="https://sdaas.netlify.app/reference/command"
+SDAAS_ETC="/etc/sdaas"
+
 
 ################################################################################
 ## Configuration variables' default values
@@ -16,7 +18,6 @@ STORE=${STORE:-"http://kb:8080/sdaas/sparql"}
 STORE_TYPE=${STORE_TYPE:-w3c}
 
 SD_LOG_PRIORITY=${SD_LOG_PRIORITY:-5}
-SD_TMP_DIR=${SD_TMP_DIR:-"/tmp"}
 SD_APPLICATION_ID=${SD_APPLICATION_ID:-"SDaaS-EE"}
 SD_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
 SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"$SD_APPLICATION_ID $SDAAS_VERSION"}
@@ -199,6 +200,42 @@ sd_core_version() {
 }
 
 
+sd_core_ontology() {
+	local out_format="ntriples"
+    local OPTIND opt; while getopts ":O:" opt; do
+        case "${opt}" in
+            O) out_format="${OPTARG}" ;;
+			*) 
+				sd_log -p ERROR "Invalid option: -$OPTARG ." 
+				return 1 
+				;;
+        esac
+    done; shift $((OPTIND-1))
+
+    sd_validate out_format "^(rdfxml|ntriples|turtle)$" || return 1
+
+	function get_triples {
+		local files_array="$(find $SDAAS_ETC -type f \( -name "*.rdf" -o -name "*.nt" -o -name "*.ttl" \))"
+		for file in "${files_array[@]}"; do
+			rapper -i guess -I "urn:sdaas:tbox" -o "ntriples" -O "urn:sdaas:tbox" -wq "$file" || sd_abort "Internal error, invalid tbox $file"
+		done
+	}
+
+	get_triples | rapper -i guess -I "urn:sdaas:tbox" -o "$out_format" -O "urn:sdaas:tbox" -wq \
+		-f 'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"' \
+		-f 'xmlns:owl="http://www.w3.org/2002/07/owl#"' \
+		-f 'xmlns:foaf="http://xmlns.com/foaf/0.1/"' \
+		-f 'xmlns:dc="http://purl.org/dc/elements/1.1/"' \
+		-f 'xmlns:dct="http://purl.org/dc/terms/"' \
+		-f 'xmlns:dqv="http://www.w3.org/ns/dqv#"' \
+		-f 'xmlns:prov="http://www.w3.org/ns/prov#"' \
+		-f 'xmlns:sd="http://www.w3.org/ns/sparql-service-description#"' \
+		-f 'xmlns:void="http://rdfs.org/ns/void#"' \
+		-f 'xmlns:xsd="http://www.w3.org/2001/XMLSchema#"' \
+		-f 'xmlns:kees="http://linkeddata.center/kees/v1#"' \
+		-f 'xmlns:sdaas="http://linkeddata.center/sdaas/v4#"' \
+		-
+}
 
 ################################################################################
 ## Commands shortcut
@@ -213,7 +250,7 @@ sd_test() { sd sparql query -O test "$@"; }
 # Module initialization
 ###########################
 if [[ "$1" != "NO_SPLASH" ]]; then
-	sd_log -p INFORMATIONAL -f /etc/splash.txt "Copyright (C) 2018-2023 https://linkeddata.center"
+	sd_log -p INFORMATIONAL -f "$SDAAS_ETC/splash.txt" "Copyright (C) 2018-2023 https://linkeddata.center"
 fi
 
 # Set the prompt in interactive mode

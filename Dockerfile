@@ -16,10 +16,16 @@ RUN apt-get update && \
 ###### Variables affecting the image building
 ENV SDAAS_INSTALL_DIR=/opt/sdaas
 ENV SDAAS_WORKSPACE=/workspace
+ENV SDAAS_ETC="/etc/sdaas"
+
+###### SDAAS constant the image building
+ENV SDAAS_REFERENCE_DOC="https://sdaas.netlify.app/reference/command"
+ENV SDAAS_VERSION="4.0"
+ENV SDAAS_VERSION_NAME="Pitagora"
 
 COPY modules "$SDAAS_INSTALL_DIR"
 COPY bin/sdaas /usr/bin/sdaas
-COPY /etc/* /etc/
+COPY etc/sdaas "${SDAAS_ETC}"
 RUN chmod -R 0755 /usr/bin/sdaas
 
 RUN useradd -m -d /workspace -s /bin/bash -g users -u 1001 sdaas
@@ -28,7 +34,7 @@ WORKDIR "${SDAAS_WORKSPACE}"
 
 ## Variables affecting program execution
 ENV SD_LOG_PRIORITY=6
-ENV SD_TMP_DIR="/tmp"
+
 
 # Uncomment this to change the default web agent signature
 #ENV SD_APPLICATION_ID="example.org SDaaS"

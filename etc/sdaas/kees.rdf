@@ -1,0 +1,433 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://linkeddata.center/kees/v1#"
+     xml:base="http://linkeddata.center/kees/v1"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:sd="http://www.w3.org/ns/sparql-service-description#"
+     xmlns:dqv="http://www.w3.org/ns/dqv#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:prov="http://www.w3.org/ns/prov#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:void="http://rdfs.org/ns/void#"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+    <owl:Ontology rdf:about="http://linkeddata.center/kees/v1">
+        <dc:creator xml:lang="en">Enrico Fagnoni</dc:creator>
+        <dc:description rdf:resource="https://raw.githubusercontent.com/linkeddatacenter/kees/master/v1/images/uml.png"/>
+        <dc:description xml:lang="en">KEES ontology Defines few new terms used in KEES Language Application as defined in http://linkeddata.center/kees</dc:description>
+        <dc:rights xml:lang="en">The KEES ontology is available under the Creative Commons Attribution 4.0 Unported license; see http://creativecommons.org/licenses/by/4.0/. In a nutshell, you are free to copy, distribute and transmit the work; to remix/adapt the work (e.g. to import the ontology and create specializations of its elements), as long as you attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work). Proper Attribution: Simply include the statement &quot;This work is based on the KEES ontology, developed by Enrico Fagnoni&quot; and link back to http:/linkeddata.center/kees/v1</dc:rights>
+        <dc:title xml:lang="en">The KEES Vocabulary</dc:title>
+        <dcterms:license rdf:resource="http://creativecommons.org/licenses/by/4.0/"/>
+        <rdfs:label xml:lang="en">KEES Ontology</rdfs:label>
+        <owl:versionInfo>V 1.3.0 Release 2023-12-12</owl:versionInfo>
+        <foaf:homepage rdf:resource="http://linkeddata.center/kees/"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/contributor -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/contributor"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/creator -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/creator"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/description -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/description"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/modifed -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/modifed"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/rights -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/rights"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/subject -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/subject"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/title -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/title"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/license -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/license"/>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#deprecated -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2002/07/owl#deprecated"/>
+    
+
+
+    <!-- http://xmlns.com/foaf/0.1/homepage -->
+
+    <owl:AnnotationProperty rdf:about="http://xmlns.com/foaf/0.1/homepage"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#ZeroToOneDecimal -->
+
+    <rdfs:Datatype rdf:about="http://linkeddata.center/kees/v1#ZeroToOneDecimal">
+        <owl:equivalentClass>
+            <rdfs:Datatype>
+                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                <owl:withRestrictions rdf:parseType="Collection">
+                    <rdf:Description>
+                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0</xsd:minInclusive>
+                    </rdf:Description>
+                    <rdf:Description>
+                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1</xsd:maxInclusive>
+                    </rdf:Description>
+                </owl:withRestrictions>
+            </rdfs:Datatype>
+        </owl:equivalentClass>
+    </rdfs:Datatype>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#isLockedBy -->
+
+    <owl:ObjectProperty rdf:about="http://linkeddata.center/kees/v1#isLockedBy">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://linkeddata.center/kees/v1#KnowledgeGraph"/>
+        <rdfs:range rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#enriched -->
+
+    <owl:DatatypeProperty rdf:about="http://linkeddata.center/kees/v1#enriched">
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/Date"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://linkeddata.center/kees/v1#KnowledgeGraph"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:comment xml:lang="en">all activities in the enriching window of a KEES cycle was declared as completed</rdfs:comment>
+        <rdfs:label xml:lang="en">enriching completed</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#ingested -->
+
+    <owl:DatatypeProperty rdf:about="http://linkeddata.center/kees/v1#ingested">
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/Date"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://linkeddata.center/kees/v1#KnowledgeGraph"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:comment xml:lang="en">All activities in the learning window of a KEES cycle was declared as completed</rdfs:comment>
+        <rdfs:label xml:lang="en">learning complete</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#published -->
+
+    <owl:DatatypeProperty rdf:about="http://linkeddata.center/kees/v1#published">
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/Date"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://linkeddata.center/kees/v1#KnowledgeGraph"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:comment xml:lang="en">the knowledge base was declared as safe and completed</rdfs:comment>
+        <rdfs:label xml:lang="en">published</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#reasoned -->
+
+    <owl:DatatypeProperty rdf:about="http://linkeddata.center/kees/v1#reasoned">
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/Date"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://linkeddata.center/kees/v1#KnowledgeGraph"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:comment xml:lang="en">all activities in the reasoning window of a KEES cycle was declared as completed</rdfs:comment>
+        <rdfs:label xml:lang="en">reasoning completed</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#versioned -->
+
+    <owl:DatatypeProperty rdf:about="http://linkeddata.center/kees/v1#versioned">
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/Date"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://linkeddata.center/kees/v1#KnowledgeGraph"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:comment xml:lang="en">the knowledge base was safe and versioned</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/Date -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.org/dc/terms/Date"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Activity -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#Activity">
+        <rdfs:subClassOf rdf:resource="http://www.w3.org/ns/prov#Activity"/>
+        <rdfs:comment xml:lang="en">a KEES agent Activity</rdfs:comment>
+        <rdfs:label xml:lang="en">Activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Boot -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#Boot">
+        <rdfs:subClassOf rdf:resource="http://linkeddata.center/kees/v1#Activity"/>
+        <rdfs:comment xml:lang="en">The annotated activity erased and rebuildd knowledge base</rdfs:comment>
+        <rdfs:label xml:lang="en">Boot activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Enriching -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#Enriching">
+        <rdfs:subClassOf rdf:resource="http://linkeddata.center/kees/v1#Activity"/>
+        <rdfs:comment xml:lang="en">The annotated activity adds 3rd party data known facts to the knowledge base</rdfs:comment>
+        <rdfs:label xml:lang="en">Enriching activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Ingestion -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#Ingestion">
+        <rdfs:subClassOf rdf:resource="http://linkeddata.center/kees/v1#Activity"/>
+        <rdfs:comment xml:lang="en">The annotated activity learns facts into knowledge base</rdfs:comment>
+        <rdfs:label xml:lang="en">Ingestion activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#KnowledgeGraph -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#KnowledgeGraph">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://linkeddata.center/kees/v1#enriched"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://linkeddata.center/kees/v1#ingested"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://linkeddata.center/kees/v1#published"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://linkeddata.center/kees/v1#reasoned"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://linkeddata.center/kees/v1#versioned"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">a subclass of [sd:Service](https://www.w3.org/TR/sparql11-service-description/#sd-Service), indicating that the annotated subject represents a service compliant with the KEES protocol. It can offer a variety of optional properties, empowering a KEES-compliant agent to signal the completion of a window within a KEES cycle. `kees:KnowledgeGraph` represents a *singleton*; for each Graph Store, only one `sd:endpoint` can be associated with an instance of this class.</rdfs:comment>
+        <rdfs:label xml:lang="en">Knowledge Graph</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Publishing -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#Publishing">
+        <rdfs:subClassOf rdf:resource="http://linkeddata.center/kees/v1#Activity"/>
+        <rdfs:comment xml:lang="en">The annotated activity finalizes the building of the knowledge base by adding ontology mappings, linkeddata sets  and specific application information</rdfs:comment>
+        <rdfs:label xml:lang="en">Publishing activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Reasoning -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#Reasoning">
+        <rdfs:subClassOf rdf:resource="http://linkeddata.center/kees/v1#Activity"/>
+        <rdfs:comment xml:lang="en">The annotated activity makes abductions and/or deductions to the knowledge base</rdfs:comment>
+        <rdfs:label xml:lang="en">Reasoning activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Versioning -->
+
+    <owl:Class rdf:about="http://linkeddata.center/kees/v1#Versioning">
+        <rdfs:subClassOf rdf:resource="http://linkeddata.center/kees/v1#Activity"/>
+        <rdfs:comment xml:lang="en">The annotated activity creates a snapshot of all knowledge graph and assign a versiion identifier to it</rdfs:comment>
+        <rdfs:label xml:lang="en">Versioning activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/ns/dqv#Metric -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/dqv#Metric"/>
+    
+
+
+    <!-- http://www.w3.org/ns/prov#Activity -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/prov#Activity"/>
+    
+
+
+    <!-- http://www.w3.org/ns/sparql-service-description#Feature -->
+
+    <owl:Class rdf:about="http://www.w3.org/ns/sparql-service-description#Feature"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Locking -->
+
+    <owl:NamedIndividual rdf:about="http://linkeddata.center/kees/v1#Locking">
+        <rdfs:comment xml:lang="en">it is a predefined instance of [sd:Feature](https://www.w3.org/TR/sparql11-service-description/#sd-Feature) that indicates that the annotated service supports locking protocol</rdfs:comment>
+        <rdfs:label xml:lang="en">Locking</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#Status -->
+
+    <owl:NamedIndividual rdf:about="http://linkeddata.center/kees/v1#Status">
+        <rdfs:comment xml:lang="en">Status</rdfs:comment>
+        <rdfs:comment xml:lang="en">it is a predefined instance of [sd:Feature](https://www.w3.org/TR/sparql11-service-description/#sd-Feature) that indicates that the annotated service supports the ability to detect if the knowledge graph cycle status</rdfs:comment>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://linkeddata.center/kees/v1#TrustLevel -->
+
+    <owl:NamedIndividual rdf:about="http://linkeddata.center/kees/v1#TrustLevel">
+        <rdf:type rdf:resource="http://www.w3.org/ns/dqv#Metric"/>
+        <rdfs:comment xml:lang="en">it is a predefined  instance of [dqv:Metric](https://www.w3.org/TR/vocab-dqv/#dqv:Metric) to be used in a [dqv:QualityMeasurement](https://www.w3.org/TR/vocab-dqv/#dqv:QualityMeasurement) to define a trust level in a [dqv:UserQualityFeedback](https://www.w3.org/TR/vocab-dqv/#dqv:UserQualityFeedback)  according with the [Data Quality Vocabulary](https://www.w3.org/TR/vocab-dqv/). The `dqv:value` property is expected to be a xsd:decimal in the range 0-1</rdfs:comment>
+        <rdfs:label xml:lang="en">Trust Level</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2001/XMLSchema#success">
+        <rdfs:label xml:lang="en">has input</rdfs:label>
+        <owl:priorVersion xml:lang="en">task  processor input as a json structure.</owl:priorVersion>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+
