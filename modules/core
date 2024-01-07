@@ -1,14 +1,16 @@
 if [[ ! -z ${__module_core+x} ]]; then return ; else __module_core=1 ; fi
-# Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
+# Copyright (C) 2019-2024 LinkedData.Center - All Rights Reserved
 
 
 ################################################################################
-## Costants (read only variables from DOCKER)
+## Following constant MUST be defined (e.g. in Dockerfile)
 ################################################################################
-SDAAS_VERSION="4.0"
-SDAAS_VERSION_NAME="Pitagora"
-SDAAS_REFERENCE_DOC="https://sdaas.netlify.app/reference/command"
-SDAAS_ETC="/etc/sdaas"
+#
+#SDAAS_INSTALL_DIR
+#SDAAS_VERSION
+#SDAAS_REFERENCE_DOC
+#SDAAS_ETC
+#SDAAS_APPLICATION_ID
 
 
 ################################################################################
@@ -18,9 +20,10 @@ STORE=${STORE:-"http://kb:8080/sdaas/sparql"}
 STORE_TYPE=${STORE_TYPE:-w3c}
 
 SD_LOG_PRIORITY=${SD_LOG_PRIORITY:-5}
-SD_APPLICATION_ID=${SD_APPLICATION_ID:-"SDaaS-EE"}
 SD_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
-SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"$SD_APPLICATION_ID $SDAAS_VERSION"}
+
+# WARNING: changing this variable breaks the license agreement
+SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"SDaaS $SDAAS_APPLICATION_ID $SDAAS_VERSION"}
 
 
 ################################################################################
@@ -136,7 +139,7 @@ sd_include() {
 
 sd_curl() {
 	sd_log -p DEBUG "executing sd_curl $@"
-	curl -L -A "$SDAAS_SIGNATURE" --retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused "$@"
+	curl -L -A "$SDAAS_SIGNATURE" --retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused --compressed "$@"
 }
 
 
@@ -162,7 +165,7 @@ sd() {
 
 	if $help ; then
 		# print the URL of the manual
-		echo "$SDAAS_REFERENCE_DOC/sd_${module}_${function_name}"
+		echo "$SDAAS_REFERENCE_DOC/reference/sd_${module}_${function_name}"
 		return 0
 	fi
 
@@ -202,9 +205,9 @@ sd_core_version() {
 
 sd_core_ontology() {
 	local out_format="ntriples"
-    local OPTIND opt; while getopts ":O:" opt; do
+    local OPTIND opt; while getopts ":o:" opt; do
         case "${opt}" in
-            O) out_format="${OPTARG}" ;;
+            o) out_format="${OPTARG}" ;;
 			*) 
 				sd_log -p ERROR "Invalid option: -$OPTARG ." 
 				return 1 
@@ -245,12 +248,20 @@ sd_rule() { sd sparql query -O ntriples "$@"; }
 sd_test() { sd sparql query -O test "$@"; }
 
 
+################################################################################
+## Ensure mandatory variables are well-defined
+################################################################################
+# [[ -d "$SDAAS_INSTALL_DIR" && -r "$SDAAS_INSTALL_DIR/core" ]] || sd_abort "Invalid SDAAS_INSTALL_DIR directory ($SDAAS_INSTALL_DIR)"
+# [[ "$SDAAS_VERSION" =~  "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$" ]] || sd_abort "No semver in SDAAS_VERSION ($SDAAS_VERSION)"
+# [[ "$SDAAS_REFERENCE_DOC" =~  "^https?://" ]] || sd_abort "Invalid SDAAS_REFERENCE_DOC URL ($SDAAS_REFERENCE_DOC)"
+# [[ -d "$SDAAS_ETC" ]] ||  sd_abort "Invalid SDAAS_ETC directory ($SDAAS_ETC)"
+# [[ -z "$SDAAS_APPLICATION_ID" ]] ||  sd_abort "Empty SDAAS_APPLICATION_ID not allowed"
 
 ###########################
 # Module initialization
-###########################
+##########################
 if [[ "$1" != "NO_SPLASH" ]]; then
-	sd_log -p INFORMATIONAL -f "$SDAAS_ETC/splash.txt" "Copyright (C) 2018-2023 https://linkeddata.center"
+	( export STORE STORE_TYPE ; cat "$SDAAS_ETC/splash.txt" | envsubst)
 fi
 
 # Set the prompt in interactive mode

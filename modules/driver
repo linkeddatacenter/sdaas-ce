@@ -66,13 +66,13 @@ sd_driver_load() {
     local sid="$1"
     local inputFormat="$2"
     local resource="$3"
-    local accrualPolicy="$4"
+    local accrualMethod="$4"
     local graph="$5"
 
     sd_driver_validate "$sid" || return 1
     sd_validate inputFormat "^(rdfxml|ntriples|turtle|trig|rss-tag-soup|grddl|guess|rdfa|json|nquads)$" || return 2
     sd_validate resource "^((http|https|ftp|file)://.*|@.+)" || return 3
-    sd_validate accrualPolicy "^(PUT|POST)$" || return 4
+    sd_validate accrualMethod "^(PUT|POST)$" || return 4
 	
     # Auto detect input base uri and rewrite resource and graph if needed
     local input_baseuri 
@@ -101,7 +101,7 @@ sd_driver_load() {
 
     # call rapper and pipe it to driver load function
     local driver_type_var="${sid}_TYPE"
-    rapper -i "$inputFormat" -I "$input_baseuri" -o "ntriples" -O "$graph" -wq "$resource" | "sd_${!driver_type_var}_load" "$sid" "$graph" "$accrualPolicy"
+    rapper -i "$inputFormat" -I "$input_baseuri" -o "ntriples" -O "$graph" -wq "$resource" | "sd_${!driver_type_var}_load" "$sid" "$graph" "$accrualMethod"
 }
 
 

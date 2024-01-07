@@ -16,12 +16,12 @@ This is the  open source implementation of the [LinkeData.Center SDaaS™ produc
 
 
 
-### 🚀 Quickstart
+## 🚀 Quickstart
 
 ```
 docker compose up -d --build
-docker compose logs tests
 docker compose exec cli sdaas
+bats tests/{unit,functional,system}
 exit
 docker compose down
 ```
@@ -93,10 +93,11 @@ To push a new docker image to docker hub:
 ```
 docker login
 # input the docker hub credentials...
-docker build -t linkeddatacenter/sdaas-ce .
-docker push linkeddatacenter/sdaas-ce
-docker tag linkeddatacenter/sdaas-ce linkeddatacenter/sdaas-ce:4.0.0-rc1
+VERSION="4.0.0-rc1"
+docker build -t linkeddatacenter/sdaas-ce:4.0.0-rc1 .
+docker tag linkeddatacenter/sdaas-ce:4.0.0-rc1 linkeddatacenter/sdaas-ce 
 docker push linkeddatacenter/sdaas-ce:4.0.0-rc1
+docker push linkeddatacenter/sdaas-ce:latest
 ```
 
 

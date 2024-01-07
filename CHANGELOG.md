@@ -195,7 +195,7 @@ bridge release
 ### Added
 
 - shortcuts support in SD_REASONER_QUERY
-- rdf file accrual policy in reasoner
+- rdf file accrual method in reasoner
 - tracing outputs of SD_REASONER_QUERY and SD_REASONER_UPDATE
 - improved debug info
 
@@ -203,7 +203,7 @@ bridge release
 
 - unused fourth paramether in SD_REASONER_QUERY
 - unused third paramether in SD_REASONER_UPDATE
-- rdf file accural policy in reasoner
+- rdf file accrual method in reasoner
 
 ### fixed
 
@@ -212,7 +212,7 @@ bridge release
 ### Changed
 
 - aligned with sdaas-rdfstore 1.1.0
-- rdf file accural policy in reasoner
+- rdf file accrual method in reasoner
 
 ## [2.2.0]
 
@@ -232,7 +232,7 @@ aligned with SDaaS [2.1.0]
 - refactory
 - license conditions
 - dockerfile file structure (now aligned to linkeddatacenter/sdaas-rdfstore:1.0.0)
-- accrual policy to reasoner
+- accrual method to reasoner
 
 ## 2.1.0
 

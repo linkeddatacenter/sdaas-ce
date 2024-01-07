@@ -8,17 +8,10 @@ services:
       - "9999:8080"
   
   cli:
+    image: linkeddatacenter/sdaas-ce:dev
     build: .
     stdin_open: true
     tty: true
-    depends_on:
-      - kb
-    volumes:
-      - .:/workspace
-
-  tests:
-    build: .
-    command: sdaas -c "bats tests/{unit,functional,system}"
     depends_on:
       - kb
     volumes:

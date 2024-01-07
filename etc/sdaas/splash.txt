@@ -4,5 +4,9 @@
 	 ___) | |_| | (_| | (_| |___) |
 	|____/|____/ \__,_|\__,_|____/ 
 
-	Smart Data as a Service platform - Pitagora edition
+	Smart Data as a Service platform - Pitagora
+	$SDAAS_APPLICATION_ID $SDAAS_VERSION connected to ${STORE} (${STORE_TYPE})
+
+	Copyright (C) 2018-2024 LinkedData.Center
+	more info at $SDAAS_REFERENCE_DOC
 

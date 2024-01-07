@@ -32,9 +32,9 @@ sd_sparql_query() {
     # parse and validate inputs
     local sid="STORE"
     local out_format="xml"
-    local OPTIND opt; while getopts ":O:s:" opt; do
+    local OPTIND opt; while getopts ":o:s:" opt; do
         case "${opt}" in
-            O) out_format="${OPTARG}" ;;
+            o) out_format="${OPTARG}" ;;
             s) sid="${OPTARG}" ;;
 			*) 
 				sd_log -p ERROR "Invalid option: -$OPTARG ." 
@@ -87,12 +87,12 @@ sd_sparql_graph() {
     local accualPolicy="POST"
     local inputFormat="guess"
     local resource="@-"
-    local OPTIND opt; while getopts ":s:a:r:f:" opt; do
+    local OPTIND opt; while getopts ":s:a:I:i:" opt; do
         case "${opt}" in
             s) sid="${OPTARG}" ;;
             a) accualPolicy="${OPTARG}" ;;
-            f) inputFormat="${OPTARG}" ;;
-            r) resource="${OPTARG}" ;;
+            i) inputFormat="${OPTARG}" ;;
+            I) resource="${OPTARG}" ;;
 			*) 
 				sd_log -p ERROR "Invalid option: -$OPTARG ." 
 				return 1 

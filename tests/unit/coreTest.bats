@@ -118,7 +118,7 @@ function teardown {
 @test "core sd help" {
 	run sd -h view modules
 	[[ "$status" -eq 0 ]]
-	[[ "${lines[0]}" == "https://sdaas.netlify.app/reference/command/sd_view_modules" ]]
+	[[ "${lines[0]}" == "https://linkeddata.center/sdaas/reference/sd_view_modules" ]]
 }
 
 @test "sd core ontology" {
@@ -126,22 +126,22 @@ function teardown {
 	[[ "$status" -eq 0 ]]
 	[[ ${lines[0]} =~ "<http://linkeddata.center/kees/v1>" ]]
 	
-	run sd core ontology -O ntriples
+	run sd core ontology -o ntriples
 	[[ "$status" -eq 0 ]]
 	[[ ${lines[0]} =~ "<http://linkeddata.center/kees/v1>" ]]
 }
 
 
-@test "sd core ontology  -O turtle" {
-	run sd core ontology -O turtle
+@test "sd core ontology  -o turtle" {
+	run sd core ontology -o turtle
 	[[ "$status" -eq 0 ]]
 	[[ ${lines[0]} =~ "@base <urn:sdaas:tbox> ." ]]
 }
 
 
 
-@test "sd core ontology -O rdfxml" {
-	run sd core ontology -O rdfxml
+@test "sd core ontology -o rdfxml" {
+	run sd core ontology -o rdfxml
 	[[ "$status" -eq 0 ]]
 	[[ ${lines[0]} =~ "<?xml version=\"1.0\" encoding=\"utf-8\"?>" ]]
 }
