@@ -61,47 +61,20 @@ sd_driver_query() {
 }
 
 
+
 sd_driver_load() {
-    [[ "$#" -eq 5 ]] || return 99
+    [[ "$#" -eq 3 ]] || return 99
     local sid="$1"
-    local inputFormat="$2"
-    local resource="$3"
-    local accrualMethod="$4"
-    local graph="$5"
+    local accrualMethod="$2"
+    local graph="$3"
 
     sd_driver_validate "$sid" || return 1
-    sd_validate inputFormat "^(rdfxml|ntriples|turtle|trig|rss-tag-soup|grddl|guess|rdfa|json|nquads)$" || return 2
-    sd_validate resource "^((http|https|ftp|file)://.*|@.+)" || return 3
-    sd_validate accrualMethod "^(PUT|POST)$" || return 4
-	
-    # Auto detect input base uri and rewrite resource and graph if needed
-    local input_baseuri 
-    if [[ "$resource" == "@-" ]]; then
-        resource="-"
-        input_baseuri="$graph"
-    elif [[ "${resource:0:1}" == "@" ]];  then
-        #  rewrite resource and additional check for file existence
-        resource="${resource:1}"
-        input_baseuri="$graph"
-
-        if [[ ! -r "$resource" ]]; then
-            sd_log -p ERROR "'$resource' file not found"
-            return 3
-        fi
-    else 
-        input_baseuri="$resource"
-
-        # if resource and empty graph rewrite graph
-        if [[ -z "$graph" ]]; then
-            graph="$resource"
-        fi
-    fi
-
-    sd_validate graph "^(http|https|ftp|file|urn):" || return 5
+    sd_validate accrualMethod "^(PUT|POST)$" || return 2
+    sd_validate graph "^(http|https|ftp|file|urn):" || return 3
 
     # call rapper and pipe it to driver load function
     local driver_type_var="${sid}_TYPE"
-    rapper -i "$inputFormat" -I "$input_baseuri" -o "ntriples" -O "$graph" -wq "$resource" | "sd_${!driver_type_var}_load" "$sid" "$graph" "$accrualMethod"
+    "sd_${!driver_type_var}_load" "$sid" "$graph" "$accrualMethod"
 }
 
 

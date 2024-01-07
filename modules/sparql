@@ -85,21 +85,17 @@ sd_sparql_graph() {
     # parse and validate inputs
     local sid="STORE"
     local accualPolicy="POST"
-    local inputFormat="guess"
-    local resource="@-"
-    local OPTIND opt; while getopts ":s:a:I:i:" opt; do
+    local OPTIND opt; while getopts ":s:a:" opt; do
         case "${opt}" in
             s) sid="${OPTARG}" ;;
             a) accualPolicy="${OPTARG}" ;;
-            i) inputFormat="${OPTARG}" ;;
-            I) resource="${OPTARG}" ;;
 			*) 
 				sd_log -p ERROR "Invalid option: -$OPTARG ." 
 				return 1 
 				;;
         esac
     done; shift $((OPTIND-1))
-    local graph="$1"
+    local graph="${1:-$(sd_uuid)}"
 
     # Try a good default if empty graph passed
     if [[ -z "$graph" ]]; then
@@ -110,7 +106,7 @@ sd_sparql_graph() {
         fi
     fi
 
-    "sd_driver_load" "$sid" "$inputFormat" "$resource" "$accualPolicy" "$graph" 
+    "sd_driver_load" "$sid" "$accualPolicy" "$graph" 
 }
 
 

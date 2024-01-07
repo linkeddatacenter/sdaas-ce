@@ -138,8 +138,27 @@ sd_include() {
 
 
 sd_curl() {
-	sd_log -p DEBUG "executing sd_curl $@"
+	# sd_log -p DEBUG "executing sd_curl -L -A '$SDAAS_SIGNATURE' --retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused --compressed $@"
 	curl -L -A "$SDAAS_SIGNATURE" --retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused --compressed "$@"
+}
+
+
+sd_rapper() {
+	# sd_log -p DEBUG "executing rapper -gwq $@"
+	rapper -gwq \
+		-f 'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"' \
+		-f 'xmlns:owl="http://www.w3.org/2002/07/owl#"' \
+		-f 'xmlns:foaf="http://xmlns.com/foaf/0.1/"' \
+		-f 'xmlns:dc="http://purl.org/dc/elements/1.1/"' \
+		-f 'xmlns:dct="http://purl.org/dc/terms/"' \
+		-f 'xmlns:dqv="http://www.w3.org/ns/dqv#"' \
+		-f 'xmlns:prov="http://www.w3.org/ns/prov#"' \
+		-f 'xmlns:sd="http://www.w3.org/ns/sparql-service-description#"' \
+		-f 'xmlns:void="http://rdfs.org/ns/void#"' \
+		-f 'xmlns:xsd="http://www.w3.org/2001/XMLSchema#"' \
+		-f 'xmlns:kees="http://linkeddata.center/kees/v1#"' \
+		-f 'xmlns:sdaas="http://linkeddata.center/sdaas/v4#"' \
+		"$@"
 }
 
 
@@ -220,32 +239,19 @@ sd_core_ontology() {
 	function get_triples {
 		local files_array="$(find $SDAAS_ETC -type f \( -name "*.rdf" -o -name "*.nt" -o -name "*.ttl" \))"
 		for file in "${files_array[@]}"; do
-			rapper -i guess -I "urn:sdaas:tbox" -o "ntriples" -O "urn:sdaas:tbox" -wq "$file" || sd_abort "Internal error, invalid tbox $file"
+			sd_rapper -I "urn:sdaas:tbox" -O "urn:sdaas:tbox" "$file" || sd_abort "Internal error, invalid tbox $file"
 		done
 	}
 
-	get_triples | rapper -i guess -I "urn:sdaas:tbox" -o "$out_format" -O "urn:sdaas:tbox" -wq \
-		-f 'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"' \
-		-f 'xmlns:owl="http://www.w3.org/2002/07/owl#"' \
-		-f 'xmlns:foaf="http://xmlns.com/foaf/0.1/"' \
-		-f 'xmlns:dc="http://purl.org/dc/elements/1.1/"' \
-		-f 'xmlns:dct="http://purl.org/dc/terms/"' \
-		-f 'xmlns:dqv="http://www.w3.org/ns/dqv#"' \
-		-f 'xmlns:prov="http://www.w3.org/ns/prov#"' \
-		-f 'xmlns:sd="http://www.w3.org/ns/sparql-service-description#"' \
-		-f 'xmlns:void="http://rdfs.org/ns/void#"' \
-		-f 'xmlns:xsd="http://www.w3.org/2001/XMLSchema#"' \
-		-f 'xmlns:kees="http://linkeddata.center/kees/v1#"' \
-		-f 'xmlns:sdaas="http://linkeddata.center/sdaas/v4#"' \
-		-
+	get_triples | sd_rapper -I "urn:sdaas:tbox" -o "$out_format" -O "urn:sdaas:tbox"  -
 }
 
 ################################################################################
 ## Commands shortcut
 ################################################################################
-sd_list() { sd sparql query -O 'csv-h' "$@"; }
-sd_rule() { sd sparql query -O ntriples "$@"; }
-sd_test() { sd sparql query -O test "$@"; }
+sd_list() { sd sparql query -o 'csv-h' "$@"; }
+sd_rule() { sd sparql query -o ntriples "$@"; }
+sd_test() { sd sparql query -o test "$@"; }
 
 
 ################################################################################

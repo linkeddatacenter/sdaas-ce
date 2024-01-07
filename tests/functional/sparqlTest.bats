@@ -38,7 +38,7 @@ function setup {
 
 @test "sd_sparql_query inserted data" {
 	sd_sparql_update "$INSERT_TEST_STATEMENT"
-	run sd_sparql_query -O "csv-h" "SELECT ?s ?p ?o { ?s ?p ?o }"
+	run sd_sparql_query -o "csv-h" "SELECT ?s ?p ?o { ?s ?p ?o }"
     [[ "$status" -eq 0 ]]
     [[ "${lines[0]}" ==  "urn:uri:s,urn:uri:p,urn:uri:o" ]]
 }
@@ -47,12 +47,6 @@ function setup {
 
 ########## sd_sparql_graph
 
-@test "sd_sparql_graph from file " {
-	run sd_sparql_graph -f ntriples -a PUT -r "@tests/data/empty-store.nt" "urn:graph:store"
-    [[ "$status" -eq 0 ]] 
-	[[ "$(sd_driver_size STORE)" -eq 41 ]]
-}
-
 
 @test "sd_sparql_graph from stream " {
 	cat "tests/data/empty-store.nt" |  sd_sparql_graph -a PUT "urn:graph:store"
@@ -60,14 +54,14 @@ function setup {
 }
 
 
-@test "sd_sparql_graph with put and guess" {
+@test "sd_sparql_graph with put" {
 	cat "tests/data/empty-store.nt" | sd_sparql_graph -a PUT "urn:graph:store"
 	[[ "$(sd_driver_size STORE)" -eq 41 ]]
 	cat "tests/data/empty-store.nt" | sd_sparql_graph -a PUT "urn:graph:store"
 	[[ "$(sd_driver_size STORE)" -eq 41 ]]
 }
 
-@test "sd_sparql_graph with post and guess" {
+@test "sd_sparql_graph with post " {
 	cat "tests/data/empty-store.nt" | sd_sparql_graph "urn:graph:store"
 	[[ "$(sd_driver_size STORE)" -eq 41 ]]
 	cat "tests/data/empty-store.nt" | sd_sparql_graph "urn:graph:store"

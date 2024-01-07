@@ -34,7 +34,7 @@ on_script_startup
 
 
 @test "sd_sparql_graph sid management" {
-	test_sid sd_sparql_graph -i ntriples -a PUT -I "@tests/data/empty-store.nt" "urn:graph:store"
+	test_sid sd_sparql_graph  -a PUT "urn:graph:store"
 }
 
 
