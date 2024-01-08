@@ -61,7 +61,6 @@ sd_driver_query() {
 }
 
 
-
 sd_driver_load() {
     [[ "$#" -eq 3 ]] || return 99
     local sid="$1"

@@ -137,7 +137,7 @@ sd_include() {
 }
 
 
-sd_curl() {
+sd_curl() 
 	# sd_log -p DEBUG "executing sd_curl -L -A '$SDAAS_SIGNATURE' --retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused --compressed $@"
 	curl -L -A "$SDAAS_SIGNATURE" --retry 3 --retry-delay 3 --retry-max-time 30 --retry-connrefused --compressed "$@"
 }

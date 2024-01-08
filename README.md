@@ -98,6 +98,7 @@ docker build -t linkeddatacenter/sdaas-ce:4.0.0-rc1 .
 docker tag linkeddatacenter/sdaas-ce:4.0.0-rc1 linkeddatacenter/sdaas-ce 
 docker push linkeddatacenter/sdaas-ce:4.0.0-rc1
 docker push linkeddatacenter/sdaas-ce:latest
+
 ```
 
 

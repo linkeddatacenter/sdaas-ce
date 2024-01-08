@@ -71,7 +71,6 @@ sd_w3c_load() {
     local sid="$1"
     local graph="$2"
     local accrualMethod="$3"
-
     local first_line
  
     function stream_data {

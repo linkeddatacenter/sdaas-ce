@@ -14,6 +14,7 @@ RUN apt-get update && \
 		csvtool \
 		libxml2-utils
 
+
 ###### Mandatory configuration variables
 ENV SDAAS_INSTALL_DIR=/opt/SDAAS_REFERENCE_DOC
 ENV SDAAS_ETC="/etc/sdaas"
@@ -28,12 +29,14 @@ RUN chmod -R 0755 /usr/bin/sdaas
 
 # Create  an user and a workspace
 ENV SDAAS_WORKSPACE=/workspace
+
 RUN useradd -m -d /workspace -s /bin/bash -g users -u 1001 sdaas
 USER sdaas
 WORKDIR "${SDAAS_WORKSPACE}"
 
 ## Variables affecting program execution
 ENV SD_LOG_PRIORITY=6
+
 
 
 ENTRYPOINT ["/usr/bin/sdaas"]
