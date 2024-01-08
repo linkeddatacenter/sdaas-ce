@@ -18,8 +18,9 @@ sd_w3c_update() {
     local update_command="$2"
 
     local data_mode
-    if [[ "$update_command" == "@-" ]]; then
+    if [[ "$update_command" == "-" ]]; then
         data_mode="--data"
+        update_command="@-"
     else
         data_mode="--data-raw"
     fi
@@ -48,8 +49,9 @@ sd_w3c_query() {
     
 
     local data_mode
-    if [[ "$query_command" == "@-" ]]; then
+    if [[ "$query_command" == "-" ]]; then
         data_mode="--data"
+        query_command="@-"
     else
         data_mode="--data-raw"
     fi
@@ -84,7 +86,7 @@ sd_w3c_load() {
         sd_log -p INFORMATIONAL "No data stream, load skipped"
         return 0
     else
-        stream_data | sd_w3c_update "$sid" "@-"
+        stream_data | sd_w3c_update "$sid" "-"
     fi
 }
 

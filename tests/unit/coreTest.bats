@@ -21,6 +21,7 @@ function teardown {
 }
 
 
+
 ########## Test sd_log 
 
 @test "core sd_log with default priority" {
@@ -124,6 +125,7 @@ function teardown {
 @test "sd core ontology" {
 	run sd core ontology
 	[[ "$status" -eq 0 ]]
+	echo "$output" > /tmp/x
 	[[ ${lines[0]} =~ "<http://linkeddata.center/kees/v1>" ]]
 	
 	run sd core ontology -o ntriples

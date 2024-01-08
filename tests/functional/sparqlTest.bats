@@ -49,7 +49,7 @@ function setup {
 
 
 @test "sd_sparql_graph from stream " {
-	cat "tests/data/empty-store.nt" |  sd_sparql_graph -a PUT "urn:graph:store"
+	cat "tests/data/empty-store.nt" | sd_sparql_graph -a PUT "urn:graph:store"
 	[[ "$(sd_driver_size STORE)" -eq 41 ]]
 }
 

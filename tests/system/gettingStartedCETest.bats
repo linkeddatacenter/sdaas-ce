@@ -19,9 +19,9 @@ on_script_startup
 }
 
 @test "step2: load from sparql update" {
-	run sd sparql update 'LOAD <https://schema.org/version/latest/schemaorg-current-http.ttl> INTO GRAPH <urn:graph:0>'
+	run sd sparql update 'LOAD <https://dbpedia.org/data/Lecco.ttl> INTO GRAPH <urn:graph:0>'
 	[[ "$status" -eq 0 ]]
-	[[ "$(sd driver size STORE)" -eq 16389 ]]
+	[[ "$(sd driver size STORE)" -eq 1205 ]]
 }
 
 @test "step3: load from resource" {
@@ -31,7 +31,7 @@ on_script_startup
 	
 	run pipe_load
 	[[ "$status" -eq 0 ]]
-	[[ "$(sd driver size STORE)" -eq 16530 ]]
+	[[ "$(sd driver size STORE)" -eq 1346 ]]
 }
 
 
@@ -39,8 +39,8 @@ on_script_startup
 	run sd sparql query -o csv "SELECT ?g (COUNT (?s) AS ?subjects) WHERE {GRAPH ?g{?s?p ?o}} GROUP BY ?g order by ?g"
 	[[ "$status" -eq 0 ]]
 	[[ "${lines[0]}" == "g,subjects" ]]
-	[[ "$(sd driver size STORE)" -eq 16530 ]]
-	[[ "${lines[1]}" == "urn:graph:0,16389" ]]
+	[[ "$(sd driver size STORE)" -eq 1346 ]]
+	[[ "${lines[1]}" == "urn:graph:0,1205" ]]
 	[[ "${lines[2]}" == "urn:graph:1,141" ]]
 }
 
