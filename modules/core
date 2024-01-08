@@ -163,12 +163,12 @@ sd_rapper() {
 
 
 sd() {
-	local abortOnFail=${SD_ABORT_ON_FAIL:-false}
-	local help=false
-	while getopts ":hA" opt; do 
+	local OPT_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
+	local OPT_HELP=false
+	local OPTIND opt; while getopts ":hA" opt; do 
         case "${opt}" in
-			h) help=true ;;
-			A) abortOnFail=true ;;
+			h) OPT_HELP=true ;;
+			A) OPT_ABORT_ON_FAIL=true ;;
 			*) 
 				sd_log -p ERROR "Invalid option: -$OPTARG . Usage: sd [-h] [-A] MODULE FUNCTION" 
 				return 1 
@@ -182,7 +182,7 @@ sd() {
 	sd_validate function_name "^[a-z][a-z0-9-]+$"  || return 2
 	shift 2
 
-	if $help ; then
+	if [[ "$OPT_HELP" == "true" ]] ; then
 		# print the URL of the manual
 		echo "$SDAAS_REFERENCE_DOC/reference/sd_${module}_${function_name}"
 		return 0
@@ -198,7 +198,7 @@ sd() {
 	# build and execute a command
 	"sd_${module}_${function_name}" "$@"
 	local status="$?"
-	if $abortOnFail && [[ $status -gt 0 ]]; then
+	if $OPT_ABORT_ON_FAIL && [[ $status -gt 0 ]]; then
 		sd_abort "exit=$status, sd_${module}_${function_name}"
 	fi
 	return $status
