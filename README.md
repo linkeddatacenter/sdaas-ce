@@ -28,7 +28,6 @@ docker compose down
 
 
 ## Installation & usage
-
 See the [documentation](https://gitlab.com/linkeddatacenter/sdaas/doc) for more info.
 
 
