@@ -143,6 +143,16 @@ sd_curl() {
 }
 
 
+sd_curl_rdf() {
+	sd_curl -s -f -H "Accept: application/rdf+xml, text/turtle;q=0.9, application/n-triples;q=0.8, */*;q=0.5" "$@"
+}
+
+
+sd_curl_sparql() {
+	sd_curl -s -f -H "Accept: application/sparql-query, application/sparql-update;q=0.9, text/plain;q=0.5" "$@"
+}
+
+
 sd_rapper() {
 	# sd_log -p DEBUG "executing rapper -wq $@"
 	rapper -wq \

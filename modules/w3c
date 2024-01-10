@@ -25,7 +25,8 @@ sd_w3c_update() {
         data_mode="--data-raw"
     fi
 
-    SD_LAST_SPARQL_UPDATE_RESULT="$(sd_curl -s --fail-with-body \
+    local last_sparql_update_result
+    last_sparql_update_result="$(sd_curl -s --fail-with-body \
         -X POST \
         "$data_mode" "$update_command" \
         --header "Transfer-Encoding: chunked" \
@@ -34,9 +35,9 @@ sd_w3c_update() {
     )" 
 
     if [[ $? -eq 0 ]]; then 
-        sd_log -p DEBUG "$SD_LAST_SPARQL_UPDATE_RESULT"
+        sd_log -p DEBUG "$last_sparql_update_result"
     else
-        sd_log -p ERROR "$SD_LAST_SPARQL_UPDATE_RESULT"
+        sd_log -p ERROR "$last_sparql_update_result"
         return 1
     fi
 }
