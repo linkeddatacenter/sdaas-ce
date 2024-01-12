@@ -171,6 +171,10 @@ sd_rapper() {
 		"$@"
 }
 
+sd_url_encode() {
+	echo -n "$1" | jq -s -R -r @uri
+}
+
 
 sd() {
 	local OPT_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
@@ -221,37 +225,6 @@ sd_uuid() {
 	cat /proc/sys/kernel/random/uuid
 }
 
-
-
-################################################################################
-## module commands definition
-################################################################################
-
-sd_core_version() {
-	echo "$SDAAS_VERSION"
-}
-
-
-sd_core_ontology() {
-	# parse and validate inputs
-   	local OPT_OUTPUT_FORMAT="ntriples"
-    local OPTIND opt; while getopts ":o:" opt; do
-        case "${opt}" in
-            o) OPT_OUTPUT_FORMAT="${OPTARG}" ;;
-			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
-        esac
-    done; shift $((OPTIND-1))
-	sd_validate OPT_OUTPUT_FORMAT "^(rdfxml|ntriples|turtle)$" || return 1
-
-	function get_triples {
-		local files_array="$(find $SDAAS_ETC -type f \( -name "*.rdf" -o -name "*.nt" -o -name "*.ttl" \))"
-		for file in "${files_array[@]}"; do
-			sd_rapper -g -I "urn:sdaas:tbox" -o ntriples "$file" || sd_abort "Internal error, invalid tbox $file"
-		done
-	}
-
-	get_triples | sd_rapper -i ntriples -o "$OPT_OUTPUT_FORMAT"  - "urn:sdaas:tbox"
-}
 
 ################################################################################
 ## Commands shortcut

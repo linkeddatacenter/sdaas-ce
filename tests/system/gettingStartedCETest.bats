@@ -26,7 +26,7 @@ on_script_startup
 
 @test "step3: load from resource" {
 	function pipe_load {
-		sd_core_ontology | sd sparql graph "urn:graph:1"
+		sd view ontology | sd sparql graph "urn:graph:1"
 	}
 	
 	run pipe_load

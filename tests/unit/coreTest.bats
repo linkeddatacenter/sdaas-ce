@@ -93,21 +93,11 @@ function teardown {
 
 ########## Test sd
 
-@test "core sd with base params" {
-	run sd core version
+@test "test SD" {
+	run sd view version
 	[[ "$status" -eq 0 ]]
 	[[ "${lines[0]}" == "$SDAAS_VERSION" ]]
 }
-
-
-
-@test "core sd or direct command must provide the same result" {
-	local res=$(sd core version)
-	run sd_core_version
-	[[ "$status" -eq 0 ]]
-	[[ "${lines[0]}" == "$res" ]]
-}
-
 
 
 @test "core sd abort on failing" {
@@ -122,28 +112,10 @@ function teardown {
 	[[ "${lines[0]}" == "https://linkeddata.center/sdaas/reference/sd_view_modules" ]]
 }
 
-@test "sd core ontology" {
-	run sd core ontology
-	[[ "$status" -eq 0 ]]
-	echo "$output" > /tmp/x
-	[[ ${lines[0]} =~ "<http://linkeddata.center/kees/v1>" ]]
-	
-	run sd core ontology -o ntriples
-	[[ "$status" -eq 0 ]]
-	[[ ${lines[0]} =~ "<http://linkeddata.center/kees/v1>" ]]
-}
+########## Test sd_url_encode
 
-
-@test "sd core ontology  -o turtle" {
-	run sd core ontology -o turtle
-	[[ "$status" -eq 0 ]]
-	[[ ${lines[0]} =~ "@base <urn:sdaas:tbox> ." ]]
-}
-
-
-
-@test "sd core ontology -o rdfxml" {
-	run sd core ontology -o rdfxml
-	[[ "$status" -eq 0 ]]
-	[[ ${lines[0]} =~ "<?xml version=\"1.0\" encoding=\"utf-8\"?>" ]]
+@test "sd_url_encode" {
+	run sd_url_encode "http://w3.org/?test#name"
+	[ "$status" -eq 0 ]
+	[[ "${lines[0]}" == "http%3A%2F%2Fw3.org%2F%3Ftest%23name" ]]
 }
