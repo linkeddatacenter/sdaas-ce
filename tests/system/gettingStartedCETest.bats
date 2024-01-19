@@ -13,14 +13,14 @@ on_script_startup
 
 
 @test "step1: drop all" {
-	run sd sparql update "DROP ALL"
-	[[ "$status" -eq 0 ]]
+	echo "DROP ALL" | sd sparql update
+	[[ "$?" -eq 0 ]]
 	[[ "$(sd driver size STORE)" -eq 0 ]]
 }
 
 @test "step2: load from sparql update" {
-	run sd sparql update 'LOAD <https://dbpedia.org/data/Lecco.ttl> INTO GRAPH <urn:graph:0>'
-	[[ "$status" -eq 0 ]]
+	echo 'LOAD <https://dbpedia.org/data/Lecco.ttl> INTO GRAPH <urn:graph:0>' | sd sparql update 
+	[[ "$?" -eq 0 ]]
 	[[ "$(sd driver size STORE)" -eq 1205 ]]
 }
 
@@ -36,7 +36,11 @@ on_script_startup
 
 
 @test "step4: query" {
-	run sd sparql query -o csv "SELECT ?g (COUNT (?s) AS ?subjects) WHERE {GRAPH ?g{?s?p ?o}} GROUP BY ?g order by ?g"
+	function pipe_load {
+		echo "SELECT ?g (COUNT (?s) AS ?subjects) WHERE {GRAPH ?g{?s?p ?o}} GROUP BY ?g order by ?g" | sd sparql query -o csv 
+	}
+
+	run pipe_load
 	[[ "$status" -eq 0 ]]
 	[[ "${lines[0]}" == "g,subjects" ]]
 	[[ "$(sd driver size STORE)" -eq 1346 ]]
@@ -45,7 +49,11 @@ on_script_startup
 }
 
 @test "step5: query by streamed command" {
-	run sd sparql query -o csv "SELECT DISTINCT ?class WHERE { ?s a ?class} LIMIT 10"
+	function pipe_load {
+		echo "SELECT DISTINCT ?class WHERE { ?s a ?class} LIMIT 10" | sd sparql query -o csv 
+	}
+
+	run pipe_load
 	[[ "$status" -eq 0 ]]
 	[[ "${lines[0]}" == "class" ]]
 	[[ "${#lines[@]}" -eq 11 ]]
