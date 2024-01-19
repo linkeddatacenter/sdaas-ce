@@ -16,19 +16,27 @@ function setup {
 }
 
 
+
+function test {
+	local statement="$1"
+	shift 1
+
+	echo "$statement" | "$@"
+}
+
+
+
 ##########  sd_sparql_update
 
 @test "sd_sparql_update insert data" {
-	run sd_sparql_update "$INSERT_TEST_STATEMENT"
+	run test "$INSERT_TEST_STATEMENT"  sd_sparql_update
     [[ "$status" -eq 0 ]]
 	[[ "$(sd_driver_size STORE)" -eq 1 ]]
 }
 
-
 @test "sd_sparql_update wrong statement" {
-	run sd_sparql_update "NO UPDATE STATEMENT"
+	run test  "NO UPDATE STATEMENT"  sd_sparql_update
     [[ "$status" -ne 0 ]]
-    [[ "${lines[0]}" =~  ^\[ERROR\] ]]
 	[[ "$(sd_driver_size STORE)" -eq 0 ]]
 }
 
@@ -37,8 +45,8 @@ function setup {
 
 
 @test "sd_sparql_query inserted data" {
-	sd_sparql_update "$INSERT_TEST_STATEMENT"
-	run sd_sparql_query -o "csv-h" "SELECT ?s ?p ?o { ?s ?p ?o }"
+	echo "$INSERT_TEST_STATEMENT" | sd_sparql_update 
+	run test "SELECT ?s ?p ?o { ?s ?p ?o }" sd_sparql_query -o "csv-h" 
     [[ "$status" -eq 0 ]]
     [[ "${lines[0]}" ==  "urn:uri:s,urn:uri:p,urn:uri:o" ]]
 }

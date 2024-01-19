@@ -21,6 +21,7 @@ STORE_TYPE=${STORE_TYPE:-w3c}
 
 SD_LOG_PRIORITY=${SD_LOG_PRIORITY:-5}
 SD_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
+SD_DEFAULT_CONTEXT=${SD_DEFAULT_CONTEXT:-"sid=STORE graph=urn:sdaas:abox"}
 
 # WARNING: changing this variable breaks the license agreement
 SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"SDaaS $SDAAS_APPLICATION_ID $SDAAS_VERSION"}
@@ -153,6 +154,11 @@ sd_curl_sparql() {
 }
 
 
+sd_cat() {
+	cat "$@" 2> /dev/null
+}
+
+
 sd_rapper() {
 	# sd_log -p DEBUG "executing rapper -wq $@"
 	rapper -wq \
@@ -177,12 +183,12 @@ sd_url_encode() {
 
 
 sd() {
-	local OPT_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
-	local OPT_HELP=false
+	local abort_on_fail=${SD_ABORT_ON_FAIL:-false}
+	local help=false
 	local OPTIND opt; while getopts ":hA" opt; do 
         case "${opt}" in
-			h) OPT_HELP=true ;;
-			A) OPT_ABORT_ON_FAIL=true ;;
+			h) help=true ;;
+			A) abort_on_fail=true ;;
 			*) 
 				sd_log -p ERROR "Invalid option: -$OPTARG . Usage: sd [-h] [-A] MODULE FUNCTION" 
 				return 1 
@@ -196,7 +202,7 @@ sd() {
 	sd_validate function_name "^[a-z][a-z0-9-]+$"  || return 2
 	shift 2
 
-	if [[ "$OPT_HELP" == "true" ]] ; then
+	if [[ "$help" == "true" ]] ; then
 		# print the URL of the manual
 		echo "$SDAAS_REFERENCE_DOC/reference/sd_${module}_${function_name}"
 		return 0
@@ -212,7 +218,7 @@ sd() {
 	# build and execute a command
 	"sd_${module}_${function_name}" "$@"
 	local status="$?"
-	if $OPT_ABORT_ON_FAIL && [[ $status -gt 0 ]]; then
+	if $abort_on_fail && [[ $status -ne 0 ]]; then
 		sd_abort "exit=$status, sd_${module}_${function_name}"
 	fi
 	return $status
@@ -225,13 +231,6 @@ sd_uuid() {
 	cat /proc/sys/kernel/random/uuid
 }
 
-
-################################################################################
-## Commands shortcut
-################################################################################
-sd_list() { sd sparql query -o 'csv-h' "$@"; }
-sd_rule() { sd sparql query -o ntriples "$@"; }
-sd_test() { sd sparql query -o test "$@"; }
 
 
 ################################################################################

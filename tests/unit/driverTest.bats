@@ -43,7 +43,7 @@ on_script_startup
 
 @test "driver sd_driver_validate to an invalid driver" {
 	local TEST="http://example/sparql"
-	local TEST_TYPE="not exists"
+	local TEST_TYPE="notexists"
 	run sd_driver_validate TEST 
     [[ "$status" -ne 0 ]]
 }
@@ -62,12 +62,12 @@ on_script_startup
 @test "driver sd_driver_update" {
 	local TEST="http://example/sparql"
 	local TEST_TYPE="testdriver"
-	run sd_driver_update TEST "STATEMENT"
+	run sd_driver_update TEST
     [[ "$status" -eq 0 ]]
 }
 
 @test "driver sd_driver_update invalid sid" {
-	run sd_driver_update NOSTORE "STATEMENT"
+	run sd_driver_update NOSTORE
     [[ "$status" -eq 1 ]]
 }
 
@@ -76,19 +76,19 @@ on_script_startup
 @test "driver sd_driver_query" {
 	local TEST="http://example/sparql"
 	local TEST_TYPE="testdriver"
-	run sd_driver_query TEST "text/csv" "STATEMENT"
+	run sd_driver_query TEST "text/csv"
     [[ "$status" -eq 0 ]]
 }
 
 
 @test "driver sd_driver_query invalid sid" {
-	run sd_driver_query INVALIDSID "text/csv" "STATEMENT"
+	run sd_driver_query INVALIDSID "text/csv"
     [[ "$status" -gt 0 ]]
 }
 
 
 
 @test "driver sd_driver_query missing mimetype" {
-	run sd_driver_query STORE "STATEMENT"
+	run sd_driver_query STORE
     [[ "$status" -gt 0 ]]
 }

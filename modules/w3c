@@ -15,29 +15,17 @@ sd_w3c_validate() {
 
 sd_w3c_update() {
     local sid="$1"
-    local update_command="$2"
-
-    local data_mode
-    if [[ "$update_command" == "-" ]]; then
-        data_mode="--data"
-        update_command="@-"
-    else
-        data_mode="--data-raw"
-    fi
 
     local last_sparql_update_result
     last_sparql_update_result="$(sd_curl -s --fail-with-body \
         -X POST \
-        "$data_mode" "$update_command" \
+        --data @- \
         --header "Transfer-Encoding: chunked" \
         --header "Content-Type: application/sparql-update; charset=utf-8" \
-        "${!sid}" \
-    )" 
+        "${!sid}" )"
 
-    if [[ $? -eq 0 ]]; then 
-        sd_log -p DEBUG "$last_sparql_update_result"
-    else
-        sd_log -p ERROR "$last_sparql_update_result"
+    if  [ $? -ne 0 ]; then
+        sd_log -p ERROR "running $last_sparql_update_result..."
         return 1
     fi
 }
@@ -46,20 +34,10 @@ sd_w3c_update() {
 sd_w3c_query() {
     local sid="$1"
     local mime_type="$2"
-    local query_command="$3"
-    
-
-    local data_mode
-    if [[ "$query_command" == "-" ]]; then
-        data_mode="--data"
-        query_command="@-"
-    else
-        data_mode="--data-raw"
-    fi
 
 	sd_curl -s --fail-with-body --compressed \
         -X POST \
-        "$data_mode" "$query_command" \
+        --data @- \
         --header "Content-Type: application/sparql-query; charset=utf-8" \
         --header "Accept: $mime_type; charset=utf-8" \
         "${!sid}"
@@ -87,18 +65,18 @@ sd_w3c_load() {
         sd_log -p INFORMATIONAL "No data stream, load skipped"
         return 0
     else
-        stream_data | sd_w3c_update "$sid" "-"
+        stream_data | sd_w3c_update "$sid"
     fi
 }
 
 
 
 sd_w3c_size() {
-    sd_w3c_query "$1" "text/csv" "SELECT (COUNT(?s) AS ?ntriples) WHERE { ?s ?p ?o }" | csvtool drop 1 -
+    echo "SELECT (COUNT(?s) AS ?ntriples) WHERE { ?s ?p ?o }" | sd_w3c_query "$1" "text/csv"  | csvtool drop 1 -
 }
 
 
 sd_w3c_erase() {
-    sd_w3c_update "$1" "DROP SILENT ALL"
+    echo "DROP SILENT ALL" | sd_w3c_update "$1" 
 }
 

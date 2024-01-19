@@ -1,10 +1,13 @@
-if [[ ! -z ${__module_testdriver+x} ]]; then return ; else __module_testdirver=1 ; fi
+if [[ ! -z ${__module_testdriver+x} ]]; then return ; else __module_testdriver=1 ; fi
 # Copyright (C) 2019-2023 LinkedData.Center - All Rights Reserved
 
-sd_testdriver_validate() { return 0; }
-sd_testdriver_load() { return 0; }
-sd_testdriver_size()  { return 0; }
-sd_testdriver_erase()  { return 0; }
-sd_testdriver_update()  { return 0; }
-sd_testdriver_query()  { return 0; }
+# Can redefine this function in unit test:
+sd_testdriver_stub() {  echo "$@"; }
+
+sd_testdriver_validate() { sd_testdriver_stub "$@"; }
+sd_testdriver_load() { sd_testdriver_stub "$@"; }
+sd_testdriver_size() { sd_testdriver_stub "$@"; }
+sd_testdriver_erase() { sd_testdriver_stub "$@"; }
+sd_testdriver_update() { sd_testdriver_stub "$@"; }
+sd_testdriver_query() { sd_testdriver_stub "$@"; }
 

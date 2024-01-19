@@ -9,37 +9,38 @@ sd_include driver
 
 sd_sparql_update() {
     # parse and validate inputs
-    local OPT_SID="STORE"
-    local OPTIND opt; while getopts ":s:" opt; do
+    local sid="STORE"
+    eval "declare $SD_DEFAULT_CONTEXT"
+    local OPTIND opt; while getopts ":s:D:" opt; do
         case "${opt}" in
-            s) OPT_SID="${OPTARG}" ;;
+            s) sid="$OPTARG" ;;
+            D) eval "declare $OPTARG" ;;
 			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
         esac
-    done; shift $((OPTIND-1))
-    local ARG_UPDATE_COMMAND="${1:-"-"}"
-    
+    done; 
+
     # call driver function
-    sd_driver_update "$OPT_SID" "$ARG_UPDATE_COMMAND"
+    sd_driver_update "$sid" 
 }
 
 
 
 sd_sparql_query() {
     # parse and validate inputs
-    local OPT_SID="STORE"
-    local OPT_OUTPUT_FORMAT="xml"
-    local OPTIND opt; while getopts ":o:s:" opt; do
+    local sid="STORE" output_format="xml"
+    eval "declare $SD_DEFAULT_CONTEXT"
+    local OPTIND opt; while getopts ":o:s:D:" opt; do
         case "${opt}" in
-            o) OPT_OUTPUT_FORMAT="${OPTARG}" ;;
-            s) OPT_SID="${OPTARG}" ;;
+            o) output_format="${OPTARG}" ;;
+            s) sid="${OPTARG}" ;;
+            D) eval "declare $OPTARG" ;;
 			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
         esac
     done; shift $((OPTIND-1))
-    local ARG_QUERY_COMMAND="${1:-"-"}"
 
-    # Validate OPT_OUTPUT_FORMAT
+    # Validate output_format
     local media_type
-	case "${OPT_OUTPUT_FORMAT}" in
+	case "${output_format}" in
 		csv*) media_type="text/csv" ;;
         tsl) media_type="text/tab-separated-values" ;;
         json) media_type="application/sparql-results+json" ;;
@@ -48,41 +49,48 @@ sd_sparql_query() {
         turtle) media_type="text/turtle" ;;
         rdfxml) media_type="application/rdf+xml" ;;
         *) 
-            sd_log -p ERROR "format $OPT_OUTPUT_FORMAT not supported"
+            sd_log -p ERROR "format $output_format not supported"
             return 1
             ;;
 	esac
    
     # call driver function and post-processing results
-	case "$OPT_OUTPUT_FORMAT" in
-		csv-h)   sd_driver_query "$OPT_SID" "$media_type" "$ARG_QUERY_COMMAND" | csvtool drop 1 - ;;
-		csv-1)   sd_driver_query "$OPT_SID" "$media_type" "$ARG_QUERY_COMMAND" | csvtool head 2 - | csvtool drop 1 -;;
-		csv-f1)  sd_driver_query "$OPT_SID" "$media_type" "$ARG_QUERY_COMMAND" | csvtool head 2 - | csvtool drop 1 - | csvtool format '%(1)\n' - ;;
-		boolean) sd_driver_query "$OPT_SID" "$media_type" "$ARG_QUERY_COMMAND" | xmllint --xpath "//*[local-name()='boolean']/text()" - 2>/dev/null;;
-        test)    sd_driver_query "$OPT_SID" "$media_type" "$ARG_QUERY_COMMAND" | \
+	case "$output_format" in
+		csv-h)   sd_driver_query "$sid" "$media_type" | csvtool drop 1 - ;;
+		csv-1)   sd_driver_query "$sid" "$media_type" | csvtool head 2 - | csvtool drop 1 -;;
+		csv-f1)  sd_driver_query "$sid" "$media_type" | csvtool head 2 - | csvtool drop 1 - | csvtool format '%(1)\n' - ;;
+		boolean) sd_driver_query "$sid" "$media_type" | xmllint --xpath "//*[local-name()='boolean']/text()" - 2>/dev/null;;
+        test)    sd_driver_query "$sid" "$media_type" | \
             xmllint --xpath "((count(//*[local-name()='results']/*) + count(//*[local-name()='boolean'])) = 0) \
                 or //*[local-name()='boolean'][text()='true']" - 2>/dev/null \
             |  grep -q "true"
             ;;
-		*) sd_driver_query "$OPT_SID" "$media_type" "$ARG_QUERY_COMMAND" ;;
+		*) sd_driver_query "$sid" "$media_type" ;;
 	esac
 }
 
 
 sd_sparql_graph() {
     # parse and validate inputs
-    local OPT_SID="STORE"
-    local OPT_ACCRUAL_METHOD="POST"
-    local OPTIND opt; while getopts ":a:s:" opt; do
+    local sid="STORE" accrual_method="POST" graph="$(sd_uuid)ù"
+    eval "declare $SD_DEFAULT_CONTEXT"
+    local OPTIND opt; while getopts ":a:s:D:" opt; do
         case "${opt}" in
-            a) OPT_ACCRUAL_METHOD="${OPTARG}" ;;
-            s) OPT_SID="${OPTARG}" ;;
+            a) accrual_method="${OPTARG}" ;;
+            s) sid="${OPTARG}" ;;
+            D) eval "declare $OPTARG" ;;
 			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
         esac
     done; shift $((OPTIND-1))
-    local ARG_GRAPH_URI="${1:-$(sd_uuid)}"
+    if [[ -n "$1" ]]; then graph="$1"; fi
 
-    "sd_driver_load" "$OPT_SID" "$OPT_ACCRUAL_METHOD" "$ARG_GRAPH_URI" 
+    sd_driver_load "$sid" "$accrual_method" "$graph" 
 }
 
 
+################################################################################
+## Commands shortcuts
+################################################################################
+sd_sparql_rule() { sd sparql query -o ntriples "$@"; }
+sd_sparql_test() { sd sparql query -o test "$@"; }
+sd_sparql_list() { sd sparql query -o 'csv-h' "$@"; }

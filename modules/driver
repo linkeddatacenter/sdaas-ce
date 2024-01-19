@@ -32,24 +32,22 @@ sd_driver_validate() {
 
 
 sd_driver_update() {
-    [[ "$#" -eq 2 ]] || return 99
+    [[ "$#" -eq 1 ]] || return 99
     local sid="$1"
-    local update_command="$2"
 
     sd_driver_validate "$sid"  || return 1
-    # sd_validate not used for update_command becaus can be anything
+    # sd_validate not used for update_string because it is too heavvy to check, ltet this duty to SPARQL parser in graph store
     
     # call driver function
     local driver_type_var="${sid}_TYPE"
-    "sd_${!driver_type_var}_update" "$sid" "$update_command"
+    "sd_${!driver_type_var}_update" "$sid"
 }
 
 
 sd_driver_query() {
-    [[ "$#" -eq 3 ]] || return 99
+    [[ "$#" -eq 2 ]] || return 99
     local sid="$1"
     local mime_type="$2"
-    local query_command="$3"
 
     sd_driver_validate "$sid" || return 1
     sd_validate mime_type "^[a-z]+\/[a-z0-9.+-]+$" || return 2
@@ -57,7 +55,7 @@ sd_driver_query() {
 
     # call driver function and post-processing results
     local driver_type_var="${sid}_TYPE"
-    "sd_${!driver_type_var}_query" "${sid}" "$mime_type" "$query_command"  | tr -d '\r'
+    "sd_${!driver_type_var}_query" "${sid}" "$mime_type" | tr -d '\r'
 }
 
 
