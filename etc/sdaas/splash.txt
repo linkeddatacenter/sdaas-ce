@@ -6,6 +6,7 @@
 
 	Smart Data as a Service platform - Pitagora
 	$SDAAS_APPLICATION_ID $SDAAS_VERSION connected to ${STORE} (${STORE_TYPE})
+	Agent ID: $AGENT_ID
 
 	Copyright (C) 2018-2024 LinkedData.Center
 	more info at $SDAAS_REFERENCE_DOC

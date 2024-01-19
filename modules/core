@@ -21,7 +21,7 @@ STORE_TYPE=${STORE_TYPE:-w3c}
 
 SD_LOG_PRIORITY=${SD_LOG_PRIORITY:-5}
 SD_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
-SD_DEFAULT_CONTEXT=${SD_DEFAULT_CONTEXT:-"sid=STORE graph=urn:sdaas:abox"}
+SD_DEFAULT_CONTEXT=${SD_DEFAULT_CONTEXT:-"sid=STORE activity=Activity"}
 
 # WARNING: changing this variable breaks the license agreement
 SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"SDaaS $SDAAS_APPLICATION_ID $SDAAS_VERSION"}
@@ -245,8 +245,9 @@ sd_uuid() {
 ###########################
 # Module initialization
 ##########################
+AGENT_ID="$(sd_uuid)"
 if [[ "$1" != "NO_SPLASH" ]]; then
-	( export STORE STORE_TYPE ; cat "$SDAAS_ETC/splash.txt" | envsubst)
+	( export STORE STORE_TYPE AGENT_ID; cat "$SDAAS_ETC/splash.txt" | envsubst)
 fi
 
 # Set the prompt in interactive mode
