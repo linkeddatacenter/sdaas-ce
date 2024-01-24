@@ -31,7 +31,7 @@ on_script_startup
 	
 	run pipe_load
 	[[ "$status" -eq 0 ]]
-	[[ "$(sd driver size STORE)" -eq 1346 ]]
+	[[ "$(sd driver size STORE)" -eq 1350 ]]
 }
 
 
@@ -43,9 +43,9 @@ on_script_startup
 	run pipe_load
 	[[ "$status" -eq 0 ]]
 	[[ "${lines[0]}" == "g,subjects" ]]
-	[[ "$(sd driver size STORE)" -eq 1346 ]]
+	[[ "$(sd driver size STORE)" -eq 1350 ]]
 	[[ "${lines[1]}" == "urn:graph:0,1205" ]]
-	[[ "${lines[2]}" == "urn:graph:1,141" ]]
+	[[ "${lines[2]}" == "urn:graph:1,145" ]]
 }
 
 @test "step5: query by streamed command" {

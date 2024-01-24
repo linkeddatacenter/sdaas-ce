@@ -72,7 +72,7 @@ sd_sparql_query() {
 
 sd_sparql_graph() {
     # parse and validate inputs
-    local sid="STORE" accrual_method="POST" graph="$(sd_uuid)ù"
+    local sid="STORE" accrual_method="POST" graph="$(sd_uuid)"
     eval "declare $SD_DEFAULT_CONTEXT"
     local OPTIND opt; while getopts ":a:s:D:" opt; do
         case "${opt}" in
