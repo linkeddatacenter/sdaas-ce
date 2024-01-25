@@ -236,11 +236,11 @@ sd_uuid() {
 ################################################################################
 ## Ensure mandatory variables are well-defined
 ################################################################################
-# [[ -d "$SDAAS_INSTALL_DIR" && -r "$SDAAS_INSTALL_DIR/core" ]] || sd_abort "Invalid SDAAS_INSTALL_DIR directory ($SDAAS_INSTALL_DIR)"
-# [[ "$SDAAS_VERSION" =~  "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$" ]] || sd_abort "No semver in SDAAS_VERSION ($SDAAS_VERSION)"
-# [[ "$SDAAS_REFERENCE_DOC" =~  "^https?://" ]] || sd_abort "Invalid SDAAS_REFERENCE_DOC URL ($SDAAS_REFERENCE_DOC)"
-# [[ -d "$SDAAS_ETC" ]] ||  sd_abort "Invalid SDAAS_ETC directory ($SDAAS_ETC)"
-# [[ -z "$SDAAS_APPLICATION_ID" ]] ||  sd_abort "Empty SDAAS_APPLICATION_ID not allowed"
+[[ -d "$SDAAS_INSTALL_DIR" && -r "$SDAAS_INSTALL_DIR/core" ]] || sd_abort "Invalid SDAAS_INSTALL_DIR directory ($SDAAS_INSTALL_DIR)"
+[[ -n "$SDAAS_VERSION" ]] || sd_abort "No semver in SDAAS_VERSION ($SDAAS_VERSION)"
+[[ "$SDAAS_REFERENCE_DOC" =~  ^https?:// ]] || sd_abort "Invalid SDAAS_REFERENCE_DOC URL ($SDAAS_REFERENCE_DOC)"
+[[ -d "$SDAAS_ETC" ]] ||  sd_abort "Invalid SDAAS_ETC directory ($SDAAS_ETC)"
+[[ -n "$SDAAS_APPLICATION_ID" ]] ||  sd_abort "Empty SDAAS_APPLICATION_ID not allowed"
 
 ###########################
 # Module initialization
