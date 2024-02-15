@@ -4,7 +4,7 @@
 
 A platform to build knowledge graphs.
 
-This is the  open source implementation of the [LinkeData.Center SDaaS™ product](https://en.linkeddata.center/p/sdaas).
+This is the open source implementation of the [LinkeData.Center SDaaS™ product](https://en.linkeddata.center/p/sdaas).
 
 > ## end-of-support approaching for Anassimene releases (SDaaS 3.x)
 >
