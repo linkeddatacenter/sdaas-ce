@@ -84,3 +84,10 @@ on_script_startup
 	[[ "$status" -eq 0 ]]
 	[[ "${lines[0]}" == "$SDAAS_VERSION" ]]
 }
+
+
+
+@test "view agent" {
+	run sd_view_agent
+	[[ "$status" -eq 0 ]]
+}

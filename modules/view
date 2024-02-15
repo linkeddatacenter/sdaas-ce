@@ -68,23 +68,48 @@ sd_view_version() {
 }
 
 
-sd_view_ontology() {
+sd_view_agent() {
 	# parse and validate inputs
-   	local OPT_OUTPUT_FORMAT="ntriples"
+   	local output_format="ntriples"
     local OPTIND opt; while getopts ":o:" opt; do
         case "${opt}" in
-            o) OPT_OUTPUT_FORMAT="${OPTARG}" ;;
+            o) output_format="${OPTARG}" ;;
 			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
         esac
     done; shift $((OPTIND-1))
-	sd_validate OPT_OUTPUT_FORMAT "^(rdfxml|ntriples|turtle)$" || return 1
+	sd_validate output_format "^(rdfxml|ntriples|turtle)$" || return 1
+
+
+	cat <<-EOF |  sd_rapper -i turtle -o "$output_format"  - "$AGENT_ID"
+	@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+	@prefix prov: <http://www.w3.org/ns/prov#> .
+	@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+	<$AGENT_ID> a prov:SoftwareAgent, prov:Agent ;
+		rdfs:label "SDaaS Agent" ;
+		foaf:name "$SDAAS_SIGNATURE" .
+EOF
+}
+
+
+
+sd_view_ontology() {
+	# parse and validate inputs
+   	local output_format="ntriples"
+    local OPTIND opt; while getopts ":o:" opt; do
+        case "${opt}" in
+            o) output_format="${OPTARG}" ;;
+			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
+        esac
+    done; shift $((OPTIND-1))
+	sd_validate output_format "^(rdfxml|ntriples|turtle)$" || return 1
 
 	function get_triples {
 		local files_array="$(find $SDAAS_ETC -type f \( -name "*.rdf" -o -name "*.nt" -o -name "*.ttl" \))"
 		for file in "${files_array[@]}"; do
 			sd_rapper -g -I "urn:sdaas:tbox" -o ntriples "$file" || sd_abort "Internal error, invalid tbox $file"
 		done
+		sd_view_agent
 	}
 
-	get_triples | sd_rapper -i ntriples -o "$OPT_OUTPUT_FORMAT"  - "urn:sdaas:tbox"
+	get_triples | sd_rapper -i ntriples -o "$output_format"  - "urn:sdaas:tbox"
 }

@@ -4,7 +4,7 @@
 
 A platform to build knowledge graphs.
 
-This is the  open source implementation of the [LinkeData.Center SDaaS™ product](https://it.linkeddata.center/p/sdaas).
+This is the open source implementation of the [LinkeData.Center SDaaS™ product](https://en.linkeddata.center/p/sdaas).
 
 > ## end-of-support approaching for Anassimene releases (SDaaS 3.x)
 >
@@ -28,7 +28,7 @@ docker compose down
 
 
 ## Installation & usage
-See the [documentation](https://gitlab.com/linkeddatacenter/sdaas/doc) for more info.
+See the [documentation](https:/linkeddata.center/sdaas) for more info.
 
 
 ## Start test environment
@@ -102,7 +102,7 @@ docker push linkeddatacenter/sdaas-ce:latest
 
 ## Credits and license
 
-The sdaas community edition platform is derived from [LinkedData.Center SDaas Product](https://it.linkeddata.center/p/sdaas) and licensed with MIT by LinkedData.Center
+The sdaas community edition platform is derived from [LinkedData.Center SDaas Product](https://en.linkeddata.center/p/sdaas) and licensed with MIT by LinkedData.Center.
 
 Copyright (C) 2018-2024 LinkedData.Center SRL
  - All Rights Reserved

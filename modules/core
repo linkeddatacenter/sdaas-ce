@@ -34,61 +34,59 @@ SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"SDaaS $SDAAS_APPLICATION_ID $SDAAS_VERSION"}
 
 sd_log() {
 	# parse and validate inputs
-	local OPT_PRIORITY=5
-	local OPT_SIZE=1024
-	local OPT_FILE=""
+	local priority=5 size=1024 file=""
     local OPTIND opt; while getopts ":f:p:S:" opt; do
         case "${opt}" in
-            f) OPT_FILE="$(readlink -f "${OPTARG}")" ;;
-            p) OPT_PRIORITY="${OPTARG}" ;;
+            f) file="$(readlink -f "${OPTARG}")" ;;
+            p) priority="${OPTARG}" ;;
             S) 
 				if [[ $(( OPTARG )) -gt 0 ]]; then 
-					OPT_SIZE=$OPTARG;
+					size=$OPTARG;
 				fi
                 ;;
 			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
         esac
     done; shift $((OPTIND-1))
 	local ARG_MESSAGE="$1"
-	ARG_MESSAGE="${ARG_MESSAGE:0:$OPT_SIZE}" 
+	ARG_MESSAGE="${ARG_MESSAGE:0:$size}" 
 
 	# normalize priority level
-	case "${OPT_PRIORITY^^}" in
-		CRITICAL | 2) OPT_PRIORITY=2 ;;
-		ERROR | 3) OPT_PRIORITY=3 ;;
-		WARNING | 4) OPT_PRIORITY=4 ;;
-		NOTICE | 5) OPT_PRIORITY=5 ;;
-		INFORMATIONAL | 6) OPT_PRIORITY=6 ;;
-		DEBUG | 7) OPT_PRIORITY=7 ;;
+	case "${priority^^}" in
+		CRITICAL | 2) priority=2 ;;
+		ERROR | 3) priority=3 ;;
+		WARNING | 4) priority=4 ;;
+		NOTICE | 5) priority=5 ;;
+		INFORMATIONAL | 6) priority=6 ;;
+		DEBUG | 7) priority=7 ;;
 		* ) 
-		    ARG_MESSAGE="invalid log priority $OPT_PRIORITY"
-			OPT_PRIORITY=3
+		    ARG_MESSAGE="invalid log priority $priority"
+			priority=3
 			;;
 	esac
 	
 	# normalize priority level mnemonic
 	local mnemonic
-	case "${OPT_PRIORITY}" in
+	case "${priority}" in
 		2) mnemonic=CRITICAL ;;
 		3) mnemonic=ERROR ;;
 		4) mnemonic=WARNING ;;
 		5) mnemonic=NOTICE ;;
 		6) mnemonic=INFORMATIONAL ;;
 		7) mnemonic=DEBUG ;;
-		* ) mnemonic="$OPT_PRIORITY"
+		* ) mnemonic="$priority"
 			;;
 	esac
 
 	# format and print log ARG_MESSAGE
-	if [[ "$OPT_PRIORITY" -le "$SD_LOG_PRIORITY" ]]; then 
+	if [[ "$priority" -le "$SD_LOG_PRIORITY" ]]; then 
 		echo "[$mnemonic] [sdaas-$$ ${FUNCNAME[1]}] "$ARG_MESSAGE"" >&2
-		if [[ -r "$OPT_FILE" ]]; then
-			local file_size=$(stat -c %s "$OPT_FILE")
+		if [[ -r "$file" ]]; then
+			local file_size=$(stat -c %s "$file")
 			if [[ "$file_size" -gt 1024 ]]; then
-				head -c 1024 "$OPT_FILE" >&2
-				echo "...see more info at $OPT_FILE (size=$file_size bytes)" >&2
+				head -c 1024 "$file" >&2
+				echo "...see more info at $file (size=$file_size bytes)" >&2
 			else
-				cat "$OPT_FILE" >&2
+				cat "$file" >&2
 			fi
 		fi
 	fi
@@ -96,8 +94,7 @@ sd_log() {
 
 
 sd_validate() {
-	local var="$1"
-	local regexp="$2"
+	local var="$1" regexp="$2"
     if ! [[ "${!var}" =~ $regexp ]]; then
 		sd_log -p ERROR "${FUNCNAME[2]} parameter $var does not match '$regexp'"
 		return 1
@@ -183,8 +180,7 @@ sd_url_encode() {
 
 
 sd() {
-	local abort_on_fail=${SD_ABORT_ON_FAIL:-false}
-	local help=false
+	local abort_on_fail=${SD_ABORT_ON_FAIL:-false} help=false
 	local OPTIND opt; while getopts ":hA" opt; do 
         case "${opt}" in
 			h) help=true ;;
@@ -236,11 +232,11 @@ sd_uuid() {
 ################################################################################
 ## Ensure mandatory variables are well-defined
 ################################################################################
-# [[ -d "$SDAAS_INSTALL_DIR" && -r "$SDAAS_INSTALL_DIR/core" ]] || sd_abort "Invalid SDAAS_INSTALL_DIR directory ($SDAAS_INSTALL_DIR)"
-# [[ "$SDAAS_VERSION" =~  "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$" ]] || sd_abort "No semver in SDAAS_VERSION ($SDAAS_VERSION)"
-# [[ "$SDAAS_REFERENCE_DOC" =~  "^https?://" ]] || sd_abort "Invalid SDAAS_REFERENCE_DOC URL ($SDAAS_REFERENCE_DOC)"
-# [[ -d "$SDAAS_ETC" ]] ||  sd_abort "Invalid SDAAS_ETC directory ($SDAAS_ETC)"
-# [[ -z "$SDAAS_APPLICATION_ID" ]] ||  sd_abort "Empty SDAAS_APPLICATION_ID not allowed"
+[[ -d "$SDAAS_INSTALL_DIR" && -r "$SDAAS_INSTALL_DIR/core" ]] || sd_abort "Invalid SDAAS_INSTALL_DIR directory ($SDAAS_INSTALL_DIR)"
+[[ -n "$SDAAS_VERSION" ]] || sd_abort "No semver in SDAAS_VERSION ($SDAAS_VERSION)"
+[[ "$SDAAS_REFERENCE_DOC" =~  ^https?:// ]] || sd_abort "Invalid SDAAS_REFERENCE_DOC URL ($SDAAS_REFERENCE_DOC)"
+[[ -d "$SDAAS_ETC" ]] ||  sd_abort "Invalid SDAAS_ETC directory ($SDAAS_ETC)"
+[[ -n "$SDAAS_APPLICATION_ID" ]] ||  sd_abort "Empty SDAAS_APPLICATION_ID not allowed"
 
 ###########################
 # Module initialization

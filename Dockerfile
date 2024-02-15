@@ -15,7 +15,7 @@ RUN apt-get update && \
 		libxml2-utils
 
 ###### Mandatory configuration variables
-ENV SDAAS_INSTALL_DIR=/opt/SDAAS_REFERENCE_DOC
+ENV SDAAS_INSTALL_DIR=/opt/sdaas
 ENV SDAAS_ETC="/etc/sdaas"
 ENV SDAAS_REFERENCE_DOC="https://linkeddata.center/sdaas"
 ENV SDAAS_VERSION="4.0.0-rc.1"

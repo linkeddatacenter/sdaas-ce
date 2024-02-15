@@ -1,0 +1,42 @@
+if [[ ! -z ${__module_store+x} ]]; then return ; else __module_store=1 ; fi
+# Copyright (C) 2019-2024 LinkedData.Center - All Rights Reserved
+
+sd_include driver
+
+################################################################################
+## Core functions definition
+################################################################################
+
+
+sd_store_erase() {
+    # parse and validate inputs
+    local sid="STORE"
+    eval "declare $SD_DEFAULT_CONTEXT"
+    local OPTIND opt; while getopts ":s:D:" opt; do
+        case "${opt}" in
+            s) sid="$OPTARG" ;;
+            D) eval "declare $OPTARG" ;;
+			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
+        esac
+    done; 
+
+    # call driver function
+    sd_driver_erase "$sid" 
+}
+
+
+sd_store_size() {
+    # parse and validate inputs
+    local sid="STORE"
+    eval "declare $SD_DEFAULT_CONTEXT"
+    local OPTIND opt; while getopts ":s:D:" opt; do
+        case "${opt}" in
+            s) sid="$OPTARG" ;;
+            D) eval "declare $OPTARG" ;;
+			*) sd_log -p ERROR "Invalid option: -$OPTARG ." ; return 1 ;;
+        esac
+    done; 
+
+    # call driver function
+    sd_driver_size "$sid" 
+}
