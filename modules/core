@@ -107,6 +107,13 @@ sd_abort() {
 	exit 2
 }
 
+sd_return_first_non_zero() {
+	for element in "$@"; do
+		if [[ $element -ne 0 ]]; then
+			return $element
+		fi
+	done
+}
 
 sd_include() {	
 	local forceFlag=0

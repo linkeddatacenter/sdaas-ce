@@ -119,3 +119,21 @@ function teardown {
 	[ "$status" -eq 0 ]
 	[[ "${lines[0]}" == "http%3A%2F%2Fw3.org%2F%3Ftest%23name" ]]
 }
+
+
+########## sd_return_first_non_zero
+
+@test "sd_return_first_non_zero" {
+	
+	#run sd_return_first_non_zero 0 
+	#[ "$status" -eq 0 ]
+
+	run sd_return_first_non_zero 0 0 0 0
+	[ "$status" -eq 0 ]
+	
+	run sd_return_first_non_zero 0 1 2 3
+	[ "$status" -eq 1 ]
+	
+	run sd_return_first_non_zero 0 0 2 3
+	[ "$status" -eq 2 ]
+}
