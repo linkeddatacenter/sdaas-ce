@@ -89,14 +89,18 @@ To push a new docker image to docker hub:
 
 ```
 docker login
-# input the docker hub credentials...
-VERSION="4.0.0-rc2"
-docker build -t linkeddatacenter/sdaas-ce:$VERSION .
-docker tag linkeddatacenter/sdaas-ce:$VERSION linkeddatacenter/sdaas-ce 
-docker push linkeddatacenter/sdaas-ce:$VERSION
-docker push linkeddatacenter/sdaas-ce:latest
+NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="0" PATCH="0-rc2"
+docker build --build-arg MODE=prod -t $NAME:$MAJOR.$MINOR.$PATCH
+docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:$MAJOR.$MINOR
+docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:$MAJOR 
+docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:latest 
+docker push $NAME:$MAJOR.$MINOR.$PATCH
+docker push $NAME:$MAJOR.$MINOR
+docker push $NAME:$MAJOR
+docker push $NAME:latest
 ```
 
+N.B. opmitting  `--build-arg ARG=prod` enable the supports for test automation
 
 ## Credits and license
 

@@ -9,7 +9,10 @@ services:
   
   cli:
     image: linkeddatacenter/sdaas-ce:dev
-    build: .
+    build:    
+      context: .
+      args:
+        - MODE=${MODE:-test}  # define MODE=prod to unload test support
     stdin_open: true
     tty: true
     depends_on:
