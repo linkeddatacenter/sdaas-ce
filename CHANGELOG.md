@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [4.0.0]
 
-Complete refactoring see https://gitlab.com/linkeddatacenter/sdaas/doc v.1.0.0 for project documentation
+Complete refactoring see https://gitlab.com/linkeddatacenter/sdaas/doc v.4.0.0 for project documentation
 
 ## [3.3.1]
 

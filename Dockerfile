@@ -19,7 +19,7 @@ RUN apt-get update && \
 ENV SDAAS_INSTALL_DIR=/opt/sdaas
 ENV SDAAS_ETC="/etc/sdaas"
 ENV SDAAS_REFERENCE_DOC="https://linkeddata.center/sdaas"
-ENV SDAAS_VERSION="4.0.0-rc.1"
+ENV SDAAS_VERSION="4.0.0"
 ENV SDAAS_APPLICATION_ID="Community Edition"
 
 COPY modules "$SDAAS_INSTALL_DIR"
@@ -43,7 +43,6 @@ WORKDIR "${SDAAS_WORKSPACE}"
 
 ## Variables affecting program execution
 ENV SD_LOG_PRIORITY=7
-ENV SD_LOG_PRIORITY=3
 
 
 ENTRYPOINT ["/usr/bin/sdaas"]
