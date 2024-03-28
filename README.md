@@ -89,8 +89,8 @@ To push a new docker image to docker hub:
 
 ```
 docker login
-NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="0" PATCH="0-rc2"
-docker build --build-arg MODE=prod -t $NAME:$MAJOR.$MINOR.$PATCH
+NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="0" PATCH="0"
+docker build --build-arg MODE=prod -t $NAME:$MAJOR.$MINOR.$PATCH .
 docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:$MAJOR.$MINOR
 docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:$MAJOR 
 docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:latest 
