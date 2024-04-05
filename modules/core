@@ -107,6 +107,13 @@ sd_abort() {
 	exit 2
 }
 
+
+sd_error() {
+	local error_message="${1:-"return error"}" return_val="${2:-1}"
+	sd_log -p ERROR "$error_message ($return_val)"
+	return $return_val
+}
+
 sd_return_first_non_zero() {
 	for element in "$@"; do
 		if [[ $element -ne 0 ]]; then

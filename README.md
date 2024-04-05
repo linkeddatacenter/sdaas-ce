@@ -88,19 +88,13 @@ docker network rm myvpn
 To push a new docker image to docker hub:
 
 ```
-docker login
-NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="0" PATCH="0"
-docker build --build-arg MODE=prod -t $NAME:$MAJOR.$MINOR.$PATCH .
-docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:$MAJOR.$MINOR
-docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:$MAJOR 
-docker tag $NAME:$MAJOR.$MINOR.$PATCH $NAME:latest 
-docker push $NAME:$MAJOR.$MINOR.$PATCH
-docker push $NAME:$MAJOR.$MINOR
-docker push $NAME:$MAJOR
-docker push $NAME:latest
+# docker login
+# docker buildx create --name multi-arch-builder
+
+NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="1" PATCH="0"
+docker buildx build --builder multi-arch-builder  --platform linux/arm,linux/amd64 --build-arg MODE=prod --push -t $NAME:$MAJOR.$MINOR.$PATCH .
 ```
 
-N.B. opmitting  `--build-arg ARG=prod` enable the supports for test automation
 
 ## Credits and license
 

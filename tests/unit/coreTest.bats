@@ -60,6 +60,15 @@ function teardown {
 }
 
 
+########## Test sd_error 
+
+@test "core sd_error" {
+	SD_LOG_PRIORITY=7
+	run sd_error "test message as ERROR" 3
+	[[ "$status" -eq 3 ]]
+	[[ "${lines[0]}" =~ "[ERROR]" ]]
+	[[ "${lines[0]}" =~ "test message as ERROR" ]]
+}
 
 ########## Test sd_validate
 
