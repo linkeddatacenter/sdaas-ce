@@ -3,7 +3,7 @@ version: "3.3"
 services:
 
   kb:
-    image: linkeddatacenter/sdaas-rdfstore
+    image: linkeddatacenter/sdaas-rdfstore:2.2.1
     ports:
       - "9999:8080"
   
