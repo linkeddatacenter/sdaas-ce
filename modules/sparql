@@ -67,6 +67,7 @@ sd_sparql_query() {
             ;;
 		*) sd_driver_query "$sid" "$media_type" ;;
 	esac
+	sd_return_first_non_zero "${PIPESTATUS[@]}"
 }
 
 

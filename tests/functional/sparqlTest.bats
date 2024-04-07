@@ -53,8 +53,18 @@ function test {
 
 
 
+@test "sd_sparql_query with wrong statement" {
+	run test "xxxx" sd_sparql_query -o "csv-h" 
+    [[ "$status" -ne 0 ]]
+}
+
+
 ########## sd_sparql_graph
 
+@test "sd_sparql_graph bad stream " {
+	run test "xxx" sd_sparql_graph -a PUT "urn:graph:store"
+    [[ "$status" -ne 0 ]]
+}
 
 @test "sd_sparql_graph from stream " {
 	cat "tests/data/empty-store.nt" | sd_sparql_graph -a PUT "urn:graph:store"

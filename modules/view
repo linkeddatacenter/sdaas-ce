@@ -87,7 +87,8 @@ sd_view_agent() {
 	<$AGENT_ID> a prov:SoftwareAgent, prov:Agent ;
 		rdfs:label "SDaaS Agent" ;
 		foaf:name "$SDAAS_SIGNATURE" .
-EOF
+	EOF
+	sd_return_first_non_zero "${PIPESTATUS[@]}"
 }
 
 

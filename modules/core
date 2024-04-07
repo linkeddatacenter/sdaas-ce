@@ -190,6 +190,7 @@ sd_rapper() {
 
 sd_url_encode() {
 	echo -n "$1" | jq -s -R -r @uri
+	sd_return_first_non_zero "${PIPESTATUS[@]}"
 }
 
 

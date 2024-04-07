@@ -8,7 +8,7 @@ This is the open source implementation of the [LinkeData.Center SDaaS™ product
 
 > ## end-of-support approaching for Anassimene releases (SDaaS 3.x)
 >
-> Starting from the major release of version 4 of SDaaS (Pitagora), planned in 2024 Q1,
+> Starting from the major release of version 4 of SDaaS (Pitagora)
 > The Community Edition 3.x will no longer supported by LinkedData.Center.
 >
 > If you plan to use SDaaS for professional use, please consider moving to Enterprise Edition.
@@ -91,7 +91,7 @@ To push a new docker image to docker hub:
 # docker login
 # docker buildx create --name multi-arch-builder
 
-NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="1" PATCH="0"
+NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="1" PATCH="1"
 docker buildx build --builder multi-arch-builder  --platform linux/arm,linux/amd64 --build-arg MODE=prod --push -t $NAME:$MAJOR.$MINOR.$PATCH .
 ```
 
