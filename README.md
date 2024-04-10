@@ -90,9 +90,11 @@ To push a new docker image to docker hub:
 # docker login
 # docker buildx create --name multi-arch-builder
 
-NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="1" PATCH="2"
-docker buildx build --builder multi-arch-builder  --platform linux/arm/v8,linux/amd64 --build-arg MODE=prod --push -t $NAME:$MAJOR.$MINOR.$PATCH .
+NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="2" PATCH="0"
+docker buildx build --builder multi-arch-builder  --platform linux/arm64,linux/amd64 --build-arg MODE=prod --push -t $NAME:$MAJOR.$MINOR.$PATCH .
 ```
+
+To compile images with docker cloud network use `--builder cloud-linkeddatacenter-sdaas` ( create the driver with `docker buildx create --driver cloud linkeddatacenter/sdaas` )
 
 
 ## Credits and license

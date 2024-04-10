@@ -4,9 +4,6 @@ function on_script_startup {
 	_SAVED_PRIORITY="$SD_LOG_PRIORITY"
 	SD_LOG_PRIORITY=2
 	source "$SDAAS_INSTALL_DIR/core" NO_SPLASH
-
-	# this allow reload of local commands
-	sd_include -f core
 }
 
 on_script_startup

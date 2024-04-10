@@ -1,5 +1,5 @@
 # Copyright (C) 2023 LinkedData.Center - All Rights Reserved
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 LABEL authors="enrico@linkeddata.center"
 
@@ -18,7 +18,7 @@ RUN apt-get update && \
 ENV SDAAS_INSTALL_DIR=/opt/sdaas
 ENV SDAAS_ETC="/etc/sdaas"
 ENV SDAAS_REFERENCE_DOC="https://linkeddata.center/sdaas"
-ENV SDAAS_VERSION="4.0.0"
+ENV SDAAS_VERSION="4.2"
 ENV SDAAS_APPLICATION_ID="Community Edition"
 
 COPY modules "$SDAAS_INSTALL_DIR"
