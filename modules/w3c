@@ -19,7 +19,7 @@ sd_w3c_update() {
     local last_sparql_update_result
     last_sparql_update_result="$(sd_curl -s --fail-with-body \
         -X POST \
-        --data @- \
+        --data-binary @- \
         --header "Transfer-Encoding: chunked" \
         --header "Content-Type: application/sparql-update; charset=utf-8" \
         "${!sid}" )"
@@ -37,7 +37,7 @@ sd_w3c_query() {
 
 	sd_curl -s --fail-with-body --compressed \
         -X POST \
-        --data @- \
+        --data-binary @- \
         --header "Content-Type: application/sparql-query; charset=utf-8" \
         --header "Accept: $mime_type; charset=utf-8" \
         "${!sid}"

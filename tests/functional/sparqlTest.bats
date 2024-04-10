@@ -4,7 +4,10 @@ function on_script_startup {
 	source "$SDAAS_INSTALL_DIR/core" NO_SPLASH
 	STORE="http://kb:8080/sdaas/sparql"
 	STORE_TYPE=w3c
-	INSERT_TEST_STATEMENT='INSERT DATA { GRAPH <urn:graph:g> { <urn:uri:s> <urn:uri:p> <urn:uri:o>} }'
+	INSERT_TEST_STATEMENT="
+# This is a comment to ensure new lines are evaluated
+INSERT DATA { GRAPH <urn:graph:g> { <urn:uri:s> <urn:uri:p> <urn:uri:o>} }
+"
 	sd_include sparql
 }
 

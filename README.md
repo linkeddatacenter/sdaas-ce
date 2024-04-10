@@ -86,13 +86,12 @@ docker network rm myvpn
 ## Push to docker hub
 
 To push a new docker image to docker hub:
-
 ```
 # docker login
 # docker buildx create --name multi-arch-builder
 
-NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="1" PATCH="1"
-docker buildx build --builder multi-arch-builder  --platform linux/arm,linux/amd64 --build-arg MODE=prod --push -t $NAME:$MAJOR.$MINOR.$PATCH .
+NAME="linkeddatacenter/sdaas-ce" MAJOR="4" MINOR="1" PATCH="2"
+docker buildx build --builder multi-arch-builder  --platform linux/arm/v8,linux/amd64 --build-arg MODE=prod --push -t $NAME:$MAJOR.$MINOR.$PATCH .
 ```
 
 
