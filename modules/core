@@ -21,7 +21,7 @@ STORE_TYPE=${STORE_TYPE:-w3c}
 
 SD_LOG_PRIORITY=${SD_LOG_PRIORITY:-5}
 SD_ABORT_ON_FAIL=${SD_ABORT_ON_FAIL:-false}
-SD_DEFAULT_CONTEXT=${SD_DEFAULT_CONTEXT:-"sid=STORE activity=Activity"}
+SD_DEFAULT_CONTEXT=${SD_DEFAULT_CONTEXT:-"sid=STORE"}
 
 # WARNING: changing this variable breaks the license agreement
 SDAAS_SIGNATURE=${SDAAS_SIGNATURE:-"SDaaS $SDAAS_APPLICATION_ID $SDAAS_VERSION"}
@@ -135,7 +135,7 @@ sd_include() {
 	fi
 
 	# test if the module was already included
-	if eval "[ ! -z \${__module_${module}+x} ]" ; then return ; fi 
+	if eval "[ ! -z \${__module_${module}+x} ]" ; then return 0	 ; fi 
 
 	if [[ -e "$HOME/modules/$module" ]]; then
 		# try local defined module (override default installation)
