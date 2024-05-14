@@ -135,7 +135,7 @@ sd_include() {
 	fi
 
 	# test if the module was already included
-	if eval "[ ! -z \${__module_${module}+x} ]" ; then return ; fi 
+	if eval "[ ! -z \${__module_${module}+x} ]" ; then return 0	 ; fi 
 
 	if [[ -e "$HOME/modules/$module" ]]; then
 		# try local defined module (override default installation)
