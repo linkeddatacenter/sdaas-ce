@@ -4,16 +4,7 @@
 
 A platform to build knowledge graphs.
 
-This is the open source implementation of the [LinkeData.Center SDaaS™ product](https://en.linkeddata.center/p/sdaas).
-
-> ## end-of-support approaching for Anassimene releases (SDaaS 3.x)
->
-> Starting from the major release of version 4 of SDaaS (Pitagora)
-> The Community Edition 3.x will no longer supported by LinkedData.Center.
->
-> If you plan to use SDaaS for professional use, please consider moving to Enterprise Edition.
-> Contact https://LinkedData.Center for more info, prices, support and documentation.
-
+This is the open source distribution of the [LinkeData.Center SDaaS™ product](https://en.linkeddata.center/p/sdaas).
 
 
 ## 🚀 Quickstart
@@ -26,7 +17,7 @@ docker compose down
 
 
 ## Installation & usage
-See the [documentation](https:/linkeddata.center/sdaas) for more info.
+See the [documentation](https://linkeddata.center/sdaas) for more info.
 
 
 ## Start test environment
